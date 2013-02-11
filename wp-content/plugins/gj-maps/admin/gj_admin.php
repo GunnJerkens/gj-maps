@@ -1,0 +1,132 @@
+	<?php
+
+	require_once('db.php');
+
+		if($_POST['gj_hidden'] == 'Y') {
+			//Form data sent
+				global $post;
+
+				if ($_POST['id']) {
+				//Update existing POI
+				$poi = array();
+				foreach ($_POST as $key=>$value) {
+					if ($key !== 'gj_hidden') {
+						$poi[$key] = $value;
+					}
+				}
+				editPOI($poi);
+
+				} else {
+				//Add new POI
+				$poi = array();
+				foreach ($_POST as $key=>$value) {
+					if ($key !== 'gj_hidden') {
+						$poi[$key] = $value;
+					}
+				}
+
+				$address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+				$url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+		    	$url .= '&address='.$address;
+
+		    	$response = wp_remote_get( $url );
+				if( is_wp_error( $response ) ) {
+				   $error_message = $response->get_error_message();
+				   echo "Something went wrong: $error_message";
+				}
+
+				$response2 = json_decode($response['body']);
+			    $location = $response2->results[0]->geometry->location;
+			    $poi['lat'] = $location->lat;
+			    $poi['lng'] = $location->lng;
+
+				$POIs = array($poi);
+				savePOI($POIs);
+				}
+
+		}
+
+		$GJ_api = new GJ_api();
+		$poi = $GJ_api->gj_get_POI();
+
+		?>
+		<div class="wrap">
+			<?php    echo "<h2>" . __( 'GJ Maps Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
+
+			<h4>Add New</h4>
+				<form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+					<input type="hidden" name="gj_hidden" value="Y"/>
+					<input type="text" name="name" placeholder="Name"/>
+					<input type="text" name="cat" placeholder="Category"/>
+					<input type="text" name="address" placeholder="Street Address"/>
+					<input type="text" name="city" placeholder="City"/>
+					<input type="text" name="state" placeholder="State"/>
+					<input type="text" name="zip" placeholder="Zip/Postal Code"/>
+					<input type="text" name="country" placeholder="Country"/>
+					<input type="text" name="phone" placeholder="Phone Number"/>
+					<input type="text" name="url" placeholder="URL"/>
+
+					<p class="submit"><input type="submit" value="<?php _e('Add POI', 'gj_trdom' ) ?>" /></p>
+				</form>
+
+			<h4>Edit POIs</h4>
+
+				<?php
+
+				foreach ($poi as $index=>$object) {
+				?>
+					<form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+					<input type="hidden" name="gj_hidden" value="Y"/>
+					<input type="hidden" name="id" value="<?php echo $object->id; ?>"/>
+
+					<label for="name">Name: 
+					<input type="text" name="name" placeholder="Name" value="<?php echo $object->name; ?>"/>
+					</label>
+
+					<label for="cat">Category: 
+					<input type="text" name="cat" placeholder="Category" value="<?php echo $object->cat; ?>"/>
+					</label>
+
+					<label for="address">Street Address: 
+					<input type="text" name="address" placeholder="Street Address" value="<?php echo $object->address; ?>"/>
+					</label>
+
+					<label for="city">City: 
+					<input type="text" name="city" placeholder="City" value="<?php echo $object->city; ?>"/>
+					</label>
+
+					<label for="state">State: 
+					<input type="text" name="state" placeholder="State" value="<?php echo $object->state; ?>"/>
+					</label>
+
+					<label for="zip">Zip/Postal Code: 
+					<input type="text" name="zip" placeholder="Zip/Postal Code" value="<?php echo $object->zip; ?>"/>
+					</label>
+
+					<label for="country">Country: 
+					<input type="text" name="country" placeholder="Country" value="<?php echo $object->country; ?>"/>
+					</label>
+
+					<label for="phone">Phone Number: 
+					<input type="text" name="phone" placeholder="Phone Number" value="<?php echo $object->phone; ?>"/>
+					</label>
+
+					<label for="url">URL: 
+					<input type="text" name="url" placeholder="URL" value="<?php echo $object->url; ?>"/>
+					</label>
+
+					<label for="lat">Latitude: 
+					<input type="text" name="lat" placeholder="Latitude" value="<?php echo $object->lat; ?>"/>
+					</label>
+
+					<label for="lng">Longitude: 
+					<input type="text" name="lng" placeholder="Longitude" value="<?php echo $object->lng; ?>"/>
+					</label>
+
+					<p class="submit"><input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" /></p>
+
+					</form>
+				
+				<?php } ?>
+
+		</div>

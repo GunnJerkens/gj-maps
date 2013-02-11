@@ -20,12 +20,17 @@ function gj_import() {
 function gj_delete() {
    include ('admin/gj_delete.php');
 }
+function gj_options() {
+   include ('admin/gj_options.php');
+}
 function gj_admin_actions() {
    add_menu_page( "GJ Maps", "GJ Maps", 'administrator', "gj_maps", "gj_admin" );
    add_submenu_page("gj_maps", "Import CSV", "Import CSV", 'administrator', "gj_import", "gj_import");
    add_submenu_page("gj_maps", "GJ Maps Delete", "GJ Maps Delete", 'administrator', "gj_delete", "gj_delete");
+   add_submenu_page("gj_maps", "Settings", "Settings", 'administrator', "gj_options", "gj_options");
 }
 add_action('admin_menu', 'gj_admin_actions');
+
 
 //INIT DB
 

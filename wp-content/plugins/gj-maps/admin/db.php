@@ -17,6 +17,15 @@ function savePOI ($poi) {
 
 }
 
+function editPOI ($poi) {
+
+   global $wpdb;
+   $table_name = $wpdb->prefix . "gj_poi";
+
+   $rows_affected = $wpdb->update( $table_name, array( 'cat'=>$poi['cat'], 'name'=>$poi['name'], 'address'=>$poi['address'], 'city'=>$poi['city'], 'state'=>$poi['state'], 'zip'=>$poi['zip'], 'country'=>$poi['country'], 'phone'=>$poi['phone'], 'url'=>$poi['url'], 'lat'=>$poi['lat'], 'lng'=>$poi['lng'] ), array( 'id'=>$poi['id'] ) );
+
+}
+
 function deletePOI () {
 	global $wpdb;
 

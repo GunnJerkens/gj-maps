@@ -25,7 +25,7 @@ if ( ! class_exists( 'GJ_api') ) {
             "
          );
 
-         return json_encode($query);
+         return $query;
 
       }
    }

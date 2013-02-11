@@ -48,6 +48,8 @@
 
 				    savePOI($poi);
 
+				    echo '<h4>Your POIs have been uploaded.</h4>';
+
 				    echo '<br /><br /><table cellspacing="20"><tr>';
 				    foreach ($labels as $key=>$value) {
 				    	echo '<td>'.$value.'</td>';
