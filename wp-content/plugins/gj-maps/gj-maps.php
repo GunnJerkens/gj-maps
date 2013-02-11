@@ -8,25 +8,26 @@
    License: GPL2
    */
 
-/*
-require 'admin.php';
-require 'upload.php';
-require 'api.php';
-*/
+include('api.php');
 
 //ADMIN
-
-function gj_admin() {  
-    include('gj_import_admin.php');  
+function gj_admin() {
+   include('admin/gj_admin.php');
+}
+function gj_import() {  
+    include('admin/gj_import.php'); 
 }  
-function gj_admin_delete() {
-   include ('gj_delete.php');
+function gj_delete() {
+   include ('admin/gj_delete.php');
 }
 function gj_admin_actions() {
-   add_options_page("GJ Maps", "GJ Maps", 'administrator', "gj_maps_display_main", "gj_admin");
-   add_options_page("GJ Maps Delete", "GJ Maps Delete", 'administrator', "gj_maps_delete", "gj_admin_delete");
+   add_menu_page( "GJ Maps", "GJ Maps", 'administrator', "gj_maps", "gj_admin" );
+   add_submenu_page("gj_maps", "Import CSV", "Import CSV", 'administrator', "gj_import", "gj_import");
+   add_submenu_page("gj_maps", "GJ Maps Delete", "GJ Maps Delete", 'administrator', "gj_delete", "gj_delete");
 }
 add_action('admin_menu', 'gj_admin_actions');
+
+//INIT DB
 
 function gj_table_install () {
 
