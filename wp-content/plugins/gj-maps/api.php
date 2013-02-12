@@ -28,6 +28,20 @@ if ( ! class_exists( 'GJ_api') ) {
          return $query;
 
       }
+
+      public function gj_POI_frontend() {
+         if ( ! $GJ_api ) {
+            $GJ_api = new GJ_api();
+         }
+           $poi = json_encode($GJ_api->gj_get_POI());
+           echo '<script type="text/javascript">';
+           echo 'var poi = ';
+           print_r($poi);
+           echo ';';
+           echo 'var center_lat = '.get_option('gj_center_lat').';';
+           echo 'var center_lng = '.get_option('gj_center_lng').';';
+           echo '</script>';
+      }
    }
 }
 

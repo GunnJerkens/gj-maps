@@ -32,6 +32,19 @@ function gj_admin_actions() {
 add_action('admin_menu', 'gj_admin_actions');
 
 
+//ADD GMAPS AND STYLES
+function gj_add_styles () {
+   if (get_option('gj_styles')) {
+      wp_register_script('google-maps', 'http://maps.googleapis.com/maps/api/js?sensor=false&#038;v=3&#038;language=en', null, null);
+      wp_enqueue_script('google-maps');
+      wp_register_script('gmaps', WP_PLUGIN_URL.'/gj-maps/assets/gmaps.js', array('jquery', 'google-maps'), null);
+      wp_enqueue_script('gmaps');
+      wp_register_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'gmaps'), null, true);
+      wp_enqueue_script('gj-maps');
+   }
+}
+add_action('init', 'gj_add_styles');
+
 //INIT DB
 
 function gj_table_install () {

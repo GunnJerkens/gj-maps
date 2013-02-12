@@ -26,14 +26,26 @@ function editPOI ($poi) {
 
 }
 
-function deletePOI () {
+function deletePOI ($id) {
 	global $wpdb;
 
 	$table_name = $wpdb->prefix . "gj_poi";
 
-	$wpdb->query(
-		$wpdb->prepare(
-			"TRUNCATE TABLE $table_name"
-		)
-	);
+   if ($id) {
+      $wpdb->query(
+         $wpdb->prepare(
+            "
+            DELETE FROM $table_name 
+            WHERE id = %d
+            ",
+            $id
+         )
+      );
+   } else {
+      $wpdb->query(
+         $wpdb->prepare(
+            "TRUNCATE TABLE $table_name"
+         )
+      );
+   }
 }

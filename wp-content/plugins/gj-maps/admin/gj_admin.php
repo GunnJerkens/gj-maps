@@ -7,41 +7,47 @@
 				global $post;
 
 				if ($_POST['id']) {
-				//Update existing POI
-				$poi = array();
-				foreach ($_POST as $key=>$value) {
-					if ($key !== 'gj_hidden') {
-						$poi[$key] = $value;
+
+					if ($_POST['delete']) {
+						//Delete Selected POI
+						deletePOI($_POST['id']);
+					} else {
+						//Update existing POI
+						$poi = array();
+						foreach ($_POST as $key=>$value) {
+							if ($key !== 'gj_hidden') {
+								$poi[$key] = $value;
+							}
+						}
+						editPOI($poi);
 					}
-				}
-				editPOI($poi);
 
 				} else {
-				//Add new POI
-				$poi = array();
-				foreach ($_POST as $key=>$value) {
-					if ($key !== 'gj_hidden') {
-						$poi[$key] = $value;
+					//Add new POI
+					$poi = array();
+					foreach ($_POST as $key=>$value) {
+						if ($key !== 'gj_hidden') {
+							$poi[$key] = $value;
+						}
 					}
-				}
 
-				$address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-				$url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-		    	$url .= '&address='.$address;
+					$address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+					$url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+			    	$url .= '&address='.$address;
 
-		    	$response = wp_remote_get( $url );
-				if( is_wp_error( $response ) ) {
-				   $error_message = $response->get_error_message();
-				   echo "Something went wrong: $error_message";
-				}
+			    	$response = wp_remote_get( $url );
+					if( is_wp_error( $response ) ) {
+					   $error_message = $response->get_error_message();
+					   echo "Something went wrong: $error_message";
+					}
 
-				$response2 = json_decode($response['body']);
-			    $location = $response2->results[0]->geometry->location;
-			    $poi['lat'] = $location->lat;
-			    $poi['lng'] = $location->lng;
+					$response2 = json_decode($response['body']);
+				    $location = $response2->results[0]->geometry->location;
+				    $poi['lat'] = $location->lat;
+				    $poi['lng'] = $location->lng;
 
-				$POIs = array($poi);
-				savePOI($POIs);
+					$POIs = array($poi);
+					savePOI($POIs);
 				}
 
 		}
@@ -121,6 +127,10 @@
 
 					<label for="lng">Longitude: 
 					<input type="text" name="lng" placeholder="Longitude" value="<?php echo $object->lng; ?>"/>
+					</label>
+
+					<label for="delete">Delete this POI? : 
+					<input type="checkbox" name="delete"/>
 					</label>
 
 					<p class="submit"><input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" /></p>
