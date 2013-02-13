@@ -23,15 +23,16 @@
 				    $labels['lng'] = 'lng';
 
 				    foreach ($poi as $key=>$value) {
-				    	array_push($value, 0);
-				    	array_push($value, 0);
+				    	array_push($value, null);
+				    	array_push($value, null);
 				    	$poi[$key] = array_combine($labels, $value);
 				    }
 				    unset($poi[0]);
 
-				    $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+				    
 				    foreach ($poi as $key=>$value) {
 				    	$address = urlencode($value["address"].', '.$value['city'].', '.$value['state'].' '.$value['zip']);
+				    	$url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
 				    	$url .= '&address='.$address;
 
 				    	$response = wp_remote_get( $url );
@@ -45,7 +46,6 @@
 					    $poi[$key]['lat'] = $location->lat;
 					    $poi[$key]['lng'] = $location->lng;
 				    }
-
 				    savePOI($poi);
 
 				    echo '<h4>Your POIs have been uploaded.</h4>';

@@ -22,6 +22,39 @@
 						editPOI($poi);
 					}
 
+				} else if ($_POST['geocode']) {
+					//Update geocodes
+			         global $wpdb;
+
+			         $table_name = $wpdb->prefix . "gj_poi";
+			         $query = $wpdb->get_results(
+			            "
+			            SELECT *
+			            FROM $table_name
+			            WHERE lat=0
+
+			            ",
+			            'ARRAY_A'
+			         );
+
+			         foreach ($query as $poi) {
+			         	$address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+						$url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+				    	$url .= '&address='.$address;
+
+				    	$response = wp_remote_get( $url );
+						if( is_wp_error( $response ) ) {
+						   $error_message = $response->get_error_message();
+						   echo "Something went wrong: $error_message";
+						}
+
+						$response2 = json_decode($response['body']);
+					    $location = $response2->results[0]->geometry->location;
+					    $poi['lat'] = $location->lat;
+					    $poi['lng'] = $location->lng;
+					    editPOI($poi);
+			         }
+
 				} else {
 					//Add new POI
 					$poi = array();
@@ -75,6 +108,13 @@
 					<p class="submit"><input type="submit" value="<?php _e('Add POI', 'gj_trdom' ) ?>" /></p>
 				</form>
 
+			<h4>Find Geocodes</h4>
+				<form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+					<input type="hidden" name="gj_hidden" value="Y"/>
+					<input type="hidden" name="geocode" value="1"/>
+					<p class="submit"><input type="submit" value="<?php _e('Find Geocodes', 'gj_trdom' ) ?>" /></p>
+				</form>
+
 			<h4>Edit POIs</h4>
 
 				<?php
@@ -122,21 +162,25 @@
 					</label>
 
 					<label for="lat">Latitude: 
-					<input type="text" name="lat" placeholder="Latitude" value="<?php echo $object->lat; ?>"/>
+					<input type="text" name="lat" placeholder="Latitude" id="lat<?php echo $object->id; ?>" value="<?php echo $object->lat; ?>"/>
 					</label>
 
 					<label for="lng">Longitude: 
-					<input type="text" name="lng" placeholder="Longitude" value="<?php echo $object->lng; ?>"/>
+					<input type="text" name="lng" placeholder="Longitude" id="lng<?php echo $object->id; ?>" value="<?php echo $object->lng; ?>"/>
 					</label>
+
+					<br />
 
 					<label for="delete">Delete this POI? : 
 					<input type="checkbox" name="delete"/>
 					</label>
 
-					<p class="submit"><input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" /></p>
+					<br />
+					<input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" />
 
 					</form>
-				
+
+				<br /><hr /><br />
 				<?php } ?>
 
 		</div>

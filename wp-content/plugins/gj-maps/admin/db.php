@@ -26,7 +26,7 @@ function editPOI ($poi) {
 
 }
 
-function deletePOI ($id) {
+function deletePOI ($id = false) {
 	global $wpdb;
 
 	$table_name = $wpdb->prefix . "gj_poi";

@@ -162,76 +162,82 @@ $(document).ready(function() {
 
 		var deferred = $.Deferred();
 
-		
 
 		$.each(poi, function(i, val){
 
-			var myContent  = '<div class="infoContentWrapper">';
+			if (this.lat !== '0' && this.lng !== '0') {
 
-				myContent += '<h3>'+ this.name +'</h3>' + '<p>'+ this.cat +'</p>';
+				var myContent  = '<div class="infoContentWrapper">';
 
-				myContent += (this.url) ? '<p><a href="'+ this.url +'" target="_blank" rel="nofollow">Visit Website</a><br />' : '<p>';
+					myContent += '<h3>'+ this.name +'</h3>' + '<p>'+ this.cat +'</p>';
 
-				myContent += this.address +'<br />'+ this.city +', ' + this.state + ' ' + this.zip;
+					myContent += (this.url) ? '<p><a href="'+ this.url +'" target="_blank" rel="nofollow">Visit Website</a><br />' : '<p>';
 
-				myContent += (this.phone)? '<br />'+this.phone +'</p>': '</p>';
+					myContent += this.address +'<br />'+ this.city +', ' + this.state + ' ' + this.zip;
 
-				myContent += '</div>';
+					myContent += (this.phone)? '<br />'+this.phone +'</p>': '</p>';
 
-			
+					myContent += '</div>';
 
-			if((typeof cats === 'object') && ($.inArray(this.cat_slug, cats) !== -1)){
+					
+				if (cats) {
 
-				map.addMarker({
+					if (this.cat == cats) {
 
-					lat: this.lat,
+						map.addMarker({
 
-					lng: this.lng,
+							lat: this.lat,
 
-					title: this.title2,
+							lng: this.lng,
 
-					infoWindow: {
+							title: this.name,
 
-						content: myContent
+							infoWindow: {
 
-					},
+								content: myContent
 
-					icon: this.icon
+							},
 
-				});
+							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7CEF761F'
 
-			} else if (typeof cats !== 'object') {
+						});
 
-				map.addMarker({
+					}
 
-					lat: this.lat,
+				} else {
 
-					lng: this.lng,
+						map.addMarker({
 
-					title: this.title,
+							lat: this.lat,
 
-					infoWindow: {
+							lng: this.lng,
 
-						content: myContent
+							title: this.name,
 
-					},
+							infoWindow: {
 
-					icon: this.icon
+								content: myContent
 
-				});
+							},
+
+							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7CEF761F'
+
+
+						});
+
+				}
+
+				
+
+				if(i == poi.length - 1){
+
+					deferred.resolve();
+
+				}
 
 			}
 
-			
-
-			if(i == poi.length - 1){
-
-				deferred.resolve();
-
-			}
-
-		});
-
+			});
 		
 
 		deferred.done(function(){
@@ -250,28 +256,26 @@ $(document).ready(function() {
 
 	
 
-	$('#map-categories').on('click', 'a', function(e){
+	$('.map-category').click( function(e){
 
 		e.preventDefault();
 
-		var $myLink = $(e.currentTarget);
-
-		var targets = [$myLink.attr('data-target').split('#')[1], 'location'];
+		var target = $(this).attr('data-target');
 
 		map.removeMarkers();
 
-		
+		if(target == ''){
 
-		if(targets[0]){
-
-			buildMarkers(targets);
+			buildMarkers();
 
 		} else {
 
-			buildMarkers();
+			buildMarkers(target);
 
 		}
 
 	});
+
+	map.fitZoom();
 
 });
