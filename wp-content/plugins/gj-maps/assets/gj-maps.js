@@ -154,22 +154,32 @@ $(document).ready(function() {
 
 	map.setStyle("map_style");
 
-	
 
 	// Build Markers
 
 	var buildMarkers = function(cats){
 
+		var cat_info = [];
+		for (var i = 0; i < cat.length; i++) {
+			cat_info[cat[i].id] = {
+				name: cat[i].name,
+				color: cat[i].color
+			}
+		};
+
 		var deferred = $.Deferred();
 
-
 		$.each(poi, function(i, val){
+
+			var cat_id = parseInt(this.cat_id, 10);
+			var curr_cat = cat_info[cat_id];
+			var cat_color = curr_cat.color.slice(1);
 
 			if (this.lat !== '0' && this.lng !== '0') {
 
 				var myContent  = '<div class="infoContentWrapper">';
 
-					myContent += '<h3>'+ this.name +'</h3>' + '<p>'+ this.cat +'</p>';
+					myContent += '<h3>'+ this.name +'</h3>' + '<p>'+ curr_cat.name +'</p>';
 
 					myContent += (this.url) ? '<p><a href="'+ this.url +'" target="_blank" rel="nofollow">Visit Website</a><br />' : '<p>';
 
@@ -198,7 +208,7 @@ $(document).ready(function() {
 
 							},
 
-							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7CEF761F'
+							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7C' + cat_color
 
 						});
 
@@ -220,7 +230,7 @@ $(document).ready(function() {
 
 							},
 
-							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7CEF761F'
+							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7C' + cat_color
 
 
 						});

@@ -26,16 +26,10 @@
 					//Update geocodes
 			         global $wpdb;
 
-			         $table_name = $wpdb->prefix . "gj_poi";
-			         $query = $wpdb->get_results(
-			            "
-			            SELECT *
-			            FROM $table_name
-			            WHERE lat=0
-
-			            ",
-			            'ARRAY_A'
-			         );
+			         if ( ! $GJ_api ) {
+			            $GJ_api = new GJ_api();
+			         }
+			         $query = $GJ_api->gj_get_POI('ARRAY_A', 'lat=0');
 
 			         foreach ($query as $poi) {
 			         	$address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
@@ -80,6 +74,7 @@
 				    $poi['lng'] = $location->lng;
 
 					$POIs = array($poi);
+					print_r($POIs);
 					savePOI($POIs);
 				}
 
@@ -87,6 +82,9 @@
 
 		$GJ_api = new GJ_api();
 		$poi = $GJ_api->gj_get_POI();
+
+		$GJ_cat = new GJ_cat();
+		$cat = $GJ_cat->gj_get_cat();
 
 		?>
 		<div class="wrap">
@@ -96,7 +94,14 @@
 				<form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
 					<input type="hidden" name="gj_hidden" value="Y"/>
 					<input type="text" name="name" placeholder="Name"/>
-					<input type="text" name="cat" placeholder="Category"/>
+					<select name="cat_id">
+						<?php 
+						foreach ($cat as $key=>$value) {
+							echo "<option value='$value->id'>$value->name</option>";
+						}
+
+						?>
+					</select>
 					<input type="text" name="address" placeholder="Street Address"/>
 					<input type="text" name="city" placeholder="City"/>
 					<input type="text" name="state" placeholder="State"/>
@@ -129,8 +134,20 @@
 					<input type="text" name="name" placeholder="Name" value="<?php echo $object->name; ?>"/>
 					</label>
 
-					<label for="cat">Category: 
-					<input type="text" name="cat" placeholder="Category" value="<?php echo $object->cat; ?>"/>
+					<label for="cat_id">Category: 
+					<select name="cat_id">
+						<?php 
+						foreach ($cat as $key=>$value) {
+							
+							if ( $object->cat_id == $value->id ) {
+								echo "<option value='$value->id' selected>$value->name</option>";
+							} else {
+								echo "<option value='$value->id'>$value->name</option>";
+							}
+						}
+
+						?>
+					</select>
 					</label>
 
 					<label for="address">Street Address: 
