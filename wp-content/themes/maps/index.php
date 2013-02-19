@@ -3,7 +3,7 @@
   <?php
 
   $GJ_api->gj_POI_frontend();
-
+  gj_add_styles();
   ?>
 
   <div id="map" style="height:500px;width:100%;"></div>

@@ -8,10 +8,11 @@
    License: GPL2
    */
 
-include('api.php');
+include('poi.php');
 include('category.php');
 
-//ADMIN
+
+//ADMIN MENUS
 function gj_admin_edit() {
    include('admin/gj_admin.php');
 }
@@ -45,7 +46,6 @@ function gj_add_styles () {
       wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'gmaps'), null, true);
    }
 }
-add_action('init', 'gj_add_styles');
 
 //Color Picker
 add_action( 'admin_enqueue_scripts', 'mw_enqueue_color_picker' );
@@ -71,6 +71,7 @@ function gj_table_install () {
      id mediumint(9) NOT NULL AUTO_INCREMENT,
      name VARCHAR(55) NOT NULL,
      color VARCHAR(7) NOT NULL,
+     icon VARCHAR(255) NOT NULL,
      PRIMARY KEY (id)
    );";
 
@@ -96,6 +97,10 @@ function gj_table_install () {
    dbDelta($sql_cat);
    dbDelta($sql_poi);
 
+   $wpdb->insert($wpdb->prefix . 'gj_cat', array('name'=>'All', 'color'=>'#000000'));
+
 }
 
 register_activation_hook(__FILE__,'gj_table_install');
+
+

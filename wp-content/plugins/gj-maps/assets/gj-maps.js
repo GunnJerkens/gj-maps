@@ -109,7 +109,12 @@ $(document).ready(function() {
 	
 
 	// Init Map
-
+if (! center_lat) {
+	var center_lat = 0;
+}
+if (! center_lng) {
+	var center_lng = 0;
+}
 	var map = new GMaps({
 
 		div: '#map',
@@ -159,11 +164,14 @@ $(document).ready(function() {
 
 	var buildMarkers = function(cats){
 
+		//Here, I'm creating a new object because the one returned from the WPDB query isn't sturctured to allow me to access a category by 
+		//its ID.  I'm not sure if there's a better way to do this.
 		var cat_info = [];
 		for (var i = 0; i < cat.length; i++) {
 			cat_info[cat[i].id] = {
 				name: cat[i].name,
-				color: cat[i].color
+				color: cat[i].color,
+				icon: cat[i].icon
 			}
 		};
 
@@ -171,9 +179,9 @@ $(document).ready(function() {
 
 		$.each(poi, function(i, val){
 
+			//Set the current category based on its ID.
 			var cat_id = parseInt(this.cat_id, 10);
 			var curr_cat = cat_info[cat_id];
-			var cat_color = curr_cat.color.slice(1);
 
 			if (this.lat !== '0' && this.lng !== '0') {
 
@@ -192,7 +200,7 @@ $(document).ready(function() {
 					
 				if (cats) {
 
-					if (this.cat == cats) {
+					if (curr_cat.name == cats) {
 
 						map.addMarker({
 
@@ -208,7 +216,7 @@ $(document).ready(function() {
 
 							},
 
-							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7C' + cat_color
+							icon: curr_cat.icon
 
 						});
 
@@ -230,7 +238,7 @@ $(document).ready(function() {
 
 							},
 
-							icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home%7C' + cat_color
+							icon: curr_cat.icon
 
 
 						});
@@ -269,6 +277,9 @@ $(document).ready(function() {
 	$('.map-category').click( function(e){
 
 		e.preventDefault();
+
+		$('.map-category').removeClass('active');
+		$(this).addClass('active');
 
 		var target = $(this).attr('data-target');
 

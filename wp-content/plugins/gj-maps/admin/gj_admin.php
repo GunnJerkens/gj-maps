@@ -80,8 +80,8 @@
 
 		}
 
-		$GJ_api = new GJ_api();
-		$poi = $GJ_api->gj_get_POI();
+		$GJ_api = new GJ_poi();
+		$poi = $GJ_poi->gj_get_POI();
 
 		$GJ_cat = new GJ_cat();
 		$cat = $GJ_cat->gj_get_cat();

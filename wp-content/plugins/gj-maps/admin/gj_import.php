@@ -29,6 +29,17 @@
 				    }
 				    unset($poi[0]);
 
+				    if ( ! $GJ_cat ) {
+			            $GJ_cat = new GJ_cat();
+			        }
+			        $cat = $GJ_cat->gj_get_cat('ARRAY_A');
+			        $cats = array();
+			        foreach ($cat as $key=>$value) {
+			        	$cats[$value['name']] = new stdClass;
+			        	$cats[$value['name']]->id = $value['id']; 
+			        	$cats[$value['name']]->color = $value['color'];
+			        }
+			        $cat = (object) $cats;
 				    
 				    foreach ($poi as $key=>$value) {
 				    	$address = urlencode($value["address"].', '.$value['city'].', '.$value['state'].' '.$value['zip']);
@@ -45,25 +56,18 @@
 					    $location = $response2->results[0]->geometry->location;
 					    $poi[$key]['lat'] = $location->lat;
 					    $poi[$key]['lng'] = $location->lng;
+
+					    if ($cat->$value['cat']) {
+					    	$poi[$key]['cat_id'] = $cat->$value['cat']->id;
+					    } else {
+					    	$poi[$key]['cat_id'] = 1;
+					    }
+					    unset($poi[$key]['cat']);
 				    }
 				    savePOI($poi);
 
 				    echo '<h4>Your POIs have been uploaded.</h4>';
 
-				    echo '<br /><br /><table cellspacing="20"><tr>';
-				    foreach ($labels as $key=>$value) {
-				    	echo '<td>'.$value.'</td>';
-				    }
-				    echo '</tr><tr>';
-
-				    foreach ($poi as $key=>$value) {
-				    	foreach ($value as $key2=>$value2) {
-					    	echo "<td>$value2</td>";
-					    }
-					    echo '</tr><tr>';
-				    }
-
-				    echo '</tr></table>';
 
 
 

@@ -55,7 +55,7 @@ function saveCat ($cat) {
    global $wpdb;
    $table_name = $wpdb->prefix . "gj_cat";
 
-   $rows_affected = $wpdb->insert( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'] ) );
+   $rows_affected = $wpdb->insert( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'] ) );
 
 
 }
@@ -65,7 +65,7 @@ function editCat ($cat) {
    global $wpdb;
    $table_name = $wpdb->prefix . "gj_cat";
 
-   $rows_affected = $wpdb->update( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'] ), array( 'id'=>$cat['id'] ) );
+   $rows_affected = $wpdb->update( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'] ), array( 'id'=>$cat['id'] ) );
 
 }
 
