@@ -83,9 +83,9 @@ function gj_table_install () {
      address VARCHAR(55) NOT NULL,
      city tinytext NOT NULL,
      state tinytext NOT NULL,
-     zip tinytext DEFAULT '' NOT NULL,
-     country tinytext DEFAULT '' NOT NULL,
-     phone tinytext DEFAULT '' NOT NULL,
+     zip tinytext,
+     country tinytext,
+     phone tinytext,
      url VARCHAR(55) DEFAULT '' NOT NULL,
      lat float NOT NULL,
      lng float NOT NULL,
@@ -94,8 +94,8 @@ function gj_table_install () {
    );";
 
    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-   dbDelta($sql_cat);
    dbDelta($sql_poi);
+   dbDelta($sql_cat);
 
    $wpdb->insert($wpdb->prefix . 'gj_cat', array('name'=>'All', 'color'=>'#000000'));
 

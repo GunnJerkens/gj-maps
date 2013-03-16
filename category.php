@@ -14,7 +14,7 @@ if ( ! class_exists( 'GJ_cat') ) {
       }
 
       
-      function gj_get_cat($type='OBJECT', $where='1=1') {
+      public function gj_get_cat($type='OBJECT', $where='1=1') {
          //Allows you to set the type of the return value (assc. array or stdClass) and the WHERE clause, if necessary
          global $wpdb;
 

@@ -12,7 +12,7 @@ if ( ! class_exists( 'GJ_api') ) {
          add_action( 'wp_enqueue_scripts', array( &$this, 'gj_get_POI' ) );
       }
 
-      function gj_get_POI($type='OBJECT', $where='1=1') {
+      public function gj_get_POI($type='OBJECT', $where='1=1') {
         //Allows you to set the type of the return value (assc. array or stdClass) and the WHERE clause, if necessary
          global $wpdb;
 
