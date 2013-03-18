@@ -57,12 +57,12 @@
 					    $poi[$key]['lat'] = $location->lat;
 					    $poi[$key]['lng'] = $location->lng;
 
-					    if ($cat->$value['cat']) {
-					    	$poi[$key]['cat_id'] = $cat->$value['cat']->id;
+					    if (isset($cats[$value['cat_title']])) {
+					    	$poi[$key]['cat_id'] = $cats[$value['cat_title']]->id;
 					    } else {
 					    	$poi[$key]['cat_id'] = 1;
 					    }
-					    unset($poi[$key]['cat']);
+					    unset($poi[$key]['cat_title']);
 				    }
 				    savePOI($poi);
 
