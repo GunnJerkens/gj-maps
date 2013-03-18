@@ -46,6 +46,7 @@ function gj_add_styles () {
       wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'gmaps'), null, true);
    }
 }
+add_action('get_header', 'gj_add_styles');
 
 //Color Picker
 add_action( 'admin_enqueue_scripts', 'mw_enqueue_color_picker' );
