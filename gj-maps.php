@@ -42,8 +42,8 @@ add_action('admin_menu', 'gj_admin_actions');
 function gj_add_styles () {
    if (get_option('gj_styles') && !(is_admin()) ) {
       wp_enqueue_script('google-maps', 'http://maps.googleapis.com/maps/api/js?sensor=false&#038;v=3&#038;language=en', null, null);
-      wp_enqueue_script('gmaps', WP_PLUGIN_URL.'/gj-maps/assets/gmaps.js', array('jquery', 'google-maps'), null);
-      wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'gmaps'), null, true);
+      wp_enqueue_script('gmaps', WP_PLUGIN_URL.'/gjmaps/assets/gmaps.js', array('jquery', 'google-maps'), null);
+      wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gjmaps/assets/gj-maps.js', array('jquery', 'gmaps'), null, true);
    }
 }
 add_action('get_header', 'gj_add_styles');
