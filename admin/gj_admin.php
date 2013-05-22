@@ -74,7 +74,6 @@
 				    $poi['lng'] = $location->lng;
 
 					$POIs = array($poi);
-					print_r($POIs);
 					savePOI($POIs);
 				}
 

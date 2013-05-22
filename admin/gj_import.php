@@ -83,6 +83,7 @@
 				<p class="submit">
 				<input type="submit" name="Submit" value="<?php _e('Update Options', 'gj_trdom' ) ?>" />
 				</p>
+				<p>Include columns for: name, category, address, city, state, zip, country, phone, url.<p>
 			</form>
 		</div>
 		<?php

@@ -1,7 +1,7 @@
 function initMaps() {
 
 	var mapOptions = {
-		center: new google.maps.LatLng(37.3921265,-121.86583109999998),
+		center: new google.maps.LatLng(center_lat, center_lng),
 		zoom: 13,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
@@ -34,7 +34,7 @@ function initMaps() {
 
 					google.maps.event.addListener(marker, 'click', (function(marker, i) {
 				        return function() {
-				          var content = '<h4>'+poi[i]['title']+'</h4>';
+				          var content = '<h4>'+poi[i]['name']+'</h4>';
 				          content += '<p>'+poi[i]['address']+'<br />';
 				          content += poi[i]['phone']+'<br />';
 				          infowindow.setContent(content);
@@ -57,7 +57,7 @@ function initMaps() {
 
 				google.maps.event.addListener(marker, 'click', (function(marker, i) {
 			        return function() {
-			          var content = '<h4>'+poi[i]['title']+'</h4>';
+			          var content = '<h4>'+poi[i]['name']+'</h4>';
 			          content += '<p>'+poi[i]['address']+'<br />';
 			          content += poi[i]['phone']+'<br />';
 			          infowindow.setContent(content);
