@@ -2,7 +2,7 @@
 
 	require_once('db.php');
 
-		if($_POST['gj_hidden'] == 'Y') {
+		if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 			//Form data sent
 				global $post;
 				$uploadedfile = $_FILES['gj_upload'];

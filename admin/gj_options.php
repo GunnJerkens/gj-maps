@@ -1,5 +1,5 @@
 	<?php
-		if($_POST['gj_hidden'] == 'Y') {
+		if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 			//Form data sent
 			$styles = $_POST['gj_styles'];
 			update_option('gj_styles', $styles);

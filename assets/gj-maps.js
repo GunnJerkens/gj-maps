@@ -1,16 +1,8 @@
-function initMaps() {
+function GJMap(mapOptions) {
 
-	var mapOptions = {
-		center: new google.maps.LatLng(center_lat, center_lng),
-		zoom: 13,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
+	var self = this;
 
-	var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-
-	var markers = [];
-
-	function buildMarkers(cat) {
+	self.buildMarkers = function(cat) {
 
 		var infowindow = new google.maps.InfoWindow();
 
@@ -27,7 +19,7 @@ function initMaps() {
 					marker = new google.maps.Marker({
 						position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
 						icon: poi[i]['icon'],
-						map: map
+						map: self.map
 					});
 
 					markers.push(marker);
@@ -38,7 +30,7 @@ function initMaps() {
 				          content += '<p>'+poi[i]['address']+'<br />';
 				          content += poi[i]['phone']+'<br />';
 				          infowindow.setContent(content);
-				          infowindow.open(map, marker);
+				          infowindow.open(self.map, marker);
 				        }
 			      	})(marker, i));
 				}
@@ -50,7 +42,7 @@ function initMaps() {
 				marker = new google.maps.Marker({
 					position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
 					icon: poi[i]['icon'],
-					map: map
+					map: self.map
 				});
 
 				markers.push(marker);
@@ -67,17 +59,25 @@ function initMaps() {
 			}
 
 		}
-	}
+	};
 
-	buildMarkers();
+	self.init = function(mapOptions) {
 
+		delete map;
 
-	//Filter by categories
+		self.map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-	$('#map_categories li').click(function() {
-		for (var i = 0; i < markers.length; i++ ) {
-			markers[i].setMap(null);
-		} 
-		buildMarkers($(this).attr('data-cat'));
-	});
+		var markers = [];
+
+		self.buildMarkers();
+
+		//Filter by categories
+
+		$('#map_categories li').click(function() {
+			for (var i = 0; i < markers.length; i++ ) {
+				markers[i].setMap(null);
+			} 
+			buildMarkers($(self).attr('data-cat'));
+		});
+	};
 }

@@ -2,7 +2,7 @@
 
 	require_once('db.php');
 
-		if($_POST['gj_hidden'] == 'Y') {
+		if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 			deletePOI();
 			echo '<h4>Your Data has been deleted.</h4>';
 		} else {

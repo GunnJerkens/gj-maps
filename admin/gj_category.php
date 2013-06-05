@@ -2,7 +2,7 @@
 
 	require_once('db.php');
 
-		if($_POST['gj_hidden'] == 'Y') {
+		if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 
 			if ($_FILES['icon']) {
 				$upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
