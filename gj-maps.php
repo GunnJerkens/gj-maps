@@ -100,10 +100,3 @@ function gj_table_install () {
 register_activation_hook(__FILE__,'gj_table_install');
 
 
-('name'=>'All', 'color'=>'#000000'));
-
-}
-
-register_activation_hook(__FILE__,'gj_table_install');
-
-
