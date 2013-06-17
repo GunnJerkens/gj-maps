@@ -6,6 +6,8 @@ function GJMap(mapOptions) {
 
 		var infowindow = new google.maps.InfoWindow();
 
+		var markers = [];
+
 		var marker, i;
 
 		// ICONS
@@ -47,15 +49,15 @@ function GJMap(mapOptions) {
 
 				markers.push(marker);
 
-				google.maps.event.addListener(marker, 'click', (function(marker, i) {
+			/*	google.maps.event.addListener(marker, 'click', (function(marker, i) {
 			        return function() {
 			          var content = '<h4>'+poi[i]['name']+'</h4>';
 			          content += '<p>'+poi[i]['address']+'<br />';
 			          content += poi[i]['phone']+'<br />';
 			          infowindow.setContent(content);
-			          infowindow.open(map, marker);
+			          infowindow.open(self.map, marker);
 			        }
-		      	})(marker, i));
+		      	})(marker, i)); */
 			}
 
 		}
@@ -66,8 +68,6 @@ function GJMap(mapOptions) {
 		delete map;
 
 		self.map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-
-		var markers = [];
 
 		self.buildMarkers();
 
