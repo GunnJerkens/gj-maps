@@ -21,7 +21,7 @@
 						$cat = array();
 						foreach ($_POST as $key=>$value) {
 							if ($key !== 'gj_hidden') {
-								$cat[$key] = $value;
+								$cat[$key] = stripslashes($value);
 							}
 						}
 						$cat['icon'] = $icon;

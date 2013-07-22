@@ -50,8 +50,10 @@ if ( ! class_exists( 'GJ_api') ) {
            print_r($poi);
            echo ';';
 
-           echo 'var center_lat = '.get_option('gj_center_lat').';';
-           echo 'var center_lng = '.get_option('gj_center_lng').';';
+		   $center_lat = get_option('gj_center_lat');
+		   $center_lng = get_option('gj_center_lng');
+           echo 'var center_lat = '.($center_lat ? $center_lat : 'null').';';
+           echo 'var center_lng = '.($center_lng ? $center_lng : 'null').';';
 
            echo '</script>';
       }
