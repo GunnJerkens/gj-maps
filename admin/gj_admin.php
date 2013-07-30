@@ -6,7 +6,7 @@
       //Form data sent
         global $post;
 
-        if ($_POST['id']) {
+        if (isset($_POST['id']) && $_POST['id']) {
 
           if ($_POST['delete']) {
             //Delete Selected POI
@@ -26,7 +26,7 @@
           //Update geocodes
                global $wpdb;
 
-               if ( ! $GJ_api ) {
+               if ( ! isset($GJ_api) || ! $GJ_api ) {
                   $GJ_api = new GJ_api();
                }
                $query = $GJ_api->gj_get_POI('ARRAY_A', 'lat=0');
