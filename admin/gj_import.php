@@ -1,5 +1,7 @@
 <?php
 
+ini_set('auto_detect_line_endings',TRUE);
+
 require_once('db.php');
 
 if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
@@ -29,7 +31,7 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 	}
 	unset($poi[0]);
 
-	if ( ! $GJ_cat ) {
+	if ( !isset($GJ_cat) ) {
 		$GJ_cat = new GJ_cat();
 	}
 	$cat = $GJ_cat->gj_get_cat('ARRAY_A');
@@ -51,11 +53,16 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
 		}
-
+		echo $value['name'].'<br />';
 		$response2 = json_decode($response['body']);
-		$location = $response2->results[0]->geometry->location;
-		$poi[$key]['lat'] = $location->lat;
-		$poi[$key]['lng'] = $location->lng;
+		if(isset($response2->results[0])){
+			$location = $response2->results[0]->geometry->location;
+			$poi[$key]['lat'] = $location->lat;
+			$poi[$key]['lng'] = $location->lng;
+		} else {
+			$poi[$key]['lat'] = 0;
+			$poi[$key]['lng'] = 0;
+		}
 
 		if (isset($cats[$value['cat_title']])) {
 			$poi[$key]['cat_id'] = $cats[$value['cat_title']]->id;

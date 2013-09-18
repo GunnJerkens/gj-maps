@@ -21,7 +21,6 @@ function savePOI ($poi) {
       'country'=>$value['country'],
       'phone'=>$value['phone'],
       'url'=>$value['url'],
-      'description'=>$value['description'],
       'lat'=>$value['lat'],
       'lng'=>$value['lng']
     ) );
@@ -47,7 +46,6 @@ function editPOI ($poi) {
       'country'=>$poi['country'],
       'phone'=>$poi['phone'],
       'url'=>$poi['url'],
-      'description'=>$poi['description'],
       'lat'=>$poi['lat'],
       'lng'=>$poi['lng']
     ),

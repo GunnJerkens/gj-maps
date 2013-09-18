@@ -41,7 +41,7 @@ add_action('admin_menu', 'gj_admin_actions');
 //ADD GMAPS AND STYLES
 function gj_add_styles () {
 	if (get_option('gj_styles') && !(is_admin()) ) {
-		wp_enqueue_script('google-maps', 'http://maps.googleapis.com/maps/api/js?sensor=false&#038;v=3&#038;language=en', null, null);
+		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
 		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gjmaps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
 	}
 }

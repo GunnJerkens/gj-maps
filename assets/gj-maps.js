@@ -1,83 +1,82 @@
-function GJMap(mapOptions) {
+function initMaps() {
 
-	var self = this;
+  var mapOptions = {
+    center: new google.maps.LatLng(center_lat,center_lng),
+    zoom: 14,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
 
-	self.buildMarkers = function(cat) {
+  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-		var infowindow = new google.maps.InfoWindow();
+  var markers = [];
 
-		var markers = [];
+  function buildMarkers(cat_name) {
 
-		var marker, i;
+    var infowindow = new google.maps.InfoWindow();
 
-		// ICONS
-		//var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+    var marker, i;
 
-		if (cat) {
+    if (cat_name) {
 
-			for (i = 0; i < poi.length; i++) {
+      for (i = 0; i < poi.length; i++) {
+      	var cat_id = Number(poi[i]['cat_id']);
 
-				if (poi[i].category == cat || poi[i].category == 'community') {
-					marker = new google.maps.Marker({
-						position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
-						icon: poi[i]['icon'],
-						map: self.map
-					});
+        if (cat[cat_id]['name'] == cat_name || poi[i].category == 'community') {
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
+            icon: cat[poi[i]['cat_id']].icon,
+            map: map
+          });
 
-					markers.push(marker);
+          markers.push(marker);
 
-					google.maps.event.addListener(marker, 'click', (function(marker, i) {
-				        return function() {
-				          var content = '<h4>'+poi[i]['name']+'</h4>';
-				          content += '<p>'+poi[i]['address']+'<br />';
-				          content += poi[i]['phone']+'<br />';
-				          infowindow.setContent(content);
-				          infowindow.open(self.map, marker);
-				        }
-			      	})(marker, i));
-				}
-			}
+          google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+              var content = '<div id="hook"><h4>' + poi[i]['name'] + '</h4>';
+              content += '<p>' + poi[i]['address'] + '<br />';
+              content += poi[i]['phone'] + '</div>';
+              infowindow.setContent(content);
+              infowindow.open(map, marker);
+            }
+          })(marker, i));
+        }
+      }
 
-		} else {
+    } else {
 
-			for (i = 0; i < poi.length; i++) {
-				marker = new google.maps.Marker({
-					position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
-					icon: poi[i]['icon'],
-					map: self.map
-				});
+      for (i = 0; i < poi.length; i++) {
 
-				markers.push(marker);
+        marker = new google.maps.Marker({
+          position: new google.maps.LatLng(poi[i]['lat'], poi[i]['lng']),
+          icon: cat[poi[i]['cat_id']].icon,
+          map: map
+        });
 
-			/*	google.maps.event.addListener(marker, 'click', (function(marker, i) {
-			        return function() {
-			          var content = '<h4>'+poi[i]['name']+'</h4>';
-			          content += '<p>'+poi[i]['address']+'<br />';
-			          content += poi[i]['phone']+'<br />';
-			          infowindow.setContent(content);
-			          infowindow.open(self.map, marker);
-			        }
-		      	})(marker, i)); */
-			}
+        markers.push(marker);
 
-		}
-	};
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+          return function() {
+            var content = '<div id="hook"><h4>' + poi[i]['name'] + '</h4>';
+            content += '<p>' + poi[i]['address'] + '<br />';
+            content += poi[i]['phone'] + '</div>';
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+            var l = $('#hook').parent().parent().parent().siblings();
+          }
+        })(marker, i));
+      }
 
-	self.init = function(mapOptions) {
+    }
+  }
 
-		delete map;
+  cat.unshift({});
 
-		self.map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  buildMarkers();
 
-		self.buildMarkers();
-
-		//Filter by categories
-
-		$('#map_categories li').click(function() {
-			for (var i = 0; i < markers.length; i++ ) {
-				markers[i].setMap(null);
-			} 
-			buildMarkers($(self).attr('data-cat'));
-		});
-	};
+  $('#map_categories li').click(function() {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+    buildMarkers($(this).attr('data-cat'));
+  });
 }
