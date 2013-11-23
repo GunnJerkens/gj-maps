@@ -61,10 +61,11 @@ function gj_table_install () {
 
 	global $wpdb;
 
-	global $wpdb;
+	$gj_cat = $wpdb->prefix . "gj_cat";
+	$gj_poi = $wpdb->prefix . "gj_poi";
 
 	//CAT table
-	$sql_cat = "CREATE TABLE wp_gj_cat (
+	$sql_cat = "CREATE TABLE $gj_cat (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		   name VARCHAR(55) NOT NULL,
 		   color VARCHAR(7) NOT NULL,
@@ -73,7 +74,7 @@ function gj_table_install () {
 			   );";
 
 	//POI table
-	$sql_poi = "CREATE TABLE wp_gj_poi (
+	$sql_poi = "CREATE TABLE $gj_poi (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		   cat_id mediumint(9) NOT NULL,
 		   name VARCHAR(255) NOT NULL,
@@ -88,7 +89,7 @@ function gj_table_install () {
 		   lat float(12,8) NOT NULL,
 		   lng float(12,8) NOT NULL,
 		   PRIMARY KEY (id),
-		   FOREIGN KEY (cat_id) REFERENCES wp_gj_cat(id)
+		   FOREIGN KEY (cat_id) REFERENCES $gj_cat(id)
 			   );";
 
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
