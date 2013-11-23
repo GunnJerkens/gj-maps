@@ -85,8 +85,8 @@ function gj_table_install () {
 		   phone tinytext,
 		   description tinytext,
 		   url VARCHAR(255) DEFAULT '' NOT NULL,
-		   lat float NOT NULL,
-		   lng float NOT NULL,
+		   lat float(12,8) NOT NULL,
+		   lng float(12,8) NOT NULL,
 		   PRIMARY KEY (id),
 		   FOREIGN KEY (cat_id) REFERENCES wp_gj_cat(id)
 			   );";
