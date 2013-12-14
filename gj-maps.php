@@ -43,6 +43,8 @@ function gj_add_styles () {
 	if (get_option('gj_styles') && !(is_admin()) ) {
 		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
 		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
+		wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
+		wp_enqueue_script('poi', WP_PLUGIN_URL.'/gj-maps/assets/poi.js', array('jquery'), null, true);
 	}
 }
 add_action('get_header', 'gj_add_styles');
