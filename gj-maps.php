@@ -12,7 +12,7 @@ include('poi.php');
 include('category.php');
 
 
-//ADMIN MENUS
+// Admin menus
 function gj_admin_edit() {
 	include('admin/gj_admin.php');
 }
@@ -38,7 +38,7 @@ function gj_admin_actions() {
 add_action('admin_menu', 'gj_admin_actions');
 
 
-//ADD GMAPS AND STYLES
+// Add scripts && styles // todo -- grunt/sass w/ default stylesheet
 function gj_add_styles () {
 	if (get_option('gj_styles') && !(is_admin()) ) {
 		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
@@ -49,7 +49,7 @@ function gj_add_styles () {
 }
 add_action('get_header', 'gj_add_styles');
 
-//Color Picker
+//Color picker
 add_action( 'admin_enqueue_scripts', 'mw_enqueue_color_picker' );
 function mw_enqueue_color_picker( $hook_suffix ) {
 	// first check that $hook_suffix is appropriate for your admin page
@@ -57,8 +57,7 @@ function mw_enqueue_color_picker( $hook_suffix ) {
 	wp_enqueue_script( 'color-init', plugins_url('assets/color-init.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
 }
 
-//INIT DB
-
+// Init database
 function gj_table_install () {
 
 	global $wpdb;
@@ -103,4 +102,12 @@ function gj_table_install () {
 
 register_activation_hook(__FILE__,'gj_table_install');
 
-
+// Register [gjmaps] shortcode
+function gjmaps_shortcode(){
+	return "
+		if ( ! is_admin() ) {
+  		$GJ_api->gj_POI_frontend();
+		}
+	"
+}
+add_shortcode( 'gjmaps', 'gjmaps_shortcode' );
