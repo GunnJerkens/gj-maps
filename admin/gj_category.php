@@ -47,7 +47,7 @@
 
 		?>
 		<div class="wrap">
-			<?php    echo "<h2>" . __( 'GJ Maps Categories', 'gj_trdom' ) . "</h2>"; ?>
+			<?php    echo "<h2>" . __( 'GJ Maps - Categories', 'gj_trdom' ) . "</h2>"; ?>
 
 			<h4>Add New</h4>
 				<form name="gj_form" method="post" enctype="multipart/form-data"  action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">

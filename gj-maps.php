@@ -21,9 +21,6 @@ function gj_admin_categories() {
 }
 function gj_admin_import() {  
 	include('admin/gj_import.php'); 
-}  
-function gj_admin_delete() {
-	include ('admin/gj_delete.php');
 }
 function gj_admin_options() {
 	include ('admin/gj_options.php');
@@ -32,7 +29,6 @@ function gj_admin_actions() {
 	add_menu_page( "GJ Maps", "GJ Maps", 'administrator', "gj_maps", "gj_admin_edit" );
 	add_submenu_page("gj_maps", "Categories", "Categories", 'administrator', "gj_admin_categories", "gj_admin_categories");
 	add_submenu_page("gj_maps", "Import CSV", "Import CSV", 'administrator', "gj_admin_import", "gj_admin_import");
-	add_submenu_page("gj_maps", "GJ Maps Delete", "GJ Maps Delete", 'administrator', "gj_admin_delete", "gj_admin_delete");
 	add_submenu_page("gj_maps", "Settings", "Settings", 'administrator', "gj_admin_options", "gj_admin_options");
 }
 add_action('admin_menu', 'gj_admin_actions');
@@ -85,7 +81,6 @@ function gj_table_install () {
 		   zip tinytext,
 		   country tinytext,
 		   phone tinytext,
-		   description tinytext,
 		   url VARCHAR(255) DEFAULT '' NOT NULL,
 		   lat float(12,8) NOT NULL,
 		   lng float(12,8) NOT NULL,
@@ -108,6 +103,6 @@ function gjmaps_shortcode(){
 		if ( ! is_admin() ) {
   		$GJ_api->gj_POI_frontend();
 		}
-	"
+	";
 }
 add_shortcode( 'gjmaps', 'gjmaps_shortcode' );
