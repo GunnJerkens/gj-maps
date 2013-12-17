@@ -1,4 +1,3 @@
-console.log('poi-begin');
 var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 iconAnchor = new google.maps.Point(5, 33);
 function indexPOIData() {
@@ -25,10 +24,15 @@ function setupPOILists() {
 		catID = catElement.attr("data-cat-id");
 		if (catID === "") {
 			filter = [];
-			$(".poi-category ul").slideDown();// show all lists
+
+			// these 3 commented out lines control the POI slide up/down
+			// we need to make them controllable (on/off) from the backend
+			// 12/17 --ps 
+
+			//$(".poi-category ul").slideDown();// show all lists
 		} else {
-			catElement.siblings(".poi-category").find("ul").slideUp();
-			$("ul", catElement).slideDown();// show this list
+			//catElement.siblings(".poi-category").find("ul").slideUp();
+			//$("ul", catElement).slideDown();// show this list
 		$(".poi-category[data-cat-id=" + catID + "]").slideDown
 			filter = [catID];
 		}
@@ -57,7 +61,6 @@ function setupPOILists() {
 function markupCategoryList(cat) {
 	var markup, i, len, address, symbolPath;
 	symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
-	//console.log(symbolPath);
 	markup = '<li class="poi-category" data-cat-id="' + cat.id + '">'
 			+ '<label style="background-image: url(' + symbolPath + '); background-color: ' + cat.color + ';"><span>' + cat.name + '</span></label>'
 			+ '<ul>';
@@ -214,7 +217,6 @@ function initMap() {
 	placeMarkers(!center_lat || !center_lng);
 	setupPOILists();
 	$("#menu-item-26").addClass("current-menu-item");// FIXME: demo only
-	console.log('poi-fixme');
 }
 indexPOIData();
 google.maps.event.addDomListener(window, 'load', initMap);
