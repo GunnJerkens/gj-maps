@@ -1,5 +1,5 @@
 <?php
-	if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
+	if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_form_update_options') {
 		//Form data sent
 		$styles = $_POST['gj_styles'];
 		update_option('gj_styles', $styles);
@@ -23,8 +23,8 @@
 <div class="wrap">
   <?php    echo "<h2>" . __( 'GJ Maps - Settings', 'gj_trdom' ) . "</h2>"; ?>
   <?php    echo "<h3>" . __( 'Basic', 'gj_trdom' ) . "</h3>"; ?>  
-  <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">  
-      <input type="hidden" name="gj_hidden" value="Y">  
+  <form name="gj_form_update_options" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">  
+      <input type="hidden" name="gj_hidden" value="gj_form_update_options">  
       <p><?php _e("Use GJ Maps Styles: " ); ?><input type="checkbox" name="gj_styles" <?php if ($styles) echo 'checked'; ?>></p>  
       <p><?php _e("Center Latitude: " ); ?><input type="text" name="gj_center_lat" value="<?php echo $center_lat; ?>"></p>  
       <p><?php _e("Center Longitude: " ); ?><input type="text" name="gj_center_lng" value="<?php echo $center_lng; ?>"></p>  
@@ -38,15 +38,15 @@
 
 require_once('db.php');
 
-  if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
+  if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_form_delete') {
     deletePOI();
     echo '<h4>Your Data has been deleted.</h4>';
   } else {
     ?>
         <div class="wrap">
-    <?php    echo "<h3>" . __( 'Delete All Data', 'gj_trdom' ) . "</h3>"; ?>
-    <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-      <input type="hidden" name="gj_hidden" value="Y">
+    <?php    echo "<h3>" . __( 'Delete All POI Data', 'gj_trdom' ) . "</h3>"; ?>
+    <form name="gj_form_delete" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+      <input type="hidden" name="gj_hidden" value="gj_form_delete">
       <?php    echo "<h4>" . __( 'Are you sure you want to delete all data?', 'gj_trdom' ) . "</h4>"; ?>
       <p class="submit">
       <input type="submit" name="Submit" value="<?php _e('Delete All Data', 'gj_trdom' ) ?>" />

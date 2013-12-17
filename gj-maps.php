@@ -99,10 +99,16 @@ register_activation_hook(__FILE__,'gj_table_install');
 
 // Register [gjmaps] shortcode
 function gjmaps_shortcode(){
-	return "
-		if ( ! is_admin() ) {
-  		$GJ_api->gj_POI_frontend();
-		}
-	";
+	global $GJ_api;
+	$gjmapsAPI = $GJ_api->gj_POI_frontend();
+	$gjmapsMarkup = '
+	  <ul class="poi-categories">
+      <li class="poi-category" data-cat-id="">
+        <label style="background-color: #766761;">View All</label>
+      </li>
+    </ul>
+    <div id="map-canvas"></div>
+	';
+	return $gjmapsAPI.$gjmapsMarkup;
 }
 add_shortcode( 'gjmaps', 'gjmaps_shortcode' );
