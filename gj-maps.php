@@ -41,6 +41,7 @@ function gj_add_styles () {
 		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
 		wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
 		wp_enqueue_script('poi', WP_PLUGIN_URL.'/gj-maps/assets/poi.js', array('jquery'), null, true);
+		wp_enqueue_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps-style.css', null, true);
 	}
 }
 add_action('get_header', 'gj_add_styles');
@@ -102,12 +103,14 @@ function gjmaps_shortcode(){
 	global $GJ_api;
 	$gjmapsAPI = $GJ_api->gj_POI_frontend();
 	$gjmapsMarkup = '
-	  <ul class="poi-categories">
-      <li class="poi-category" data-cat-id="">
-        <label style="background-color: #766761;">View All</label>
-      </li>
-    </ul>
-    <div id="map-canvas"></div>
+	  <div class="gjmaps-wrapper">
+		  <ul class="gjmaps-categories">
+	      <li class="gjmaps-category" data-cat-id="">
+	        <label class="gjmaps-label" style="background-color: #766761;">View All</label>
+	      </li>
+	    </ul>
+	    <div id="map-canvas" class="gjmaps-map-canvas"></div>
+		</div>
 	';
 	return $gjmapsAPI.$gjmapsMarkup;
 }
