@@ -17,6 +17,13 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 		fclose($handle);
 	}
 
+var_dump($data);
+echo "\nend $data";
+var_dump($poi);
+echo "\nend $poi";
+var_dump($handle);
+echo "\nend $handle";
+
 	$labels = array();
 	foreach ($poi[0] as $key=>$value) {
 		$labels[$value] = $value;

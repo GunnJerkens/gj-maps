@@ -33,7 +33,7 @@ function setupPOILists() {
 		} else {
 			//catElement.siblings(".poi-category").find("ul").slideUp();
 			//$("ul", catElement).slideDown();// show this list
-		$(".gjmaps-category[data-cat-id=" + catID + "]").slideDown
+		  //$(".gjmaps-category[data-cat-id=" + catID + "]").slideDown
 			filter = [catID];
 		}
 		infoWindow.close();
@@ -43,12 +43,12 @@ function setupPOILists() {
 			map.setZoom(mapOptions.zoom);
 		}
 	});
-	$(".gjmaps-category ul").mCustomScrollbar({
+	/*$(".gjmaps-category ul").mCustomScrollbar({
 		scrollButtons: {
-			enable: true
+			enable: false
 		}
-	});
-	$(".poi-category li").click(function(event) {
+	});*/
+	/*$(".poi-category li").click(function(event) {
 		var poi = poiIndexed[$(this).attr("data-poi-id")];
 		map.panTo(poi.marker.getPosition());
 		if (filter && filter.length && filter.indexOf(poi.cat_id) === -1) {
@@ -56,7 +56,7 @@ function setupPOILists() {
 			placeMarkers();
 		}
 		showPOIInfo(poi);
-	});
+	});*/
 }
 function markupCategoryList(cat) {
 	var markup, i, len, address, symbolPath;
@@ -154,11 +154,6 @@ function placeMarkers(forceFit) {
 				google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
 					showPOIInfo(poi[i]);
 				}})(i));
-				// google.maps.addListener(poi[i].marker, 'click', function(event) {
-				// 	address = poi[i].address + '<br />' + poi[i].city + ', ' + poi[i].state + ' ' + poi[i].zip;
-				// 	markup = '<h3>' + poi[i].name + '</h3><p>' + address + '</p>';
-				// 	// show markup in infowindow
-				// });
 				markerBounds.extend(position);
 			}
 		}

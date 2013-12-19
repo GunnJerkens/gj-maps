@@ -1,8 +1,16 @@
 <?php
 	if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_form_update_options') {
 		//Form data sent
-		$styles = $_POST['gj_styles'];
+		$styles = isset($_POST['gj_styles']);
 		update_option('gj_styles', $styles);
+
+    $poi_list = isset($_POST['gj_poi_list']);
+    update_option('gj_poi_list', $poi_list);
+
+    $cat_align = isset($_POST['gj_cat_align']);
+    update_option('gj_cat_align', $cat_align);
+
+    // todo: Add some other stuff? Modularize more options
 
 		$center_lat = $_POST['gj_center_lat'];
 		update_option('gj_center_lat', $center_lat);
@@ -15,6 +23,8 @@
 	} else {
 		//Normal page display
 		$styles = get_option('gj_styles');
+    $poi_list = get_option('gj_poi_list');
+    $cat_align = get_option('gj_cat_align');
 		$center_lat = get_option('gj_center_lat');
 		$center_lng = get_option('gj_center_lng');
 	}
@@ -24,8 +34,10 @@
   <?php    echo "<h2>" . __( 'GJ Maps - Settings', 'gj_trdom' ) . "</h2>"; ?>
   <?php    echo "<h3>" . __( 'Basic', 'gj_trdom' ) . "</h3>"; ?>  
   <form name="gj_form_update_options" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">  
-      <input type="hidden" name="gj_hidden" value="gj_form_update_options">  
-      <p><?php _e("Use GJ Maps Styles: " ); ?><input type="checkbox" name="gj_styles" <?php if ($styles) echo 'checked'; ?>></p>  
+      <input type="hidden" name="gj_hidden" value="gj_form_update_options">
+      <p><?php _e("Use GJ Maps styles: " ); ?><input type="checkbox" name="gj_styles" <?php if ($styles) echo 'checked'; ?>></p>  
+      <p><?php _e("Show POI list: " ); ?><input type="checkbox" name="gj_poi_list" <?php if ($poi_list) echo 'checked'; ?>></p>
+      <p><?php _e("Show categories before map (default after): "); ?><input type="checkbox" name="gj_cat_align" <?php if ($cat_align) echo 'checked'; ?>></p>
       <p><?php _e("Center Latitude: " ); ?><input type="text" name="gj_center_lat" value="<?php echo $center_lat; ?>"></p>  
       <p><?php _e("Center Longitude: " ); ?><input type="text" name="gj_center_lng" value="<?php echo $center_lng; ?>"></p>  
       <p class="submit">  
