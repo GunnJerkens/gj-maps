@@ -18,7 +18,7 @@ function setupPOILists() {
 		markup += markupCategoryList(cat[i]);
 	}
 	$(".gjmaps-categories").append(markup);
-	$(".gjmaps-category label").click(function(event) {
+	$(".gjmaps-category div[data-type='label']").click(function(event) {
 		var catID, filterIndex
 		catElement = $(this).closest(".gjmaps-category");
 		catID = catElement.attr("data-cat-id");
@@ -28,12 +28,13 @@ function setupPOILists() {
 			// these 3 commented out lines control the POI slide up/down
 			// we need to make them controllable (on/off) from the backend
 			// 12/17 --ps 
-
-			//$(".poi-category ul").slideDown();// show all lists
+			if (poi_list === 1) { $(".poi-category ul").slideDown(); } // show all lists
 		} else {
-			//catElement.siblings(".poi-category").find("ul").slideUp();
-			//$("ul", catElement).slideDown();// show this list
-		  //$(".gjmaps-category[data-cat-id=" + catID + "]").slideDown
+			if (poi_list === 1) {
+				catElement.siblings(".poi-category").find("ul").slideUp();
+				$("ul", catElement).slideDown(); // show this list
+		  	$(".gjmaps-category[data-cat-id=" + catID + "]").slideDown
+			}
 			filter = [catID];
 		}
 		infoWindow.close();
@@ -43,26 +44,34 @@ function setupPOILists() {
 			map.setZoom(mapOptions.zoom);
 		}
 	});
-	/*$(".gjmaps-category ul").mCustomScrollbar({
-		scrollButtons: {
-			enable: false
-		}
-	});*/
-	/*$(".poi-category li").click(function(event) {
-		var poi = poiIndexed[$(this).attr("data-poi-id")];
-		map.panTo(poi.marker.getPosition());
-		if (filter && filter.length && filter.indexOf(poi.cat_id) === -1) {
-			filter = [poi.cat_id];
-			placeMarkers();
-		}
-		showPOIInfo(poi);
-	});*/
+	if (poi_list === 1) {
+		$(".gjmaps-category ul").mCustomScrollbar({
+			scrollButtons: {
+				enable: true
+			}
+		});
+		$(".poi-category li").click(function(event) {
+			var poi = poiIndexed[$(this).attr("data-poi-id")];
+			map.panTo(poi.marker.getPosition());
+			if (filter && filter.length && filter.indexOf(poi.cat_id) === -1) {
+				filter = [poi.cat_id];
+				placeMarkers();
+			}
+			showPOIInfo(poi);
+		});
+	}
+	//much test have remove
+	if (poi_list === 1) {
+		console.log('poi list true');
+	} else {
+		console.log('poi list fail');
+	}
 }
 function markupCategoryList(cat) {
 	var markup, i, len, address, symbolPath;
 	symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
 	markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">'
-			+ '<label style="background-image: url(' + symbolPath + '); background-color: ' + cat.color + ';"><span>' + cat.name + '</span></label>'
+			+ '<div style="background-image: url(' + symbolPath + '); background-color: ' + cat.color + ';" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
 			+ '<ul>';
 	for (i = 0, len = poi.length; i < len; i++) {
 		if (poi[i].cat_id == cat.id) {
