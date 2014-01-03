@@ -10,6 +10,7 @@
 
 include('poi.php');
 include('category.php');
+include('json_api.php');
 
 
 // Admin menus
