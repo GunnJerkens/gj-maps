@@ -59,7 +59,8 @@ class GJ_API_Endpoint{
       'center_lng' => $center_lng
     );
 
-    header('Content-Type: application/json');
+    header('content-type: application/json; charset=utf-8');
+    header("access-control-allow-origin: *");
     echo json_encode($data);
   }
 }
