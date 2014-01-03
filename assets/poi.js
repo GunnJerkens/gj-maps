@@ -1,3 +1,5 @@
+// poi_list is controlled through WP and served up either 1 or 0 via json ;)
+
 var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 iconAnchor = new google.maps.Point(5, 33);
 function indexPOIData() {
@@ -25,10 +27,9 @@ function setupPOILists() {
 		if (catID === "") {
 			filter = [];
 
-			// these 3 commented out lines control the POI slide up/down
-			// we need to make them controllable (on/off) from the backend
-			// 12/17 --ps 
-			if (poi_list === 1) { $(".poi-category ul").slideDown(); } // show all lists
+			if (poi_list === 1) { 
+				$(".poi-category ul").slideDown(); 
+			} // show all lists
 		} else {
 			if (poi_list === 1) {
 				catElement.siblings(".poi-category").find("ul").slideUp();
@@ -73,9 +74,11 @@ function markupCategoryList(cat) {
 	markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">'
 			+ '<div style="background-image: url(' + symbolPath + '); background-color: ' + cat.color + ';" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
 			+ '<ul>';
-	for (i = 0, len = poi.length; i < len; i++) {
-		if (poi[i].cat_id == cat.id) {
-			markup += '<li class="poi" data-poi-id="' + poi[i].id + '">' + poi[i].name + '</li>';
+	if (poi_list === 1) {
+		for (i = 0, len = poi.length; i < len; i++) {
+			if (poi[i].cat_id == cat.id) {
+				markup += '<li class="poi" data-poi-id="' + poi[i].id + '">' + poi[i].name + '</li>';
+			}
 		}
 	}
 	markup += '</ul>'
@@ -176,7 +179,7 @@ function placeMarkers(forceFit) {
 }
 function initMap() {
 	mapOptions = {
-		zoom: 14,
+		zoom: map_zoom,
 		center: new google.maps.LatLng(0, 0),
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		styles: [

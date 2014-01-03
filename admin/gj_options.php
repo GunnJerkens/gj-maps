@@ -7,8 +7,8 @@
     $poi_list = isset($_POST['gj_poi_list']);
     update_option('gj_poi_list', $poi_list);
 
-    $cat_align = isset($_POST['gj_cat_align']);
-    update_option('gj_cat_align', $cat_align);
+    $cat_default = $_POST['gj_cat_default'];
+    update_option('gj_cat_default', $cat_default);
 
     // todo: Add some other stuff? Modularize more options
 
@@ -17,6 +17,9 @@
 
 		$center_lng = $_POST['gj_center_lng'];
 		update_option('gj_center_lng', $center_lng);
+
+    $map_zoom = $_POST['gj_map_zoom'];
+    update_option('gj_map_zoom', $map_zoom);
 		?>
 		<div class="updated"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
 		<?php
@@ -24,9 +27,10 @@
 		//Normal page display
 		$styles = get_option('gj_styles');
     $poi_list = get_option('gj_poi_list');
-    $cat_align = get_option('gj_cat_align');
+    $cat_default = get_option('gj_cat_default');
 		$center_lat = get_option('gj_center_lat');
 		$center_lng = get_option('gj_center_lng');
+    $map_zoom = get_option('gj_map_zoom');
 	}
 ?>
 
@@ -37,9 +41,10 @@
       <input type="hidden" name="gj_hidden" value="gj_form_update_options">
       <p><?php _e("Use GJ Maps styles: " ); ?><input type="checkbox" name="gj_styles" <?php if ($styles) echo 'checked'; ?>></p>  
       <p><?php _e("Show POI list: " ); ?><input type="checkbox" name="gj_poi_list" <?php if ($poi_list) echo 'checked'; ?>></p>
-      <p><?php _e("Show categories before map (default after): "); ?><input type="checkbox" name="gj_cat_align" <?php if ($cat_align) echo 'checked'; ?>></p>
+      <p><?php _e("View All Default Color: " ); ?><input type="text" name="gj_cat_default" class="color-picker" value="<?php echo $cat_default; ?>"/></p>
       <p><?php _e("Center Latitude: " ); ?><input type="text" name="gj_center_lat" value="<?php echo $center_lat; ?>"></p>  
       <p><?php _e("Center Longitude: " ); ?><input type="text" name="gj_center_lng" value="<?php echo $center_lng; ?>"></p>  
+      <p><?php _e("Map Zoom: " ); ?><input type="text" name="gj_map_zoom" value="<?php echo $map_zoom; ?>"></p>  
       <p class="submit">  
       <input type="submit" name="Submit" value="<?php _e('Update Options', 'gj_trdom' ) ?>" />  
       </p>  

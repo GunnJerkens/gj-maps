@@ -36,10 +36,10 @@ add_action('admin_menu', 'gj_admin_actions');
 
 // Add scripts && styles // todo -- grunt/sass w/ default stylesheet
 function gj_add_styles () {
+	wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
+	wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
+	wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
 	if (get_option('gj_styles') && !(is_admin()) ) {
-		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
-		wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
 		wp_enqueue_script('poi', WP_PLUGIN_URL.'/gj-maps/assets/poi.js', array('jquery'), null, true);
 		wp_enqueue_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps-style.css', null, true);
 	}
@@ -98,20 +98,50 @@ function gj_table_install () {
 
 register_activation_hook(__FILE__,'gj_table_install');
 
-// Register [gjmaps] shortcode //need to fix hard coded color and add as menu option!
-function gjmaps_shortcode(){
+// Register [gjmaps] shortcode -- need to fix hard coded color and add as menu option!
+function gjmaps_shortcode($atts){
 	global $GJ_api;
+	$cat_default = get_option('gj_cat_default');
 	$gjmapsAPI = $GJ_api->gj_POI_frontend();
-	$gjmapsMarkup = '
+
+	$top = '
 	  <div class="gjmaps-wrapper">
 		  <ul class="gjmaps-categories">
 	      <li class="gjmaps-category" data-cat-id="">
-	        <div class="gjmaps-label" style="background-color: #e38632;" data-type="label">View All</label>
+	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label">View All</label>
 	      </li>
 	    </ul>
 	    <div id="map-canvas" class="gjmaps-map-canvas"></div>
 		</div>
 	';
-	return $gjmapsAPI.$gjmapsMarkup;
+
+	$bottom = '
+		<div id="map-canvas" class="gjmaps-map-canvas"></div>
+		<div class="gjmaps-wrapper">
+		  <ul class="gjmaps-categories">
+	      <li class="gjmaps-category" data-cat-id="">
+	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label">View All</label>
+	      </li>
+	    </ul>
+		</div>
+	';
+	// todo -- add layout for left & right
+	$left = '<div><p>todo</p></div>';
+	$right = '<div><p>todo</p></div';
+
+	extract(shortcode_atts(array(
+			"pos" => 'top'
+		), $atts));
+
+
+	if ($pos === 'bottom') {
+		return $gjmapsAPI.$bottom;
+	} else if ($pos === 'left') {
+		return $gjmapsAPI.$left;
+	} else if ($pos === 'right') {
+		return $gjmapsAPI.$right;
+	} else {
+		return $gjmapsAPI.$top;
+	}
 }
 add_shortcode( 'gjmaps', 'gjmaps_shortcode' );
