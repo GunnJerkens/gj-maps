@@ -108,7 +108,7 @@ function gjmaps_shortcode($atts){
 	$top = '
 	  <div class="gjmaps-wrapper">
 		  <ul class="gjmaps-categories">
-	      <li class="gjmaps-category" data-cat-id="">
+	      <li class="gjmaps-category active" data-cat-id="all">
 	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label"><span>View All</span></label>
 	      </li>
 	    </ul>
@@ -120,7 +120,7 @@ function gjmaps_shortcode($atts){
 		<div id="map-canvas" class="gjmaps-map-canvas"></div>
 		<div class="gjmaps-wrapper">
 		  <ul class="gjmaps-categories">
-	      <li class="gjmaps-category" data-cat-id="">
+	      <li class="gjmaps-category active" data-cat-id="all">
 	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label"><span>View All</span></label>
 	      </li>
 	    </ul>
