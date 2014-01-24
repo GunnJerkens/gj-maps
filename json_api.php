@@ -47,9 +47,9 @@ class GJ_API_Endpoint{
     $GJ_api = new GJ_api();
     $GJ_cat = new GJ_cat();
 
-    $gj_poi_list = get_option('gj_poi_list') ? $gj_poi_list : '0';
-    $center_lat = get_option('gj_center_lat') ? $center_lat : 'null';
-    $center_lng = get_option('gj_center_lng') ? $center_lng : 'null';
+    $gj_poi_list = get_option('gj_poi_list');
+    $center_lat = get_option('gj_center_lat');
+    $center_lng = get_option('gj_center_lng');
 
     $data = array(
       'poi' => $GJ_api->gj_get_POI(),
@@ -59,7 +59,8 @@ class GJ_API_Endpoint{
       'center_lng' => $center_lng
     );
 
-    header('Content-Type: application/json');
+    header('content-type: application/json; charset=utf-8');
+    header("access-control-allow-origin: *");
     echo json_encode($data);
   }
 }

@@ -23,16 +23,20 @@ function setupPOILists() {
 	$(".gjmaps-category div[data-type='label']").click(function(event) {
 		var catID, filterIndex
 		catElement = $(this).closest(".gjmaps-category");
-		catID = catElement.attr("data-cat-id");
-		if (catID === "") {
+		catID = catElement.attr("data-cat-id");		
+		if (catID === "all") {
 			filter = [];
-
+			$("[data-cat-id='all']").addClass("active");
+			catElement.siblings(".gjmaps-category").removeClass("active");
 			if (poi_list === 1) { 
-				$(".poi-category ul").slideDown(); 
+				$(".gjmaps-category ul").slideDown(); 
 			} // show all lists
 		} else {
+			$("[data-cat-id='all']").removeClass("active");
+			catElement.siblings(".gjmaps-category").removeClass("active");
+			$(".gjmaps-category[data-cat-id=" + catID + "]").addClass("active");
 			if (poi_list === 1) {
-				catElement.siblings(".poi-category").find("ul").slideUp();
+				catElement.siblings(".gjmaps-category").find("ul").slideUp();
 				$("ul", catElement).slideDown(); // show this list
 		  	$(".gjmaps-category[data-cat-id=" + catID + "]").slideDown
 			}
@@ -60,12 +64,6 @@ function setupPOILists() {
 			}
 			showPOIInfo(poi);
 		});
-	}
-	//much test have remove
-	if (poi_list === 1) {
-		console.log('poi list true');
-	} else {
-		console.log('poi list fail');
 	}
 }
 function markupCategoryList(cat) {
