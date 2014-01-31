@@ -12,3 +12,18 @@ Importing a CSV use the column names
 ### Issues
 
 ### CSS Classes
+ul.gjmaps-categories {
+  //display: none; <-- hide categories
+  li.gjmaps-category {
+    &.active{}
+  }
+  div.gjmaps-label { // <-- customize columns (default 4+1)
+    span {}
+  }
+  ul {
+    .poi {
+      display: none; // <-- sample bit
+    }
+  }
+}
+div#map-canvas {}
