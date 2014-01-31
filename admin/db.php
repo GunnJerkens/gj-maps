@@ -87,10 +87,15 @@ function saveCat ($cat) {
 
 function editCat ($cat) {
 
+  if(array_key_exists('icon',$cat) && $cat['icon'] == null) {
+    unset($cat['icon']);
+  }
   global $wpdb;
   $table_name = $wpdb->prefix . "gj_cat";
 
-  $rows_affected = $wpdb->update( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'] ), array( 'id'=>$cat['id'] ) );
+  $rows_affected = $wpdb->update( 
+    $table_name, $cat, array( 'id'=>$cat['id']) 
+  );
 
 }
 

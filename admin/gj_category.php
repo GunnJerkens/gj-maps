@@ -3,14 +3,11 @@
 	require_once('db.php');
 
 		if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
-
+			$icon = null;
 			if ($_FILES['icon']) {
 				$upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
 				if (isset($upload['url'])) {
 					$icon = $upload['url'];
-				}
-				else {
-					$icon = null;
 				}
 			}
 
@@ -97,7 +94,7 @@
 					</label>
 
 					<br />
-					<input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" />
+					<input type="submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" />
 
 					</form>
 

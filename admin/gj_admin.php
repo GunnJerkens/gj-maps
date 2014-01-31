@@ -8,7 +8,7 @@
 
         if (isset($_POST['id']) && $_POST['id']) {
 
-          if ($_POST['delete']) {
+          if (isset($_POST['delete'])) {
             //Delete Selected POI
             deletePOI($_POST['id']);
           } else {
@@ -22,7 +22,7 @@
             editPOI($poi);
           }
 
-        } else if ($_POST['geocode']) {
+        } else if (isset($_POST['geocode'])) {
           //Update geocodes
           global $wpdb;
 
@@ -47,9 +47,15 @@
             }
 
             $response2 = json_decode($response['body']);
-            $location = $response2->results[0]->geometry->location;
-            $poi['lat'] = $location->lat;
-            $poi['lng'] = $location->lng;
+            if( $response2 = 'ZERO_RESULTS') {
+              echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.";
+              $poi ['lat'] = '0';
+              $poi ['lng'] = '0';
+            } else {
+              $location = $response2->results[0]->geometry->location;
+              $poi['lat'] = $location->lat;
+              $poi['lng'] = $location->lng;
+            }
             editPOI($poi);
           }
 
@@ -73,10 +79,15 @@
           }
 
           $response2 = json_decode($response['body']);
+          if( $response2 = 'ZERO_RESULTS') {
+            echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.";
+            $poi ['lat'] = '0';
+            $poi ['lng'] = '0';
+          } else {
             $location = $response2->results[0]->geometry->location;
             $poi['lat'] = $location->lat;
             $poi['lng'] = $location->lng;
-
+          }
           $POIs = array($poi);
           savePOI($POIs);
         }
