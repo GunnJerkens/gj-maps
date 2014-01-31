@@ -10,13 +10,13 @@
 					$icon = $upload['url'];
 				}
 				else {
-					echo "The icon failed to upload.";
+					$icon = null;
 				}
 			}
 
 			//Form data sent
 				global $post;
-				if ($_POST['id']) {
+				if (isset($_POST['id'])) {
 
 					if (isset($_POST['delete'])) {
 						//Delete Selected cat
