@@ -48,7 +48,7 @@
 
             $response2 = json_decode($response['body']);
             if( $response2 = 'ZERO_RESULTS') {
-              echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.";
+              echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
               $poi ['lat'] = '0';
               $poi ['lng'] = '0';
             } else {
@@ -80,7 +80,7 @@
 
           $response2 = json_decode($response['body']);
           if( $response2 = 'ZERO_RESULTS') {
-            echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.";
+            echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
             $poi ['lat'] = '0';
             $poi ['lng'] = '0';
           } else {

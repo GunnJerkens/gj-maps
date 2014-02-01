@@ -8,22 +8,19 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
 	//Form data sent
 	global $post;
 	$uploadedfile = $_FILES['gj_upload'];
-	$row = 1;
-	$poi = array();
-	if (($handle = fopen($uploadedfile['tmp_name'], "r")) !== FALSE) {
-		while (($data = fgetcsv($handle, ",")) !== FALSE) {
-			array_push($poi, $data);
+	if ($uploadedfile['name'] === '') {
+		echo "You must provide a csv to upload.";
+		exit;
+	} else {
+		$row = 1;
+		$poi = array();
+		if (($handle = fopen($uploadedfile['tmp_name'], "r")) !== FALSE) {
+			while (($data = fgetcsv($handle, ",")) !== FALSE) {
+				array_push($poi, $data);
+			}
+			fclose($handle);
 		}
-		fclose($handle);
 	}
-
-var_dump($data);
-echo "\nend $data";
-var_dump($poi);
-echo "\nend $poi";
-var_dump($handle);
-echo "\nend $handle";
-
 	$labels = array();
 	foreach ($poi[0] as $key=>$value) {
 		$labels[$value] = $value;
@@ -32,9 +29,16 @@ echo "\nend $handle";
 	$labels['lng'] = 'lng';
 
 	foreach ($poi as $key=>$value) {
+		
 		array_push($value, null);
 		array_push($value, null);
-		$poi[$key] = array_combine($labels, $value);
+
+    if (count($labels) == count($value)) {
+    	$poi[$key] = array_combine($labels, $value);
+    }
+    else {
+        echo 'Check that your column headers match the requirements.';
+    }
 	}
 	unset($poi[0]);
 
@@ -97,7 +101,7 @@ echo "\nend $handle";
 		<p class="submit">
 		<input type="submit" name="Submit" value="<?php _e('Upload CSV', 'gj_trdom' ) ?>" />
 		</p>
-		<p>Include columns for: name, category, address, city, state, zip, country, phone, url.<p>
+		<p>Required columns: name, category, address, city, state, zip, country, phone, url.<p>
 		</form>
 		</div>
 <?php
