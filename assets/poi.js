@@ -1,5 +1,3 @@
-// poi_list is controlled through WP and served up either 1 or 0 via json ;)
-
 var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 iconAnchor = new google.maps.Point(5, 33);
 function indexPOIData() {
@@ -176,40 +174,18 @@ function placeMarkers(forceFit) {
 	}
 }
 function initMap() {
+
+	if(map_styles === '0') {
+		var styles = '';
+	} else {
+		var styles = map_styles;
+	}
+
 	mapOptions = {
 		zoom: map_zoom,
 		center: new google.maps.LatLng(0, 0),
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		styles: [
-			{
-				"featureType": "administrative.locality",
-				"elementType": "labels",
-				"stylers": [
-					{ "visibility": "off" }
-				]
-			},
-			{
-				"featureType": "administrative.neighborhood",
-				"elementType": "labels",
-				"stylers": [
-					{ "visibility": "off" }
-				]
-			},
-			{
-				"featureType": "poi.sports_complex",
-				"elementType": "labels",
-				"stylers": [
-					{ "visibility": "off" }
-				]
-			},
-			{
-				"featureType": "transit.station.airport",
-				"elementType": "labels",
-				"stylers": [
-					{ "visibility": "off" }
-				]
-			}
-		]
+		styles: styles
 	};
 	if (center_lat && center_lng) {
 		mapOptions.center = new google.maps.LatLng(center_lat, center_lng)

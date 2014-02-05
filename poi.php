@@ -49,14 +49,21 @@ if ( ! class_exists( 'GJ_api') ) {
           echo 'var cat = ';
           print_r($poi);
           echo ';';
+
           $gj_poi_list = get_option('gj_poi_list');
-		      $center_lat = get_option('gj_center_lat');
+          $center_lat = get_option('gj_center_lat');
           $center_lng = get_option('gj_center_lng');
           $gj_map_zoom = get_option('gj_map_zoom');
+          $gj_map_styles = get_option('gj_map_styles');
+            // Strip slashes and remove whitespace
+            $map_styles = stripslashes($gj_map_styles);
+            $map_styles = preg_replace("/\s+/", "", $map_styles);
+
           echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
           echo 'var center_lat = '.($center_lat ? $center_lat : '34.0459231').';';
           echo 'var center_lng = '.($center_lng ? $center_lng : '-118.2504648').';';
           echo 'var map_zoom = '.($gj_map_zoom ? $gj_map_zoom : '14').';';
+          echo 'var map_styles = '.($gj_map_styles ? $map_styles : '0').';';
 
           echo '</script>';
       }

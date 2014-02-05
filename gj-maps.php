@@ -47,6 +47,12 @@ function gj_add_styles () {
 }
 add_action('get_header', 'gj_add_styles');
 
+// Admin stylesheet
+add_action( 'admin_enqueue_scripts', 'admin_styles');
+function admin_styles() {
+	wp_enqueue_style( 'admin-style', plugins_url('assets/gj-maps-style.admin.css', __FILE__ ));
+}
+
 //Color picker
 add_action( 'admin_enqueue_scripts', 'mw_enqueue_color_picker' );
 function mw_enqueue_color_picker( $hook_suffix ) {

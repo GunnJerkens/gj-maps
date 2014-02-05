@@ -1,0 +1,17 @@
+.wrap {}
+.wrap form p {
+  vertical-align: top;
+}
+.wrap form p input {
+  margin-left: 5px;
+  padding: 5px;
+}
+.wrap form p a {
+  vertical-align: top;
+}
+.wrap form p textarea {
+  height: 300px;
+  width: 80%;
+  margin-left: 5px;
+  padding: 5px;
+}
