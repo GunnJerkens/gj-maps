@@ -26,6 +26,7 @@ function gj_admin_import() {
 function gj_admin_options() {
 	include ('admin/gj_options.php');
 }
+
 function gj_admin_actions() {
 	add_menu_page( "GJ Maps", "GJ Maps", 'administrator', "gj_maps", "gj_admin_edit" );
 	add_submenu_page("gj_maps", "Categories", "Categories", 'administrator', "gj_admin_categories", "gj_admin_categories");
@@ -34,21 +35,37 @@ function gj_admin_actions() {
 }
 add_action('admin_menu', 'gj_admin_actions');
 
-
 // Add scripts && styles // todo -- grunt/sass w/ default stylesheet
-function gj_add_styles () {
-	wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
+add_action('init', 'gj_register_scripts');
+add_action('wp_footer', 'gj_print_scripts');
+
+function gj_register_scripts () {
+	wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
 	if (get_option('gj_styles') && !(is_admin()) ) {
-		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
-		wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
-		wp_enqueue_script('poi', WP_PLUGIN_URL.'/gj-maps/assets/poi.js', array('jquery'), null, true);
-		wp_enqueue_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps-style.css', null, true);
+		wp_register_script('jquery-mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
+		wp_register_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
+		wp_register_script('gj-poi', WP_PLUGIN_URL.'/gj-maps/assets/poi.js', array('jquery'), null, true);
+		wp_register_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps-style.css', null, true);
 	}
 }
-add_action('get_header', 'gj_add_styles');
+function gj_print_scripts() {
+	global $gj_load;
 
-// Admin stylesheet
-add_action( 'admin_enqueue_scripts', 'admin_styles');
+	if ( ! $gj_load )
+		return;
+
+	wp_print_scripts('google-maps');
+	if (get_option('gj_styles') && !(is_admin()) ) {
+		wp_print_scripts('jquery-mscrollbar');
+		wp_print_scripts('gj-maps');
+		wp_print_scripts('gj-poi');
+		wp_print_styles('gj-maps-style');
+	}
+}
+
+
+// Admin stregistert
+add_action( 'adminregistere_scripts', 'admin_styles');
 function admin_styles() {
 	wp_enqueue_style( 'admin-style', plugins_url('assets/gj-maps-style.admin.css', __FILE__ ));
 }
@@ -108,6 +125,9 @@ register_activation_hook(__FILE__,'gj_table_install');
 // Register [gjmaps] shortcode -- need to fix hard coded color and add as menu option!
 function gjmaps_shortcode($atts){
 	global $GJ_api;
+	global $gj_load;
+	$gj_load = true;
+
 	$cat_default = get_option('gj_cat_default');
 	$gjmapsAPI = $GJ_api->gj_POI_frontend();
 
