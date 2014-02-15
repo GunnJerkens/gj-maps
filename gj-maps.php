@@ -129,6 +129,7 @@ function gjmaps_shortcode($atts){
 	$gj_load = true;
 
 	$cat_default = get_option('gj_cat_default');
+
 	$gjmapsAPI = $GJ_api->gj_POI_frontend();
 
 	$top = '

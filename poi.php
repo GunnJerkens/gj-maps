@@ -55,6 +55,8 @@ if ( ! class_exists( 'GJ_api') ) {
           $center_lng = get_option('gj_center_lng');
           $gj_map_zoom = get_option('gj_map_zoom');
           $gj_map_styles = get_option('gj_map_styles');
+          $gj_label_color = get_option('gj_label_color');
+
             // Strip slashes and remove whitespace
             $map_styles = stripslashes($gj_map_styles);
             $map_styles = preg_replace("/\s+/", "", $map_styles);
@@ -63,8 +65,8 @@ if ( ! class_exists( 'GJ_api') ) {
           echo 'var center_lat = '.($center_lat ? $center_lat : '34.0459231').';';
           echo 'var center_lng = '.($center_lng ? $center_lng : '-118.2504648').';';
           echo 'var map_zoom = '.($gj_map_zoom ? $gj_map_zoom : '14').';';
+          echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
           echo 'var map_styles = '.($gj_map_styles ? $map_styles : '0').';';
-
           echo '</script>';
       }
    }

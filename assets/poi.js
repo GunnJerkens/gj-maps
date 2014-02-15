@@ -65,10 +65,20 @@ function setupPOILists() {
 	}
 }
 function markupCategoryList(cat) {
-	var markup, i, len, address, symbolPath;
+	var markup, i, len, address, symbolPath, color, background;
 	symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+	if (label_color === "background") {
+		background = 'background-image: url(' + symbolPath + ');'; 
+		color = 'background-color: ' + cat.color +';';
+	} else if (label_color === "text") {
+		background = '';
+		color = 'color: ' + cat.color + ';';
+	} else {
+		background = '';
+		color = '';
+	}
 	markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">'
-			+ '<div style="background-image: url(' + symbolPath + '); background-color: ' + cat.color + ';" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
+			+ '<div style="' + background + color + ' class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
 			+ '<ul>';
 	if (poi_list === 1) {
 		for (i = 0, len = poi.length; i < len; i++) {

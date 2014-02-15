@@ -4,6 +4,9 @@
 		$styles = isset($_POST['gj_styles']);
 		update_option('gj_styles', $styles);
 
+    $label_color = $_POST['gj_label_color'];
+    update_option('gj_label_color', $label_color);
+
     $poi_list = isset($_POST['gj_poi_list']);
     update_option('gj_poi_list', $poi_list);
 
@@ -28,6 +31,7 @@
 	} else {
 		//Normal page display
 		$styles = get_option('gj_styles');
+    $label_color = get_option('gj_label_color');
     $poi_list = get_option('gj_poi_list');
     $cat_default = get_option('gj_cat_default');
 		$center_lat = get_option('gj_center_lat');
@@ -44,6 +48,13 @@
   <form name="gj_form_update_options" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
       <input type="hidden" name="gj_hidden" value="gj_form_update_options">
       <p><?php _e("Use GJ Maps styles: " ); ?><input type="checkbox" name="gj_styles" <?php if ($styles) echo 'checked'; ?>></p>
+      <p><?php _e("Label Colors: " ); ?>
+        <select name="gj_label_color">
+          <option value="none" <?php if ($label_color === 'none') echo 'selected'; ?>>None</option>
+          <option value="background" <?php if ($label_color === 'background') echo 'selected'; ?>>Background</option>
+          <option value="text" <?php if ($label_color === 'text') echo 'selected'; ?>>Text</option>
+        </select>
+      </p>
       <p><?php _e("Show POI list: " ); ?><input type="checkbox" name="gj_poi_list" <?php if ($poi_list) echo 'checked'; ?>></p>
       <p><?php _e("View All Default Color: " ); ?><input type="text" name="gj_cat_default" class="color-picker" value="<?php echo $cat_default; ?>"/></p>
       <p><?php _e("Center Latitude: " ); ?><input type="text" name="gj_center_lat" value="<?php echo $center_lat; ?>"></p>
