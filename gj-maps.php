@@ -127,8 +127,8 @@ function gjmaps_shortcode($atts){
 	global $GJ_api;
 	global $gj_load;
 	$gj_load = true;
-
 	$cat_default = get_option('gj_cat_default');
+	if ($cat_default === "") { $cat_default = "#ffffff"; }
 
 	$gjmapsAPI = $GJ_api->gj_POI_frontend();
 

@@ -21,7 +21,7 @@ function setupPOILists() {
 	$(".gjmaps-category div[data-type='label']").click(function(event) {
 		var catID, filterIndex
 		catElement = $(this).closest(".gjmaps-category");
-		catID = catElement.attr("data-cat-id");		
+		catID = catElement.attr("data-cat-id");
 		if (catID === "all") {
 			filter = [];
 			$("[data-cat-id='all']").addClass("active");
@@ -78,7 +78,7 @@ function markupCategoryList(cat) {
 		color = '';
 	}
 	markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">'
-			+ '<div style="' + background + color + ' class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
+			+ '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
 			+ '<ul>';
 	if (poi_list === 1) {
 		for (i = 0, len = poi.length; i < len; i++) {
@@ -210,5 +210,3 @@ function initMap() {
 }
 indexPOIData();
 google.maps.event.addDomListener(window, 'load', initMap);
-
-
