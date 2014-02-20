@@ -202,6 +202,12 @@ function initMap() {
 	}
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
+	google.maps.event.addDomListener(window, "resize", function() {
+		var center = map.getCenter();
+		google.maps.event.trigger(map, "resize");
+		map.setCenter(center);
+	});
+
 	filter = [];
 
 	infoWindow = new google.maps.InfoWindow();
