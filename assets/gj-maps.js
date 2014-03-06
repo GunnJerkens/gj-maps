@@ -15,7 +15,9 @@ function setupPOILists() {
 	var i, len;
 	var markup = '';
 	for (i = 0; i < cat.length; i++) {
-		markup += markupCategoryList(cat[i]);
+		if (cat[i].hide_list != '1') {
+			markup += markupCategoryList(cat[i]);
+		}
 	}
 	$(".gjmaps-categories").append(markup);
 	$(".gjmaps-category div[data-type='label']").click(function(event) {
@@ -93,7 +95,7 @@ function markupCategoryList(cat) {
 	return markup;
 }
 function showPOIInfo(poi) {
-	var content, linkName, $header, mapTop, povMatch, pov;
+	var content, linkName, $header, mapTop, streetViewData;
 	content = '<div class="poi-info" style="overflow:hidden;">'
 		+ '<h4>'+poi['name']+'</h4>';
 	if (poi['description']) {
@@ -112,43 +114,64 @@ function showPOIInfo(poi) {
 		if (linkName.indexOf('playavista.com') === 0) {
 			linkName = linkName.replace(/^.*\//, '');
 		}
-		if (parseStreetViewURL(poi['url'])) {
-			content += '<a href="javascript:showStreetView(\''+poi['id']+'\');false;">Street View</a>';
-		} else {
-			content += '<a href="'+poi['url']+'" target="_blank">'+linkName+'</a>';
-		}
+		content += '<a href="'+poi['url']+'" target="_blank">'+linkName+'</a>';
 	}
 	content += '</div>' // .contact
 		+ '</div>'; // .poi-info
 	infoWindow.setContent(content);
 	infoWindow.open(map, poi.marker);
+	captureStreetViewLinks();
 	$header = $("header");
 	mapTop = $("#map-canvas").offset().top - $header.height() - $header.position().top;
 	if ($(document.body).scrollTop() > mapTop) {
 		$(document.body).animate({scrollTop: mapTop}, 300);
 	}
 }
-function parseStreetViewURL(url) {
+function searchPOI(query) {
+	var pattern, i, len;
+	if (!isNaN(query)) {
+		return poiIndexed[Number(query)];
+	} else {
+		pattern = new RegExp(query, 'i');
+		for (i = 0, len = poi.length; i < len; i++) {
+			if (pattern.test(poi[i].name)) {
+				return poi[i];
+			}
+		}
+	}
+}
+function captureStreetViewLinks() {
+	$('a[href^="#street-view"]:not(.gj-street-view)').each(function() {
+		var streetViewHash = $(this).attr('href').replace(/^.*(#street-view)/, '$1');
+		$(this).addClass('gj-street-view').click(function(event) {
+			event.preventDefault();
+			showStreetView(streetViewHash);
+		});
+	});
+}
+function parseStreetViewHash(hash, point) {
 	var povMatch, pov;
-	povMatch = url.match(/^#street-view\/(-?[0-9.]+)\/(-?[0-9.]+)(\/([0-9]+))?.*/);
+	povMatch = hash.match(/^#street-view\/([^\/]+)\/(-?[0-9.]+)\/(-?[0-9.]+)(\/([0-9]+))?.*/);
 	if (povMatch) {
 		return {
+			point: point || searchPOI(povMatch[1]),
 			pov:{
-				heading : Number(povMatch[1]),
-				pitch   : Number(povMatch[2]),
-				zoom    : Number(povMatch[4])
+				heading : Number(povMatch[2]),
+				pitch   : Number(povMatch[3]),
+				zoom    : Number(povMatch[5])
 			}
 		};
 	} else {
 		return false;
 	}
 }
-function showStreetView(poiID) {
+function showStreetView(data) {
 	var point, pov;
-	point = poiIndexed[poiID];
-	data = parseStreetViewURL(point.url);
+	if (!data.hasOwnProperty('point')) {
+		data = parseStreetViewHash(data);
+	}
 	map.streetView.setVisible(true);
-	map.streetView.setPosition(new google.maps.LatLng(point.lat, point.lng));
+	map.streetView.setPosition(new google.maps.LatLng(data.point.lat, data.point.lng));
 	map.streetView.setPov(data.pov);
 }
 function placeMarkers(forceFit) {
@@ -162,6 +185,7 @@ function placeMarkers(forceFit) {
 				&& (
 					!filter.length
 					|| filter.indexOf(poi[i].cat_id) !== -1
+					|| catIndexed[poi[i].cat_id].filter_resist == '1'
 				)
 			)
 			|| (
@@ -197,7 +221,11 @@ function placeMarkers(forceFit) {
 				poi[i].marker = new google.maps.Marker(markerOptions);
 
 				google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
-					showPOIInfo(poi[i]);
+					if (/^#street-view/.test(poi[i]['url'])) {
+						showStreetView(parseStreetViewHash(poi[i]['url'], poi[i]));
+					} else {
+						showPOIInfo(poi[i]);
+					}
 				}})(i));
 				markerBounds.extend(position);
 			}
@@ -211,6 +239,7 @@ function placeMarkers(forceFit) {
 	}
 }
 function initMap() {
+	var streetViewData;
 
 	if(map_styles === '0') {
 		var styles = '';
@@ -240,6 +269,11 @@ function initMap() {
 	infoWindow = new google.maps.InfoWindow();
 	placeMarkers(!center_lat || !center_lng);
 	setupPOILists();
+
+	captureStreetViewLinks();
+	if (streetViewData = parseStreetViewHash(window.location.hash)) {
+		showStreetView(streetViewData);
+	}
 }
 indexPOIData();
 google.maps.event.addDomListener(window, 'load', initMap);
