@@ -19,14 +19,25 @@
 						//Delete Selected cat
 						deleteCat($_POST['id']);
 					} else {
+
 						//Update existing cat
 						$cat = array();
+						$defaultCat = array(
+							"id" => "1",
+							"name" => "category",
+							"color" => "#000000",
+							"hide_list" => 0,
+							"filter_resist" => 0,
+							"icon" => NULL
+							);
+
 						foreach ($_POST as $key=>$value) {
 							if ($key !== 'gj_hidden') {
 								$cat[$key] = stripslashes($value);
 							}
 						}
 						$cat['icon'] = $icon;
+						$cat = array_merge($defaultCat, $cat);
 						editCat($cat);
 					}
  
@@ -88,6 +99,14 @@
 
 
 					<br />
+
+					<label for="option-hide">Hide from list? :
+					<input type="checkbox" name="hide_list" value="1" <?php if ($object->hide_list) echo 'checked'; ?>/>
+					</label>
+
+					<label for="option-nofilter">Resist filtering? :
+					<input type="checkbox" name="filter_resist" value="1" <?php if ($object->filter_resist) echo 'checked'; ?>/>
+					</label>
 
 					<label for="delete">Delete this Category? : 
 					<input type="checkbox" name="delete"/>

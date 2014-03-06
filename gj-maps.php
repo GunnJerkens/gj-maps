@@ -92,6 +92,8 @@ function gj_table_install () {
 		   name VARCHAR(55) NOT NULL,
 		   color VARCHAR(7) NOT NULL,
 		   icon VARCHAR(255) NOT NULL,
+		   hide_list VARCHAR(1) NOT NULL,
+		   filter_resist VARCHAR(1) NOT NULL,
 		   PRIMARY KEY (id)
 			   );";
 

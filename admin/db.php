@@ -79,14 +79,11 @@ function saveCat ($cat) {
 
   global $wpdb;
   $table_name = $wpdb->prefix . "gj_cat";
-
-  $rows_affected = $wpdb->insert( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'] ) );
-
+  $rows_affected = $wpdb->insert( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'], ) );
 
 }
 
 function editCat ($cat) {
-
   if(array_key_exists('icon',$cat) && $cat['icon'] == null) {
     unset($cat['icon']);
   }
