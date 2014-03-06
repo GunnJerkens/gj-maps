@@ -176,6 +176,7 @@ function showStreetView(data) {
 }
 function placeMarkers(forceFit) {
 	var i, len, isMatch, position, markerOptions;
+	map.streetView.setVisible(false);
 	markerBounds = new google.maps.LatLngBounds();
 	for (i = 0, len = poi.length; i < len; i++) {
 		isMatch = (
