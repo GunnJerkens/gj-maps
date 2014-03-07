@@ -151,10 +151,17 @@ function captureStreetViewLinks() {
 }
 function parseStreetViewHash(hash, point) {
 	var povMatch, pov;
-	povMatch = hash.match(/^#street-view\/([^\/]+)\/(-?[0-9.]+)\/(-?[0-9.]+)(\/([0-9]+))?.*/);
+	povMatch = hash.match(/^#street-view\/([^\/]+)\/(-?[0-9.]+)\/(-?[0-9.]+)(\/([0-9]+))?(\/(-?[0-9.]+)\/(-?[0-9.]+))?.*/);
 	if (povMatch) {
+		if ('undefined' === typeof point) {
+			point = searchPOI(povMatch[1]);
+		}
+		lat = Number(povMatch[7]);
+		lng = Number(povMatch[8]);
 		return {
-			point: point || searchPOI(povMatch[1]),
+			point: point,
+			lat: isNaN(lat) ? point.lat : lat,
+			lng: isNaN(lng) ? point.lng : lng,
 			pov:{
 				heading : Number(povMatch[2]),
 				pitch   : Number(povMatch[3]),
@@ -171,7 +178,7 @@ function showStreetView(data) {
 		data = parseStreetViewHash(data);
 	}
 	map.streetView.setVisible(true);
-	map.streetView.setPosition(new google.maps.LatLng(data.point.lat, data.point.lng));
+	map.streetView.setPosition(new google.maps.LatLng(data.lat, data.lng));
 	map.streetView.setPov(data.pov);
 }
 function placeMarkers(forceFit) {
