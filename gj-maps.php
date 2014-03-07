@@ -57,7 +57,6 @@ function gj_print_scripts() {
 	if (get_option('gj_styles') && !(is_admin()) ) {
 		wp_print_scripts('jquery-mscrollbar');
 		wp_print_scripts('gj-maps');
-		wp_print_scripts('gj-poi');
 		wp_print_styles('gj-maps-style');
 	}
 }
