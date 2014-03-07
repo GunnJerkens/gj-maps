@@ -1,3 +1,5 @@
+jQuery(document).ready(function($) {
+
 var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 iconAnchor = new google.maps.Point(5, 33);
 function indexPOIData() {
@@ -285,3 +287,5 @@ function initMap() {
 }
 indexPOIData();
 google.maps.event.addDomListener(window, 'load', initMap);
+
+});
