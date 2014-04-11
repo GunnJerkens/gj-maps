@@ -1,0 +1,18 @@
+.wrap {
+  form p {
+     vertical-align: top;
+     input {
+       margin-left: 5px;
+       padding: 5px;
+     }
+     a {
+       vertical-align: top;
+     }
+     textarea {
+        height: 300px;
+        width: 80%;
+        margin-left: 5px;
+        padding: 5px;
+     }
+  }
+}
