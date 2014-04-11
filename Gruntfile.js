@@ -20,10 +20,10 @@ module.exports = function (grunt) {
     compass: {
       dist: {
         options: {
-          config: 'style/config.rb',
-          sassDir: 'style/sass',
+          config: 'css/config.rb',
+          sassDir: 'css/sass',
           imagesDir: 'img',
-          cssDir: 'style',
+          cssDir: 'css',
           environment: 'production',
           outputStyle: 'compressed',
           force: true
