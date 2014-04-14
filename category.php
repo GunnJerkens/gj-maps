@@ -4,7 +4,7 @@
  * Categories
  */
 
-//I used 'cat' instead of 'categories' because I am lazy
+//I used 'cat' instead of 'categories' because I am lazy -AK
 if ( ! class_exists( 'GJ_cat') ) {
    class GJ_cat {
 
@@ -13,7 +13,7 @@ if ( ! class_exists( 'GJ_cat') ) {
          add_action( 'wp_enqueue_scripts', array( &$this, 'gj_get_cat' ) );
       }
 
-      
+
       public function gj_get_cat($type='OBJECT', $where='1=1') {
          //Allows you to set the type of the return value (assc. array or stdClass) and the WHERE clause, if necessary
          global $wpdb;
@@ -31,12 +31,12 @@ if ( ! class_exists( 'GJ_cat') ) {
          return $query;
 
       }
-      
-      
+
+
    }
 }
 
 
 if ( class_exists( 'GJ_cat' ) ) {
-$GJ_cat = new GJ_cat();
+  $GJ_cat = new GJ_cat();
 }

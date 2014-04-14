@@ -1,7 +1,7 @@
 <?php
 
 class GJ_API_Endpoint{
-  
+
   /** Hook WordPress
   * @return void
   */
@@ -9,24 +9,24 @@ class GJ_API_Endpoint{
     add_filter('query_vars', array($this, 'add_query_vars'), 0);
     add_action('parse_request', array($this, 'sniff_requests'), 0);
     add_action('init', array($this, 'add_endpoint'), 0);
-  } 
-  
+  }
+
   /** Add public query vars
   * @param array $vars List of current public query vars
-  * @return array $vars 
+  * @return array $vars
   */
   public function add_query_vars($vars){
     $vars[] = 'gjmaps_api';
     return $vars;
   }
-  
+
   /** Add API Endpoint
   * @return void
   */
   public function add_endpoint(){
     add_rewrite_rule('^gjmaps_api/','index.php?gjmaps_api','top');
   }
- 
+
   /** Sniff Requests
   * This is where we hijack all API requests
   *   If $_GET['__api'] is set, we kill WP and serve up pug bomb awesomeness
@@ -39,7 +39,7 @@ class GJ_API_Endpoint{
       exit;
     }
   }
-  
+
   /** Response Handler
   * This sends a JSON response to the browser
   */

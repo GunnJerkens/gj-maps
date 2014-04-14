@@ -7,7 +7,7 @@
 function savePOI ($poi) {
 
   global $wpdb;
-  $table_name = $wpdb->prefix . "gj_poi";
+  $table_name = $wpdb->prefix . "gjm_poi";
 
   foreach ($poi as $key=>$value) {
 
@@ -32,7 +32,7 @@ function savePOI ($poi) {
 function editPOI ($poi) {
 
   global $wpdb;
-  $table_name = $wpdb->prefix . "gj_poi";
+  $table_name = $wpdb->prefix . "gjm_poi";
 
   $rows_affected = $wpdb->update(
     $table_name,
@@ -56,7 +56,7 @@ function editPOI ($poi) {
 function deletePOI ($id = false) {
   global $wpdb;
 
-  $table_name = $wpdb->prefix . "gj_poi";
+  $table_name = $wpdb->prefix . "gjm_poi";
 
   if ($id) {
     $wpdb->query(
@@ -78,7 +78,7 @@ function deletePOI ($id = false) {
 function saveCat ($cat) {
 
   global $wpdb;
-  $table_name = $wpdb->prefix . "gj_cat";
+  $table_name = $wpdb->prefix . "gjm_cat";
   $rows_affected = $wpdb->insert( $table_name, array( 'name'=>$cat['name'], 'color'=>$cat['color'], 'icon'=>$cat['icon'], ) );
 
 }
@@ -88,7 +88,7 @@ function editCat ($cat) {
     unset($cat['icon']);
   }
   global $wpdb;
-  $table_name = $wpdb->prefix . "gj_cat";
+  $table_name = $wpdb->prefix . "gjm_cat";
 
   $rows_affected = $wpdb->update( 
     $table_name, $cat, array( 'id'=>$cat['id']) 
@@ -99,7 +99,7 @@ function editCat ($cat) {
 function deleteCat ($id) {
   global $wpdb;
 
-  $table_name = $wpdb->prefix . "gj_cat";
+  $table_name = $wpdb->prefix . "gjm_cat";
 
   $wpdb->query(
     $wpdb->prepare(
