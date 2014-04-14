@@ -81,9 +81,9 @@ function markupCategoryList(cat) {
     background = '';
     color = '';
   }
-  markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">'
-      + '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>'
-      + '<ul>';
+  markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
+    '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>' +
+    '<ul>';
   if (poi_list === 1) {
     for (i = 0, len = poi.length; i < len; i++) {
       if (poi[i].cat_id == cat.id) {
@@ -91,35 +91,35 @@ function markupCategoryList(cat) {
       }
     }
   }
-  markup += '</ul>'
-    + '</li>';
+  markup += '</ul>' +
+    '</li>';
 
   return markup;
 }
 function showPOIInfo(poi) {
   var content, linkName, $header, mapTop, streetViewData;
-  content = '<div class="poi-info" style="overflow:hidden;">'
-    + '<h4>'+poi['name']+'</h4>';
-  if (poi['description']) {
-    content += '<div class="description">' + poi['description'] + '</div>';
+  content = '<div class="poi-info" style="overflow:hidden;">' +
+    '<h4>'+poi.name+'</h4>';
+  if (poi.description) {
+    content += '<div class="description">' + poi.description + '</div>';
   }
-  content += '<div class="address">'+poi['address'] + '<br />'
-    + poi['city'] + ', ' + poi['state'] + ' ' + poi['zip']
-    + '</div>'
-    + '<div class="contact">';
-  if (poi['phone']) {
-    content += poi['phone'];
-    if (poi['url']) content += '<br />';
+  content += '<div class="address">'+poi.address + '<br />' +
+    poi.city + ', ' + poi.state + ' ' + poi.zip +
+    '</div>' +
+    '<div class="contact">';
+  if (poi.phone) {
+    content += poi.phone;
+    if (poi.url) content += '<br />';
   }
-  if (poi['url']) {
-    linkName = poi['url'].replace(/^https?:\/\/|\/$/g, '');
+  if (poi.url) {
+    linkName = poi.url.replace(/^https?:\/\/|\/$/g, '');
     if (linkName.indexOf('playavista.com') === 0) {
       linkName = linkName.replace(/^.*\//, '');
     }
-    content += '<a href="'+poi['url']+'" target="_blank">'+linkName+'</a>';
+    content += '<a href="'+poi.url+'" target="_blank">'+linkName+'</a>';
   }
-  content += '</div>' // .contact
-    + '</div>'; // .poi-info
+  content += '</div>' + // .contact
+    '</div>'; // .poi-info
   infoWindow.setContent(content);
   infoWindow.open(map, poi.marker);
   captureStreetViewLinks();
@@ -189,21 +189,21 @@ function placeMarkers(forceFit) {
   markerBounds = new google.maps.LatLngBounds();
   for (i = 0, len = poi.length; i < len; i++) {
     isMatch = (
-      !filter
-      || (
-        typeof filter == "object"
-        && (
-          !filter.length
-          || filter.indexOf(poi[i].cat_id) !== -1
-          || catIndexed[poi[i].cat_id].filter_resist == '1'
-        )
-      )
-      || (
+      !filter ||
+      (
+        typeof filter == "object" &&
         (
-          typeof filter == "string"
-          || typeof filter == "number"
+          !filter.length ||
+          filter.indexOf(poi[i].cat_id) !== -1 ||
+          catIndexed[poi[i].cat_id].filter_resist == '1'
         )
-        && poi[i].id == filter
+      ) ||
+      (
+        (
+          typeof filter == "string" ||
+          typeof filter == "number"
+        ) &&
+        poi[i].id == filter
       )
     );
     if (typeof poi[i].marker !== "undefined") {
@@ -231,8 +231,8 @@ function placeMarkers(forceFit) {
         poi[i].marker = new google.maps.Marker(markerOptions);
 
         google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
-          if (/^#street-view/.test(poi[i]['url'])) {
-            showStreetView(parseStreetViewHash(poi[i]['url'], poi[i]));
+          if (/^#street-view/.test(poi[i].url)) {
+            showStreetView(parseStreetViewHash(poi[i].url, poi[i]));
           } else {
             showPOIInfo(poi[i]);
           }
@@ -249,12 +249,12 @@ function placeMarkers(forceFit) {
   }
 }
 function initMap() {
-  var streetViewData;
+  var streetViewData, styles;
 
   if(map_styles === '0') {
-    var styles = '';
+    styles = '';
   } else {
-    var styles = map_styles;
+    styles = map_styles;
   }
 
   mapOptions = {
