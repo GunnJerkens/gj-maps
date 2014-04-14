@@ -1,106 +1,102 @@
   <?php
 
+  global $GJ_Maps;
+
   require_once('db.php');
 
-    if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
-      //Form data sent
-        global $post;
+  if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
+    //Form data sent
+    global $post;
 
-        if (isset($_POST['id']) && $_POST['id']) {
+    if (isset($_POST['id']) && $_POST['id']) {
 
-          if (isset($_POST['delete'])) {
-            //Delete Selected POI
-            deletePOI($_POST['id']);
-          } else {
-            //Update existing POI
-            $poi = array();
-            foreach ($_POST as $key=>$value) {
-              if ($key !== 'gj_hidden') {
-                $poi[$key] = stripslashes($value);
-              }
-            }
-            editPOI($poi);
+      if (isset($_POST['delete'])) {
+        //Delete Selected POI
+        deletePOI($_POST['id']);
+      } else {
+        //Update existing POI
+        $poi = array();
+        foreach ($_POST as $key=>$value) {
+          if ($key !== 'gj_hidden') {
+            $poi[$key] = stripslashes($value);
           }
+        }
+        editPOI($poi);
+      }
 
-        } else if (isset($_POST['geocode'])) {
-          //Update geocodes
-          global $wpdb;
+    } else if (isset($_POST['geocode'])) {
+      //Update geocodes
+      global $wpdb;
 
-          if ( ! isset($GJ_api) || ! $GJ_api ) {
-              $GJ_api = new GJ_api();
-          }
-          $query = $GJ_api->gj_get_POI('ARRAY_A', 'lat=0');
+      $query = $GJ_Maps->gj_get_POI('ARRAY_A', 'lat=0');
 
-          foreach ($query as $poi) {
-            if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
-              $address = urlencode($poi["address"].', '.$poi['zip']);
-            } else {
-              $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-            }
-            $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-            $url .= '&address='.$address;
-
-            $response = wp_remote_get( $url );
-            if( is_wp_error( $response ) ) {
-              $error_message = $response->get_error_message();
-              echo "Something went wrong: $error_message";
-            }
-
-            $response2 = json_decode($response['body']);
-            if( $response2 = 'ZERO_RESULTS') {
-              echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
-              $poi ['lat'] = '0';
-              $poi ['lng'] = '0';
-            } else {
-              $location = $response2->results[0]->geometry->location;
-              $poi['lat'] = $location->lat;
-              $poi['lng'] = $location->lng;
-            }
-            editPOI($poi);
-          }
-
+      foreach ($query as $poi) {
+        if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
+          $address = urlencode($poi["address"].', '.$poi['zip']);
         } else {
-          //Add new POI
-          $poi = array();
-          foreach ($_POST as $key=>$value) {
-            if ($key !== 'gj_hidden') {
-              $poi[$key] = $value;
-            }
-          }
-
           $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-          $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-            $url .= '&address='.$address;
+        }
+        $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+        $url .= '&address='.$address;
 
-            $response = wp_remote_get( $url );
-          if( is_wp_error( $response ) ) {
-             $error_message = $response->get_error_message();
-             echo "Something went wrong: $error_message";
-          }
-
-          $response2 = json_decode($response['body']);
-          if( $response2 = 'ZERO_RESULTS') {
-            echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
-            $poi ['lat'] = '0';
-            $poi ['lng'] = '0';
-          } else {
-            $location = $response2->results[0]->geometry->location;
-            $poi['lat'] = $location->lat;
-            $poi['lng'] = $location->lng;
-          }
-          $POIs = array($poi);
-          savePOI($POIs);
+        $response = wp_remote_get( $url );
+        if( is_wp_error( $response ) ) {
+          $error_message = $response->get_error_message();
+          echo "Something went wrong: $error_message";
         }
 
+        $response2 = json_decode($response['body']);
+        if( $response2 = 'ZERO_RESULTS') {
+          echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
+          $poi ['lat'] = '0';
+          $poi ['lng'] = '0';
+        } else {
+          $location = $response2->results[0]->geometry->location;
+          $poi['lat'] = $location->lat;
+          $poi['lng'] = $location->lng;
+        }
+        editPOI($poi);
+      }
+
+    } else {
+      //Add new POI
+      $poi = array();
+      foreach ($_POST as $key=>$value) {
+        if ($key !== 'gj_hidden') {
+          $poi[$key] = $value;
+        }
+      }
+
+      $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+      $url .= '&address='.$address;
+
+      $response = wp_remote_get( $url );
+      if( is_wp_error( $response ) ) {
+        $error_message = $response->get_error_message();
+        echo "Something went wrong: $error_message";
+      }
+
+      $response2 = json_decode($response['body']);
+      if( $response2 = 'ZERO_RESULTS') {
+        echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
+        $poi ['lat'] = '0';
+        $poi ['lng'] = '0';
+      } else {
+        $location = $response2->results[0]->geometry->location;
+        $poi['lat'] = $location->lat;
+        $poi['lng'] = $location->lng;
+      }
+      $POIs = array($poi);
+      savePOI($POIs);
     }
 
-    $GJ_api = new GJ_api();
-    $poi = $GJ_api->gj_get_POI();
+  }
 
-    $GJ_cat = new GJ_cat();
-    $cat = $GJ_cat->gj_get_cat();
+  $poi = $GJ_Maps->get_poi();
+  $cat = $GJ_Maps->get_cat();
 
-    ?>
+  ?>
     <div class="wrap">
       <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
 

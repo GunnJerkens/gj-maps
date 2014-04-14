@@ -70,9 +70,13 @@ function setupPOILists() {
 }
 function markupCategoryList(cat) {
   var markup, i, len, address, symbolPath, color, background;
-  symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
   if (label_color === "background") {
-    background = 'background-image: url(' + symbolPath + ');'; 
+    if (cat.icon) {
+      symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+      background = 'background-image: url(' + symbolPath + ');';
+    } else {
+      background = '';
+    }
     color = 'background-color: ' + cat.color +';';
   } else if (label_color === "text") {
     background = '';

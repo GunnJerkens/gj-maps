@@ -237,4 +237,5 @@ class GJ_Maps {
 
 }
 
-new GJ_Maps();
+global $GJ_Maps;
+$GJ_Maps = new GJ_Maps();
