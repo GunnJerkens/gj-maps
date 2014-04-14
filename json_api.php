@@ -66,4 +66,3 @@ class GJ_API_Endpoint{
     echo json_encode($data);
   }
 }
-new GJ_API_Endpoint();

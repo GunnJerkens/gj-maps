@@ -1,6 +1,5 @@
-'use strict';
-
 module.exports = function (grunt) {
+  'use strict';
 
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
@@ -8,15 +7,15 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
- 
-    uglify: {
+
+    concat: {
       min: {
         files: {
           'js/main.js': ['js/src/*.js']
         }
       }
     },
- 
+
     compass: {
       dist: {
         options: {
@@ -48,7 +47,7 @@ module.exports = function (grunt) {
       },
       scripts: {
         files: ['js/src/*.js'],
-        tasks: ['uglify']
+        tasks: ['concat']
       },
       styles: {
         files: ['img/ui/*.png'],
@@ -60,8 +59,8 @@ module.exports = function (grunt) {
       }
     },
   });
- 
+
   // Development task checks and concatenates JS, compiles SASS preserving comments and nesting, runs dev server, and starts watch
-  grunt.registerTask('default', ['compass', 'uglify', 'imagemin', 'watch']);
- 
- }
+  grunt.registerTask('default', ['compass', 'concat', 'imagemin', 'watch']);
+
+};
