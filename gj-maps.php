@@ -202,6 +202,23 @@ class GJ_Maps {
     return $query;
   }
 
+  public function get_map($type='OBJECT', $where='1=1') {
+    //Allows you to set the type of the return value (assc. array or stdClass) and the WHERE clause, if necessary
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . "gjm_maps";
+    $query = $wpdb->get_results(
+      "
+      SELECT *
+      FROM $table_name
+      WHERE $where
+      ",
+      $type
+    );
+
+    return $query;
+  }
+
   public function frontend() {
     //Writes the JS to the page, including POIs and categories
     $poi = json_encode($this->get_poi());

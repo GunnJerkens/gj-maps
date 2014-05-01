@@ -1,5 +1,7 @@
   <?php
 
+  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
+
   global $GJ_Maps;
 
   require_once('db.php');
@@ -87,16 +89,30 @@
         $poi['lat'] = $location->lat;
         $poi['lng'] = $location->lng;
       }
+
+      $poi ['map_id'] = $map_id;
       $POIs = array($poi);
       savePOI($POIs);
     }
 
   }
 
-  $poi = $GJ_Maps->get_poi();
+  $poi = $GJ_Maps->get_poi($type='OBJECT', 'map_id='.$map_id);
   $cat = $GJ_Maps->get_cat();
+  $map = $GJ_Maps->get_map();
 
   ?>
+
+  <h2 class="nav-tab-wrapper">
+    <?php
+    foreach ($map as $key => $value) {
+    ?>
+      <a href="?page=gj_maps&map_id=<?php echo $value->id; ?>" class="nav-tab"><?php echo $value->name; ?></a>
+    <?php
+    }
+    ?>
+  </h2>
+
     <div class="wrap">
       <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
 

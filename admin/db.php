@@ -10,9 +10,9 @@ function savePOI ($poi) {
   $table_name = $wpdb->prefix . "gjm_poi";
 
   foreach ($poi as $key=>$value) {
-
     $rows_affected = $wpdb->insert( $table_name, array(
       'cat_id'=>$value['cat_id'],
+      'map_id'=>$value['map_id'],
       'name'=>$value['name'],
       'address'=>$value['address'],
       'city'=>$value['city'],
@@ -24,7 +24,6 @@ function savePOI ($poi) {
       'lat'=>$value['lat'],
       'lng'=>$value['lng']
     ) );
-
   }
 
 }
