@@ -82,6 +82,7 @@
 
         foreach ($cat as $index=>$object) {
         ?>
+        
           <form name="gj_form" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
           <input type="hidden" name="gj_hidden" value="Y"/>
           <input type="hidden" name="id" value="<?php echo $object->id; ?>"/>
