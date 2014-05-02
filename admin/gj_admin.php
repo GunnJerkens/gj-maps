@@ -1,7 +1,5 @@
   <?php
 
-  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
-
   global $GJ_Maps;
 
   require_once('db.php');
@@ -30,7 +28,7 @@
       //Update geocodes
       global $wpdb;
 
-      $query = $GJ_Maps->gj_get_POI('ARRAY_A', 'lat=0');
+      $query = $GJ_Maps->get_poi('ARRAY_A', 'lat=0');
 
       foreach ($query as $poi) {
         if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
@@ -97,23 +95,36 @@
 
   }
 
-  $poi = $GJ_Maps->get_poi($type='OBJECT', 'map_id='.$map_id);
-  $cat = $GJ_Maps->get_cat();
+  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
+
   $map = $GJ_Maps->get_map();
+  $last_map = end($map)->id;
+
+  $poi = $GJ_Maps->get_poi($type='OBJECT', 'map_id=' . $map_id);
+  $cat = $GJ_Maps->get_cat();
+
+  if ($map_id > $last_map) { //If map does not exist, add new map
+    saveMap($map_id);
+    $map = $GJ_Maps->get_map();
+  }
 
   ?>
 
   <h2 class="nav-tab-wrapper">
+
     <?php
     foreach ($map as $key => $value) {
     ?>
-      <a href="?page=gj_maps&map_id=<?php echo $value->id; ?>" class="nav-tab"><?php echo $value->name; ?></a>
+    <a href="?page=gj_maps&map_id=<?php echo $value->id; ?>" class="nav-tab<?php echo $map_id == $value->id ? ' nav-tab-active' : ''; ?>"><?php echo $value->name; ?></a>
     <?php
     }
     ?>
+    <a href="?page=gj_maps&map_id=<?php echo $last_map + 1; ?>" class="nav-tab">+</a>
+
   </h2>
 
     <div class="wrap">
+
       <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
 
       <h4>Add New</h4>

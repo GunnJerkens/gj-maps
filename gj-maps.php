@@ -84,6 +84,9 @@ class GJ_Maps {
     $sql_maps = "CREATE TABLE $gj_maps (
       id mediumint(9) NOT NULL AUTO_INCREMENT,
       name VARCHAR(55) NOT NULL,
+      c_lat float(12,8),
+      c_lng float(12,8),
+      m_zoom longtext,
       PRIMARY KEY (id)
     );";
 
@@ -123,8 +126,12 @@ class GJ_Maps {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql_maps . $sql_cat . $sql_poi);
 
-    $wpdb->insert($gj_maps, array('name'=>'Map'));
-    $wpdb->insert($gj_cat, array('name'=>'All', 'map_id'=>$wpdb->insert_id));
+    if($wpdb->get_var("SHOW TABLES LIKE '$gj_maps'") != $gj_maps) { //If table did not exist
+      $wpdb->insert($gj_maps, array('name'=>'Map 1'));
+    }
+    if($wpdb->get_var("SHOW TABLES LIKE '$gj_cat'") != $gj_cat) { //If table did not exist
+      $wpdb->insert($gj_cat, array('name'=>'All', 'map_id'=>$wpdb->insert_id));
+    } 
 
   }
 

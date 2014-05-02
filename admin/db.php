@@ -4,6 +4,20 @@
  * Adds POIs to the database
  */
 
+function saveMap ($id) {
+
+  global $wpdb;
+  $table_name = $wpdb->prefix . "gjm_maps";
+
+  $rows_affected = $wpdb->insert(
+    $table_name,
+    array(
+      'id'=>$id,
+      'name'=>'Map ' . $id,
+    )
+  );
+}
+
 function savePOI ($poi) {
 
   global $wpdb;
