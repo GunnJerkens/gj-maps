@@ -4,6 +4,8 @@
 
   require_once('db.php');
 
+  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
+
   if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
     //Form data sent
     global $post;
@@ -58,6 +60,14 @@
         editPOI($poi);
       }
 
+    } else if (isset($_POST['map_settings'])) {
+      $ms = array();
+
+      $ms['id'] = $map_id;
+      $ms['c_lat'] = $_POST['c_lat'];
+      $ms['c_lng'] = $_POST['c_lng'];
+      $ms['m_zoom'] = $_POST['m_zoom'];
+      editMapSettings($ms);
     } else {
       //Add new POI
       $poi = array();
@@ -95,10 +105,9 @@
 
   }
 
-  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
-
   $map = $GJ_Maps->get_map();
   $last_map = end($map)->id;
+  $map_key = $GJ_Maps->get_map_key($map_id, $map);
 
   $poi = $GJ_Maps->get_poi($type='OBJECT', 'map_id=' . $map_id);
   $cat = $GJ_Maps->get_cat();
@@ -106,6 +115,7 @@
   if ($map_id > $last_map) { //If map does not exist, add new map
     saveMap($map_id);
     $map = $GJ_Maps->get_map();
+    $last_map = end($map)->id;
   }
 
   ?>
@@ -124,6 +134,19 @@
   </h2>
 
     <div class="wrap">
+
+      <?php    echo "<h2>" . __( 'GJ Maps - Settings', 'gj_trdom' ) . "</h2>"; ?>
+
+      <h4>Settings</h4>
+        <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+          <input type="hidden" name="gj_hidden" value="Y"/>
+          <input type="hidden" name="map_settings" value="1"/>
+          <input type="text" name="c_lat" placeholder="Center Latitude" value="<?php echo $map[$map_key]->c_lat; ?>"/>
+          <input type="text" name="c_lng" placeholder="Center Longitude" value="<?php echo $map[$map_key]->c_lng; ?>"/>
+          <input type="text" name="m_zoom" placeholder="Map Zoom" value="<?php echo $map[$map_key]->m_zoom; ?>"/>
+
+          <p class="submit"><input type="submit" value="<?php _e('Update Settings', 'gj_trdom' ) ?>" /></p>
+        </form>
 
       <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
 

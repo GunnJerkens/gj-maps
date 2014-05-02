@@ -226,6 +226,14 @@ class GJ_Maps {
     return $query;
   }
 
+  public function get_map_key($id, $obj) {
+    foreach ($obj as $key => $value) {
+      if ($value->id == $id) {
+        return $key;
+      }
+    }
+  }
+
   public function frontend() {
     //Writes the JS to the page, including POIs and categories
     $poi = json_encode($this->get_poi());
