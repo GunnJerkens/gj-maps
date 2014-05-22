@@ -64,6 +64,7 @@
       $ms = array();
 
       $ms['id'] = $map_id;
+      $ms['name'] = $_POST['name'];
       $ms['c_lat'] = $_POST['c_lat'];
       $ms['c_lng'] = $_POST['c_lng'];
       $ms['m_zoom'] = $_POST['m_zoom'];
@@ -116,9 +117,7 @@
     saveMap($map_id);
     $map = $GJ_Maps->get_map();
     $last_map = end($map)->id;
-  }
-
-  ?>
+  } ?>
 
   <h2 class="nav-tab-wrapper">
 
@@ -135,17 +134,18 @@
 
     <div class="wrap">
 
-      <?php    echo "<h2>" . __( 'GJ Maps - Settings', 'gj_trdom' ) . "</h2>"; ?>
+      <?php echo '<h2>'.$map[$map_key]->name.'</h2>'; ?>
 
       <h4>Settings</h4>
         <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
           <input type="hidden" name="gj_hidden" value="Y"/>
           <input type="hidden" name="map_settings" value="1"/>
+          <input type="text" name="name" placeholder="Map Name" value="<?php echo $map[$map_key]->name; ?>"/>
           <input type="text" name="c_lat" placeholder="Center Latitude" value="<?php echo $map[$map_key]->c_lat; ?>"/>
           <input type="text" name="c_lng" placeholder="Center Longitude" value="<?php echo $map[$map_key]->c_lng; ?>"/>
           <input type="text" name="m_zoom" placeholder="Map Zoom" value="<?php echo $map[$map_key]->m_zoom; ?>"/>
 
-          <p class="submit"><input type="submit" value="<?php _e('Update Settings', 'gj_trdom' ) ?>" /></p>
+          <p class="submit"><input type="submit" value="<?php echo 'Update Settings'; ?>" /></p>
         </form>
 
       <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>

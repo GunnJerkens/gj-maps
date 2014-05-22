@@ -18,34 +18,22 @@ function saveMap ($id) {
   );
 }
 
-function editMapSettings ($ms) {
+function editMapSettings($ms) {
 
   global $wpdb;
   $table_name = $wpdb->prefix . "gjm_maps";
 
-  $ms_id = $ms['id'];
-  $ms_arr = array();
-  $ms_set = '';
-
-  foreach ($ms as $key=>$value) {
-    $key != 'id' && $value != null ? array_push($ms_arr, $key.'='.$ms[$key]) : '';
-  }
-
-  $last_key = end(array_keys($ms_arr));
-  foreach ($ms_arr as $key => $value) {
-    $ms_set .= $value;
-    if ($key != $last_key) {
-      $ms_set .= ',';
-    }
-  }
-
-  $rows_affected = $wpdb->query(
-    "
-    UPDATE $table_name 
-    SET $ms_set
-    WHERE id = $ms_id; 
-    "
+  $rows_affected = $wpdb->update(
+    $table_name, 
+    array(
+      'name'=>$ms['name'],
+      'c_lat'=>$ms['c_lat'],
+      'c_lng'=>$ms['c_lng'],
+      'm_zoom'=>$ms['m_zoom']
+    ),
+    array('id'=>$ms['id'])
   );
+
 }
 
 function savePOI ($poi) {
