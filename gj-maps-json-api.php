@@ -1,6 +1,6 @@
 <?php
 
-class GJ_API_Endpoint{
+class gjMapsAPI {
 
   /** Hook WordPress
   * @return void
@@ -44,8 +44,7 @@ class GJ_API_Endpoint{
   * This sends a JSON response to the browser
   */
   protected function send_response(){
-    $GJ_api = new GJ_api();
-    $GJ_cat = new GJ_cat();
+    $gjMapsDatabase = new gjMapsDB();
 
     $gj_poi_list = get_option('gj_poi_list');
     $gj_map_styles = get_option('gj_map_styles');
@@ -53,8 +52,8 @@ class GJ_API_Endpoint{
     $center_lng = get_option('gj_center_lng');
 
     $data = array(
-      'poi' => $GJ_api->gj_get_POI(),
-      'cat' => $cat = $GJ_cat->gj_get_cat(),
+      'poi' => $gjMapsDatabase->get_poi(),
+      'cat' => $cat = $gjMapsDatabase->get_cat(),
       'poi_list' => $gj_poi_list,
       'map_styles' => $gj_map_styles,
       'center_lat' => $center_lat,
