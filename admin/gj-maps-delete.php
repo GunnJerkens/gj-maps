@@ -6,17 +6,15 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_maps_delete') {
 
   $response = $adminFunctions->deleteData($_POST);
 
-} 
+  if($response['status'] === 'success') {
 
-var_dump($response);
+    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
 
-if($response['status'] === 'success') {
+  } else if ($response['status'] === 'error') {
 
-  echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
 
-} else if ($response['status'] === 'error') {
-
-  echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+  } 
 
 } ?>
 
@@ -31,9 +29,9 @@ if($response['status'] === 'success') {
         <td>
           <select name="delete">
             <option value="default" selected>Do Not Delete</option>
-            <option value="delete_categories">Delete All Categories</option>
+<!--             <option value="delete_categories">Delete All Categories</option>
             <option value="delete_maps">Delete All Maps</option>
-            <option value="delete_poi">Delete All POI</option>
+            <option value="delete_poi">Delete All POI</option> -->
             <option value="delete_all">Delete All Data</option>
           </select>
         </td>
