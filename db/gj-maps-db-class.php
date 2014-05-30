@@ -77,23 +77,23 @@ class gjMapsDB {
   * I don't know what this does?
   * It should probably move to the admin-class, it's not a db function?
   */
-  function get_map_key($id, $obj) {
+  // function get_map_key($id, $obj) {
 
-    $mapKey = false;
+  //   $mapKey = false;
 
-    foreach ($obj as $key => $value) {
+  //   foreach ($obj as $key => $value) {
 
-      if ($value->id == $id) {
+  //     if ($value->id == $id) {
 
-        $mapKey = $key;
+  //       $mapKey = $key;
 
-      }
+  //     }
 
-    }
+  //   }
 
-    return $mapKey;
+  //   return $mapKey;
 
-  }
+  // }
 
   function maxMapID() {
 

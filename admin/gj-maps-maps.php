@@ -1,263 +1,142 @@
-  <?php
+<?php
 
-  global $GJ_Maps;
+  $databaseFunctions = new gjMapsDB();
 
-  require_once('db.php');
+
+
+  /*
+  * This is the maps tabbing system
+  */
 
   $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
-
-  if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
-    //Form data sent
-    global $post;
-
-    if (isset($_POST['id']) && $_POST['id']) {
-
-      if (isset($_POST['delete'])) {
-        //Delete Selected POI
-        deletePOI($_POST['id']);
-      } else {
-        //Update existing POI
-        $poi = array();
-        foreach ($_POST as $key=>$value) {
-          if ($key !== 'gj_hidden') {
-            $poi[$key] = stripslashes($value);
-          }
-        }
-        editPOI($poi);
-      }
-
-    } else if (isset($_POST['geocode'])) {
-      //Update geocodes
-      global $wpdb;
-
-      $query = $GJ_Maps->get_poi('ARRAY_A', 'lat=0');
-
-      foreach ($query as $poi) {
-        if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
-          $address = urlencode($poi["address"].', '.$poi['zip']);
-        } else {
-          $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-        }
-        $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-        $url .= '&address='.$address;
-
-        $response = wp_remote_get( $url );
-        if( is_wp_error( $response ) ) {
-          $error_message = $response->get_error_message();
-          echo "Something went wrong: $error_message";
-        }
-
-        $response2 = json_decode($response['body']);
-        if( $response2 = 'ZERO_RESULTS') {
-          echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
-          $poi ['lat'] = '0';
-          $poi ['lng'] = '0';
-        } else {
-          $location = $response2->results[0]->geometry->location;
-          $poi['lat'] = $location->lat;
-          $poi['lng'] = $location->lng;
-        }
-        editPOI($poi);
-      }
-
-    } else if (isset($_POST['map_settings'])) {
-      $ms = array();
-
-      $ms['id'] = $map_id;
-      $ms['name'] = $_POST['name'];
-      $ms['c_lat'] = $_POST['c_lat'];
-      $ms['c_lng'] = $_POST['c_lng'];
-      $ms['m_zoom'] = $_POST['m_zoom'];
-      editMapSettings($ms);
-    } else {
-      //Add new POI
-      $poi = array();
-      foreach ($_POST as $key=>$value) {
-        if ($key !== 'gj_hidden') {
-          $poi[$key] = $value;
-        }
-      }
-
-      $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-      $url .= '&address='.$address;
-
-      $response = wp_remote_get( $url );
-      if( is_wp_error( $response ) ) {
-        $error_message = $response->get_error_message();
-        echo "Something went wrong: $error_message";
-      }
-
-      $response2 = json_decode($response['body']);
-      if( $response2 = 'ZERO_RESULTS') {
-        echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
-        $poi ['lat'] = '0';
-        $poi ['lng'] = '0';
-      } else {
-        $location = $response2->results[0]->geometry->location;
-        $poi['lat'] = $location->lat;
-        $poi['lng'] = $location->lng;
-      }
-
-      $poi ['map_id'] = $map_id;
-      $POIs = array($poi);
-      savePOI($POIs);
-    }
-
-  }
-
-  $map = $GJ_Maps->get_map();
+  $map = $databaseFunctions->get_map();
+  $map_key = $databaseFunctions->get_map_key($map_id, $map);
   $last_map = end($map)->id;
-  $map_key = $GJ_Maps->get_map_key($map_id, $map);
 
-  $poi = $GJ_Maps->get_poi($type='OBJECT', 'map_id=' . $map_id);
-  $cat = $GJ_Maps->get_cat();
+  var_dump($map_key);
+  var_dump($map_id);
+
+  var_dump($map);
+
 
   if ($map_id > $last_map) { //If map does not exist, add new map
     saveMap($map_id);
     $map = $GJ_Maps->get_map();
-    $last_map = end($map)->id;
-  } ?>
+    $last_map = end($map)->id; // Use the maxMapID DB call here!
+  }
 
-  <h2 class="nav-tab-wrapper">
+  echo '<h2 class="nav-tab-wrapper">';
 
-    <?php
-    foreach ($map as $key => $value) {
-    ?>
-    <a href="?page=gj_maps&map_id=<?php echo $value->id; ?>" class="nav-tab<?php echo $map_id == $value->id ? ' nav-tab-active' : ''; ?>"><?php echo $value->name; ?></a>
-    <?php
-    }
-    ?>
-    <a href="?page=gj_maps&map_id=<?php echo $last_map + 1; ?>" class="nav-tab">+</a>
+  foreach ($map as $key => $value) {
 
-  </h2>
+    echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab'.($map_id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
 
-    <div class="wrap">
+  }
 
-      <?php echo '<h2>'.$map[$map_key]->name.'</h2>'; ?>
+  echo '<a href="?page=gj_maps&map_id='.($last_map + 1).'" class="nav-tab">+</a>';
+  echo '</h2>';
 
-      <h4>Settings</h4>
-        <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-          <input type="hidden" name="gj_hidden" value="Y"/>
-          <input type="hidden" name="map_settings" value="1"/>
-          <input type="text" name="name" placeholder="Map Name" value="<?php echo $map[$map_key]->name; ?>"/>
-          <input type="text" name="c_lat" placeholder="Center Latitude" value="<?php echo $map[$map_key]->c_lat; ?>"/>
-          <input type="text" name="c_lng" placeholder="Center Longitude" value="<?php echo $map[$map_key]->c_lng; ?>"/>
-          <input type="text" name="m_zoom" placeholder="Map Zoom" value="<?php echo $map[$map_key]->m_zoom; ?>"/>
+  /*
+  * These calls are for retrieving the POI data for the table.
+  */
 
-          <p class="submit"><input type="submit" value="<?php echo 'Update Settings'; ?>" /></p>
-        </form>
+  $poi = $databaseFunctions->get_poi($type='OBJECT', 'map_id=' . $map_id);
+  $cat = $databaseFunctions->get_cat();
 
-      <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
+  // var_dump($poi);
 
-      <h4>Add New</h4>
-        <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-          <input type="hidden" name="gj_hidden" value="Y"/>
-          <input type="text" name="name" placeholder="Name"/>
-          <select name="cat_id">
-            <?php 
-            foreach ($cat as $key=>$value) {
-              echo "<option value='$value->id'>$value->name</option>";
-            }
+  ?>
 
-            ?>
-          </select>
-          <input type="text" name="address" placeholder="Street Address"/>
-          <input type="text" name="city" placeholder="City"/>
-          <input type="text" name="state" placeholder="State"/>
-          <input type="text" name="zip" placeholder="Zip/Postal Code"/>
-          <input type="text" name="country" placeholder="Country"/>
-          <input type="text" name="phone" placeholder="Phone Number"/>
-          <input type="text" name="url" placeholder="URL"/>
+<div class="wrap">
 
-          <p class="submit"><input type="submit" value="<?php _e('Add POI', 'gj_trdom' ) ?>" /></p>
-        </form>
+  <h4>POI</h4>
+  <form name="gj_maps_poi" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <input type="hidden" name="form_name" value="gj_maps_poi">
+    <table class="wp-list-table widefat fixed gj-maps">
+      <thead class="">
+        <tr>
+          <th scope="col" id="cb" class="column-cb check-column">
+            <input id="cb-select-all-1" type="checkbox">
+          </th>
+          <th><span>Name</span></th>
+          <th><span>Category</span></th>
+          <th><span>Address</span></th>
+          <th><span>City</span></th>
+          <th><span>State</span></th>
+          <th><span>Zip</span></th>
+          <th><span>Country</span></th>
+          <th><span>Phone</span></th>
+          <th><span>URL</span></th>
+          <th><span>Latitude</span></th>
+          <th><span>Longitude</span></th>
+        </tr>
+      </thead>
+      <tbody><?php
 
-      <h4>Find Geocodes</h4>
-        <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-          <input type="hidden" name="gj_hidden" value="Y"/>
-          <input type="hidden" name="geocode" value="1"/>
-          <p class="submit"><input type="submit" value="<?php _e('Find Geocodes', 'gj_trdom' ) ?>" /></p>
-        </form>
 
-      <h4>Edit POIs</h4>
+      foreach ($poi as $point) { ?>
 
-        <?php
+        <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>">
+          <input type="hidden" name="<?php echo $point->id; ?>[id]" value="<?php echo $point->id; ?>">
+          <input type="hidden" class="mode" name="<?php echo $point->id; ?>[mode]" value="">
+          <th class="check-column">
+            <input type="checkbox" name="<?php echo $point->id; ?>[delete]">
+          </th>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[name]" value="<?php echo $point->name; ?>"></td>
+          <td>
+            <select class="detect-change" name="<?php echo $point->id; ?>[cat_id]"><?php
 
-        foreach ($poi as $index=>$object) {
-        ?>
-          <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-          <input type="hidden" name="gj_hidden" value="Y"/>
-          <input type="hidden" name="id" value="<?php echo $object->id; ?>"/>
+              foreach ($cat as $key=>$value) {
 
-          <label for="name">Name: 
-          <input type="text" name="name" placeholder="Name" value="<?php echo $object->name; ?>"/>
-          </label>
+                if ( $point->cat_id == $value->id ) {
+                  echo "<option value='$value->id' selected>$value->name</option>";
+                } else {
+                  echo "<option value='$value->id'>$value->name</option>";
+                }
 
-          <label for="cat_id">Category: 
-          <select name="cat_id">
-            <?php 
-            foreach ($cat as $key=>$value) {
-              
-              if ( $object->cat_id == $value->id ) {
-                echo "<option value='$value->id' selected>$value->name</option>";
-              } else {
-                echo "<option value='$value->id'>$value->name</option>";
-              }
-            }
+              } ?>
 
-            ?>
-          </select>
-          </label>
+            </select>
+          </td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[address]" value="<?php echo $point->address; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[city]" value="<?php echo $point->city; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[state]" value="<?php echo $point->state; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[zip]" value="<?php echo $point->zip; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[country]" value="<?php echo $point->country; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[phone]" value="<?php echo $point->phone; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[url]" value="<?php echo $point->url; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[lat]" id="lat<?php echo $point->id; ?>" value="<?php echo $point->lat; ?>"></td>
+          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[lng]" id="lng<?php echo $point->id; ?>" value="<?php echo $point->lng; ?>"></td><?php
+      } ?>
 
-          <label for="address">Street Address: 
-          <input type="text" name="address" placeholder="Street Address" value="<?php echo $object->address; ?>"/>
-          </label>
+      </tbody>
+    </table>
+  </form>
 
-          <label for="city">City: 
-          <input type="text" name="city" placeholder="City" value="<?php echo $object->city; ?>"/>
-          </label>
+  <div class="gj-buttons">
+    <div class="btn button table-button add-row">Add Row</div>
+    <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+      <input type="hidden" name="gj_hidden" value="Y"/>
+      <input type="hidden" name="geocode" value="1"/>
+      <div class="btn button table-button" type="submit">Find Geocodes</div>
+    </form>
+    <button class="btn button table-button" type="submit">Update Settings</button>
+    <form name="gj_maps_map_settings" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+      <input type="hidden" name="form_name" value="gj_maps_map_settings">
+      <input type="text" name="name" placeholder="Map Name" value="<?php echo $map[$map_key]->name; ?>"/>
+      <button type="submit" class="btn button">Change Map Name</button>
+    </form>
+  </div>
 
-          <label for="state">State: 
-          <input type="text" name="state" placeholder="State" value="<?php echo $object->state; ?>"/>
-          </label>
-
-          <label for="zip">Zip/Postal Code: 
-          <input type="text" name="zip" placeholder="Zip/Postal Code" value="<?php echo $object->zip; ?>"/>
-          </label>
-
-          <label for="country">Country: 
-          <input type="text" name="country" placeholder="Country" value="<?php echo $object->country; ?>"/>
-          </label>
-
-          <label for="phone">Phone Number: 
-          <input type="text" name="phone" placeholder="Phone Number" value="<?php echo $object->phone; ?>"/>
-          </label>
-
-          <label for="url">URL: 
-          <input type="text" name="url" placeholder="URL" value="<?php echo $object->url; ?>"/>
-          </label>
-
-          <label for="lat">Latitude: 
-          <input type="text" name="lat" placeholder="Latitude" id="lat<?php echo $object->id; ?>" value="<?php echo $object->lat; ?>"/>
-          </label>
-
-          <label for="lng">Longitude: 
-          <input type="text" name="lng" placeholder="Longitude" id="lng<?php echo $object->id; ?>" value="<?php echo $object->lng; ?>"/>
-          </label>
-
-          <br />
-
-          <label for="delete">Delete this POI? : 
-          <input type="checkbox" name="delete"/>
-          </label>
-
-          <br />
-          <input type="submit" name="Submit" value="<?php _e('Submit Changes', 'gj_trdom' ) ?>" />
-
-          </form>
-
-        <br /><hr /><br />
-        <?php } ?>
-
+  <div class="tablenav bottom">
+    <div class="tablenav-pages">
+      <span class="displaying-num"><?php echo $pagination['total_items'].' items'; ?></span>
+      <span class="pagination-links"><a class="first-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the first page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=1">«</a>
+      <a class="prev-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the previous page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] - 1 > 0 ? $pagination['current_page'] - 1 : $pagination['current_page']; ?>">‹</a>
+      <span class="paging-input"><?php echo $pagination['current_page']; ?> of <span class="total-pages"><?php echo $pagination['pages'] == 0 ? '1' : $pagination['pages']; ?></span></span>
+      <a class="next-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the next page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? $pagination['current_page'] : $pagination['current_page'] + 1; ?>">›</a>
+      <a class="last-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the last page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['pages']; ?>">»</a></span>
     </div>
+  </div>
+
+</div>

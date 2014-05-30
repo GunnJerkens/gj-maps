@@ -14,6 +14,105 @@ class gjMapsAdmin {
   }
 
   /*
+  * GJ-Maps Functions
+  */
+
+  // if (isset($_POST['id']) && $_POST['id']) {
+
+  //   if (isset($_POST['delete'])) {
+  //     //Delete Selected POI
+  //     deletePOI($_POST['id']);
+  //   } else {
+  //     //Update existing POI
+  //     $poi = array();
+  //     foreach ($_POST as $key=>$value) {
+  //       if ($key !== 'gj_hidden') {
+  //         $poi[$key] = stripslashes($value);
+  //       }
+  //     }
+  //     editPOI($poi);
+  //   }
+
+  // } else if (isset($_POST['geocode'])) {
+  //   //Update geocodes
+  //   global $wpdb;
+
+  //   $query = $GJ_Maps->get_poi('ARRAY_A', 'lat=0');
+
+  //   foreach ($query as $poi) {
+  //     if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
+  //       $address = urlencode($poi["address"].', '.$poi['zip']);
+  //     } else {
+  //       $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+  //     }
+  //     $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+  //     $url .= '&address='.$address;
+
+  //     $response = wp_remote_get( $url );
+  //     if( is_wp_error( $response ) ) {
+  //       $error_message = $response->get_error_message();
+  //       echo "Something went wrong: $error_message";
+  //     }
+
+  //     $response2 = json_decode($response['body']);
+  //     if( $response2 = 'ZERO_RESULTS') {
+  //       echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
+  //       $poi ['lat'] = '0';
+  //       $poi ['lng'] = '0';
+  //     } else {
+  //       $location = $response2->results[0]->geometry->location;
+  //       $poi['lat'] = $location->lat;
+  //       $poi['lng'] = $location->lng;
+  //     }
+  //     editPOI($poi);
+  //   }
+
+  // } else if (isset($_POST['map_settings'])) {
+  //   $ms = array();
+
+  //   $ms['id'] = $map_id;
+  //   $ms['name'] = $_POST['name'];
+  //   $ms['c_lat'] = $_POST['c_lat'];
+  //   $ms['c_lng'] = $_POST['c_lng'];
+  //   $ms['m_zoom'] = $_POST['m_zoom'];
+  //   editMapSettings($ms);
+  // } else {
+  //   //Add new POI
+  //   $poi = array();
+  //   foreach ($_POST as $key=>$value) {
+  //     if ($key !== 'gj_hidden') {
+  //       $poi[$key] = $value;
+  //     }
+  //   }
+
+  //   $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+  //   $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+  //   $url .= '&address='.$address;
+
+  //   $response = wp_remote_get( $url );
+  //   if( is_wp_error( $response ) ) {
+  //     $error_message = $response->get_error_message();
+  //     echo "Something went wrong: $error_message";
+  //   }
+
+  //   $response2 = json_decode($response['body']);
+  //   if( $response2 = 'ZERO_RESULTS') {
+  //     echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
+  //     $poi ['lat'] = '0';
+  //     $poi ['lng'] = '0';
+  //   } else {
+  //     $location = $response2->results[0]->geometry->location;
+  //     $poi['lat'] = $location->lat;
+  //     $poi['lng'] = $location->lng;
+  //   }
+
+  //   $poi ['map_id'] = $map_id;
+  //   $POIs = array($poi);
+  //   savePOI($POIs);
+  // }
+
+
+  /*
   * Options-Settings Functions
   */
 
