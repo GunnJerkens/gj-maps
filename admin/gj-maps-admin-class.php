@@ -17,12 +17,72 @@ class gjMapsAdmin {
   * Options-Settings Functions
   */
 
+  function updateSettings($post) {
+
+    $styles = isset($_POST['use_styles']);
+    update_option('gj_maps_use_styles', $styles);
+
+    $label_color = $_POST['label_color'];
+    update_option('gj_maps_label_color', $label_color);
+
+    $poi_list = isset($_POST['poi_list']);
+    update_option('gj_maps_poi_list', $poi_list);
+
+    $cat_default = $_POST['cat_default'];
+    update_option('gj_maps_cat_default', $cat_default);
+
+    $center_lat = $_POST['center_lat'];
+    update_option('gj_maps_center_lat', $center_lat);
+
+    $center_lng = $_POST['center_lng'];
+    update_option('gj_maps_center_lng', $center_lng);
+
+    $map_zoom = $_POST['map_zoom'];
+    update_option('gj_maps_map_zoom', $map_zoom);
+
+    $map_styles = $_POST['map_styles'];
+    update_option('gj_maps_map_styles', $map_styles);
+
+    $response = $this->gjMapsMessaging('success', 'Settings updated successfully.');
+
+    return $response;
+
+  }
+
+  function getSettings() {
+
+    $style = get_option('gj_maps_use_styles');
+    $label_color = get_option('gj_maps_label_color');
+    $poi_list = get_option('gj_maps_poi_list');
+    $cat_default = get_option('gj_maps_cat_default');
+    $center_lat = get_option('gj_maps_center_lat');
+    $center_lng = get_option('gj_maps_center_lng');
+    $map_zoom = get_option('gj_maps_map_zoom');
+    $map_styles = get_option('gj_maps_map_styles');
+
+    $map_styles_strip = stripslashes($map_styles);
+
+    $settings = array(
+      'use_styles' => $style,
+      'label_color' => $label_color,
+      'poi_list' => $poi_list,
+      'cat_default' => $cat_default,
+      'center_lat' => $center_lat,
+      'center_lng' => $center_lng,
+      'map_zoom' => $map_zoom,
+      'map_styles' => $map_styles_strip
+    );
+
+    return $settings;
+
+  }
+
 
   /*
   * Options-Import Functions
   */
 
-  function importData($uploadedFile, $map = 'new') {
+  function importData($uploadedFile, $mapID) {
 
     ini_set('auto_detect_line_endings',TRUE);
 
@@ -185,10 +245,6 @@ class gjMapsAdmin {
     if($dbResponse !== NULL && $dbResponse !== false) {
 
       $response = $this->gjMapsMessaging('success', $dbResponse);
-
-    } else {
-
-      $response = $this->gjMapsMessaging('error', 'Data failed to delete');
 
     }
 
