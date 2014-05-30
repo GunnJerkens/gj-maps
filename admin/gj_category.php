@@ -1,5 +1,9 @@
   <?php
 
+
+// THIS NEEDS TO BE PORTED INTO gj-maps-maps.php //
+
+
   global $GJ_Maps;
 
   require_once('db.php');

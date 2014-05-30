@@ -9,6 +9,10 @@
  * License: GPL2
  */
 
+require_once(plugin_dir_path(__FILE__).'gj-maps-inject.php');
+require_once(plugin_dir_path(__FILE__).'gj-maps-json-api.php');
+require_once(plugin_dir_path(__FILE__).'admin/gj-maps-admin-class.php');
+require_once(plugin_dir_path(__FILE__).'db/gj-maps-db-class.php');
 
 class gjMaps {
 
@@ -16,54 +20,40 @@ class gjMaps {
 
   function __construct() {
 
-    include('json_api.php');
-
     add_action('admin_menu', array($this, 'admin_actions'));
     add_action('init', array($this, 'register_scripts'));
     add_action('wp_footer', array($this, 'print_scripts'));
     add_action('admin_enqueue_scripts', array($this, 'mw_enqueue_color_picker'));
-
     add_action('wp_enqueue_scripts', array('gjMapsDB', 'get_poi'));
     add_action('wp_enqueue_scripts', array('gjMapsDB', 'get_cat'));
-
-    
 
     register_activation_hook(__FILE__,  array($this, 'table_install'));
 
     $this->api = new gjMapsAPI();
+
   }
 
   function admin_actions() {
-    add_menu_page('GJ Maps', 'GJ Maps', 'administrator', 'gj_maps', array($this, 'admin_edit'));
-    add_submenu_page('gj_maps', 'Categories', 'Categories', 'administrator', 'gj_admin_categories', array($this, 'admin_categories'));
-    add_submenu_page('gj_maps', 'Import CSV', 'Import CSV', 'administrator', 'gj_admin_import', array($this, 'admin_import'));
-    add_submenu_page('gj_maps', 'Settings', 'Settings', 'administrator', 'gj_admin_options', array($this, 'admin_options'));
+    add_menu_page('GJ Maps', 'GJ Maps', 'administrator', 'gj_maps', array($this, 'admin_edit'), 'dashicons-location-alt');
+    add_submenu_page('gj_maps', 'Options', 'Options', 'administrator', 'gj_maps_options', array($this, 'admin_options'));
   }
 
   function admin_edit() { 
-    include('admin/gj_admin.php');
-  }
-
-  function admin_categories() {
-    include('admin/gj_category.php');
-  }
-
-  function admin_import() {
-    include('admin/gj_import.php');
+    include('admin/gj-maps-maps.php');
   }
 
   function admin_options() {
-    include('admin/gj_options.php');
+    include('admin/gj-maps-options.php');
   }
 
   function register_scripts() {
 
     wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-    wp_register_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/js/main.js', array('jquery', 'google-maps'), null, true);
+    wp_register_script('gj-maps', plugin_dir_path(__FILE__).'/gj-maps/js/main.js', array('jquery', 'google-maps'), null, true);
 
     if (get_option('gj_styles') && !(is_admin()) ) {
 
-      wp_register_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/style/screen.css', null, true);
+      wp_register_style('gj-maps-style', plugin_dir_path(__FILE__).'/gj-maps/style/screen.css', null, true);
 
     }
 

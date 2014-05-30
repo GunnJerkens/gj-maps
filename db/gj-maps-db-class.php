@@ -2,6 +2,59 @@
 
 class gjMapsDB {
 
+  private $wpdb;
+
+  function __construct() {
+
+    global $wpdb;
+
+    $this->wpdb = $wpdb;
+
+  }
+
+  function deleteAllData() {
+
+    $response['cat'] = $this->deleteAllCat();
+    $response['maps'] = $this->deleteAllMaps();
+    $response['poi'] = $this->deleteAllPOI();
+
+    return $response;
+
+  }
+
+  /*
+  * Table Name Functions
+  */
+
+  function mapsTable() {
+
+    $table = $this->wpdb->prefix.'gjm_maps';
+
+    return $table;
+
+  }
+
+  function poiTable() {
+
+    $table = $this->wpdb->prefix.'gjm_poi';
+
+    return $table;
+
+  }
+
+  function catTable() {
+
+    $table = $this->wpdb->prefix.'gjm_cat';
+
+    return $table;
+
+  }
+
+
+  /*
+  * Map Database Functions
+  */
+
   function saveMap ($id) {
 
     global $wpdb;
@@ -33,6 +86,22 @@ class gjMapsDB {
     );
 
   }
+
+  function deleteAllMaps() {
+
+    $table_name = $this->mapsTable();
+
+    $response = $this->wpdb->query(
+      "TRUNCATE TABLE $table_name"
+    );
+
+    return $response;
+
+  }
+
+  /*
+  * POI Database Functions
+  */
 
   function savePOI ($poi) {
 
@@ -104,6 +173,22 @@ class gjMapsDB {
      }
   }
 
+  function deleteAllPOI() {
+
+    $table_name = $this->poiTable();
+
+    $response = $this->wpdb->query(
+      "TRUNCATE TABLE $table_name"
+    );
+
+    return $response;
+
+  }
+
+  /*
+  * Category Database Functions
+  */
+
   function saveCat ($cat) {
 
     global $wpdb;
@@ -141,6 +226,22 @@ class gjMapsDB {
     );
 
   }
+
+  function deleteAllCat() {
+
+    $table_name = $this->catTable();
+
+    $response = $this->wpdb->query(
+      "TRUNCATE TABLE $table_name"
+    );
+
+    return $response;
+
+  }
+
+  /*
+  * Retrieval Database Functions
+  */
 
   function get_poi($type='OBJECT', $where='1=1') {
     //Allows you to set the type of the return value (assc. array or stdClass) and the WHERE clause, if necessary
