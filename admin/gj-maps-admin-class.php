@@ -246,10 +246,6 @@ class gjMapsAdmin {
 
       $response = $this->gjMapsMessaging('success', $dbResponse);
 
-    } else {
-
-      $response = $this->gjMapsMessaging('error', 'Data failed to delete');
-
     }
 
     return $response;

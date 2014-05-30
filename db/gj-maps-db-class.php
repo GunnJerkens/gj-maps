@@ -15,8 +15,8 @@ class gjMapsDB {
   function deleteAllData() {
 
     $response['poi'] = $this->deleteAllPOI();
-    $response['cat'] = $this->deleteAllCat();
     $response['maps'] = $this->deleteAllMaps();
+    $response['cat'] = $this->deleteAllCat();
 
     return $response;
 

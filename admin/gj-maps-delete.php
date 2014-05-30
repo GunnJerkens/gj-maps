@@ -16,6 +16,8 @@ if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_maps_delete') {
 
   } 
 
+var_dump($response);
+
 } ?>
 
 
