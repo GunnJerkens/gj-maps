@@ -82,7 +82,7 @@ class gjMapsAdmin {
   * Options-Import Functions
   */
 
-  function importData($uploadedFile, $map = 'new') {
+  function importData($uploadedFile, $mapID) {
 
     ini_set('auto_detect_line_endings',TRUE);
 

@@ -55,24 +55,58 @@ class gjMapsDB {
   * Map Database Functions
   */
 
-  function saveMap ($id) {
+  function maxMapID() {
 
-    global $wpdb;
-    $table_name = $wpdb->prefix . "gjm_maps";
+    $table_name = $this->mapsTable();
 
-    $rows_affected = $wpdb->insert(
+    $maxMapID = $this->wpdb->get_results(
+      "
+      SELECT MAX(id)
+      FROM $table_name
+      "
+    );
+
+    return $maxMapID;
+
+  }
+
+  function getMapID($name, $type='OBJECT') {
+
+    $table_name = $this->mapsTable();
+    $where = "name = '$name'";
+
+    $query = $this->wpdb->get_results(
+      "
+      SELECT *
+      FROM $table_name
+      WHERE $where
+      ",
+      $type
+    );
+
+    return $query;
+
+  }
+
+  function saveMap($id) {
+
+    $table_name = $this->mapsTable();
+
+    $rows_affected = $this->wpdb->insert(
       $table_name,
       array(
         'id'=>$id,
         'name'=>'Map ' . $id,
       )
     );
+
+    return $rows_affected;
+
   }
 
   function editMapSettings($ms) {
 
-    global $wpdb;
-    $table_name = $wpdb->prefix . "gjm_maps";
+    $table_name = $this->mapsTable();
 
     $rows_affected = $wpdb->update(
       $table_name, 

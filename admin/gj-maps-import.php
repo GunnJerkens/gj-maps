@@ -1,20 +1,38 @@
 <?php
 
-// var_dump($_FILES);
-var_dump($_POST);
+$databaseFunctions = new gjMapsDB(); 
 
 if(isset($_FILES['file']) && isset($_POST)) {
 
-  $adminFunctions = new gjMapsAdmin();
-  $response = $adminFunctions->importData($_FILES['file'], $_POST['map']);
+  if($_POST['map'] === 'new') {
 
-} else {
-  
+    $maxID = $databaseFunctions->maxMapID();
+    $mapID = $maxID + 1;
+
+  } else {
+
+    $mapID = $databaseFunctions->getMapID($_POST['map']);
+    $mapID = $mapID[0]->id;
+
+  }
+
+  $adminFunctions = new gjMapsAdmin();
+  $response = $adminFunctions->importData($_FILES['file'], $mapID);
+
+  if($response['status'] === 'success') {
+
+    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+
+  } else {
+
+    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+
+  }
+
 }
 
-
-$databaseFunctions = new gjMapsDB(); 
 $maps = $databaseFunctions->get_map(); ?>
+
 
 <div class="wrap">
   <form name="gj_maps_upload" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
