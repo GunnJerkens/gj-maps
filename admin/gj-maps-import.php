@@ -1,22 +1,23 @@
 <?php
 
+// var_dump($_FILES);
 var_dump($_POST);
 
-
-if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_maps_upload') {
+if(isset($_FILES['file']) && isset($_POST)) {
 
   $adminFunctions = new gjMapsAdmin();
+  $response = $adminFunctions->importData($_FILES['file'], $_POST['map']);
 
-  $response = $adminFunctions->importData($_POST);
-
+} else {
+  
 }
+
 
 $databaseFunctions = new gjMapsDB(); 
 $maps = $databaseFunctions->get_map(); ?>
 
 <div class="wrap">
   <form name="gj_maps_upload" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-    <input type="hidden" name="gj_hidden" value="gj_maps_upload">
     <table class="form-table">
       <tr>
         <th><label for="file">Choose CSV</label></th>
