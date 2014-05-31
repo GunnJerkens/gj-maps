@@ -1,55 +1,98 @@
 <?php
 
-  $databaseFunctions = new gjMapsDB();
+$databaseFunctions = new gjMapsDB();
+$adminFunctions = new gjMapsAdmin();
 
+/*
+* This is our POST handling
+*/
 
+// var_dump($_POST);
 
-  /*
-  * This is the maps tabbing system
-  */
+if(!empty($_POST)) {
 
-  $map_id = isset($_GET['map_id']) ? $_GET['map_id'] : '1';
-  $map = $databaseFunctions->get_map();
-  $map_key = $databaseFunctions->get_map_key($map_id, $map);
-  $last_map = end($map)->id;
+  if($_POST['form_name'] === 'gj_maps_map_name') {
 
-  var_dump($map_key);
-  var_dump($map_id);
-
-  var_dump($map);
-
-
-  if ($map_id > $last_map) { //If map does not exist, add new map
-    saveMap($map_id);
-    $map = $GJ_Maps->get_map();
-    $last_map = end($map)->id; // Use the maxMapID DB call here!
-  }
-
-  echo '<h2 class="nav-tab-wrapper">';
-
-  foreach ($map as $key => $value) {
-
-    echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab'.($map_id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
+    $response = $adminFunctions->renameMap($_POST);
 
   }
 
-  echo '<a href="?page=gj_maps&map_id='.($last_map + 1).'" class="nav-tab">+</a>';
-  echo '</h2>';
+  if($_POST['form_name'] === 'geocode') {
 
-  /*
-  * These calls are for retrieving the POI data for the table.
-  */
+    $response = $adminFunctions->geocodePOI();
 
-  $poi = $databaseFunctions->get_poi($type='OBJECT', 'map_id=' . $map_id);
-  $cat = $databaseFunctions->get_cat();
+  }
 
-  // var_dump($poi);
+  var_dump($response);
 
-  ?>
+}
+
+/*
+* This is the maps tabbing system
+*/
+
+$map_id = $adminFunctions->tabsMapID($_GET);
+$map = $databaseFunctions->get_map();
+
+echo '<h2 class="nav-tab-wrapper">';
+
+foreach ($map as $key => $value) {
+
+  echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab'.($map_id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
+
+  if($value->id === $map_id) {
+    $map_name = $value->name;
+  } else {
+    $map_name = $map[0];
+    $map_name = $map_name->name;
+  }
+
+}
+
+  echo '<a href="?page=gj_maps&map_id=new" class="nav-tab">+</a>';
+
+echo '</h2>';
+
+
+/*
+* These calls are for retrieving the POI data for the table.
+*/
+
+$poi = $databaseFunctions->get_poi($type='OBJECT', 'map_id=' . $map_id);
+$cat = $databaseFunctions->get_cat();
+echo '<script>var cat = '.(json_encode($cat)).';</script>';
+
+/*
+* This is our response messaging
+*/
+
+
+
+if($response['status'] === 'success') {
+
+  echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+
+} else if ($response['status'] === 'error') {
+
+  echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+
+} ?>
+
 
 <div class="wrap">
 
-  <h4>POI</h4>
+  <form name="gj_maps_geocode" class="top-form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <input type="hidden" name="form_name" value="geocode"/>
+    <button type="submit" class="btn button">Find Geocodes</button>
+  </form>
+
+  <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <input type="hidden" name="form_name" value="gj_maps_map_name">
+    <input type="hidden" name="id" value="<?php echo $map_id; ?>">
+    <input type="text" name="name" placeholder="Map Name" value="<?php echo $map_name; ?>"/>
+    <button type="submit" class="btn button">Change Map Name</button>
+  </form>
+
   <form name="gj_maps_poi" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
     <input type="hidden" name="form_name" value="gj_maps_poi">
     <table class="wp-list-table widefat fixed gj-maps">
@@ -80,53 +123,44 @@
           <input type="hidden" name="<?php echo $point->id; ?>[id]" value="<?php echo $point->id; ?>">
           <input type="hidden" class="mode" name="<?php echo $point->id; ?>[mode]" value="">
           <th class="check-column">
-            <input type="checkbox" name="<?php echo $point->id; ?>[delete]">
+            <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $point->id; ?>[delete]">
           </th>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[name]" value="<?php echo $point->name; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[name]" value="<?php echo $point->name; ?>"></td>
           <td>
-            <select class="detect-change" name="<?php echo $point->id; ?>[cat_id]"><?php
+            <select class="maps-detect-change" name="<?php echo $point->id; ?>[cat_id]"><?php
 
               foreach ($cat as $key=>$value) {
 
                 if ( $point->cat_id == $value->id ) {
-                  echo "<option value='$value->id' selected>$value->name</option>";
+                  echo '<option value='.$value->id.' selected>'.$value->name.'</option>';
                 } else {
-                  echo "<option value='$value->id'>$value->name</option>";
+                  echo '<option value='.$value->id.'>'.$value->name.'</option>';
                 }
 
               } ?>
 
             </select>
           </td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[address]" value="<?php echo $point->address; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[city]" value="<?php echo $point->city; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[state]" value="<?php echo $point->state; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[zip]" value="<?php echo $point->zip; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[country]" value="<?php echo $point->country; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[phone]" value="<?php echo $point->phone; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[url]" value="<?php echo $point->url; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[lat]" id="lat<?php echo $point->id; ?>" value="<?php echo $point->lat; ?>"></td>
-          <td><input type="text" class="detect-change full-width" name="<?php echo $point->id; ?>[lng]" id="lng<?php echo $point->id; ?>" value="<?php echo $point->lng; ?>"></td><?php
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[address]" value="<?php echo $point->address; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[city]" value="<?php echo $point->city; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[state]" value="<?php echo $point->state; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[zip]" value="<?php echo $point->zip; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[country]" value="<?php echo $point->country; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[phone]" value="<?php echo $point->phone; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[url]" value="<?php echo $point->url; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[lat]" id="lat<?php echo $point->id; ?>" value="<?php echo $point->lat; ?>"></td>
+          <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[lng]" id="lng<?php echo $point->id; ?>" value="<?php echo $point->lng; ?>"></td><?php
       } ?>
-
+        </tr>
       </tbody>
     </table>
-  </form>
 
-  <div class="gj-buttons">
-    <div class="btn button table-button add-row">Add Row</div>
-    <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-      <input type="hidden" name="gj_hidden" value="Y"/>
-      <input type="hidden" name="geocode" value="1"/>
-      <div class="btn button table-button" type="submit">Find Geocodes</div>
-    </form>
-    <button class="btn button table-button" type="submit">Update Settings</button>
-    <form name="gj_maps_map_settings" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-      <input type="hidden" name="form_name" value="gj_maps_map_settings">
-      <input type="text" name="name" placeholder="Map Name" value="<?php echo $map[$map_key]->name; ?>"/>
-      <button type="submit" class="btn button">Change Map Name</button>
-    </form>
-  </div>
+    <div class="gj-buttons">
+      <div class="btn button table-button add-row">Add Row</div>
+      <button class="btn button table-button" type="submit">Update POI</button>
+    </div>
+
+  </form>
 
   <div class="tablenav bottom">
     <div class="tablenav-pages">

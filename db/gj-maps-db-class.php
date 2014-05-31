@@ -73,28 +73,6 @@ class gjMapsDB {
 
   }
 
-  /*
-  * I don't know what this does?
-  * It should probably move to the admin-class, it's not a db function?
-  */
-  // function get_map_key($id, $obj) {
-
-  //   $mapKey = false;
-
-  //   foreach ($obj as $key => $value) {
-
-  //     if ($value->id == $id) {
-
-  //       $mapKey = $key;
-
-  //     }
-
-  //   }
-
-  //   return $mapKey;
-
-  // }
-
   function maxMapID() {
 
     $table_name = $this->mapsTable();
@@ -128,6 +106,24 @@ class gjMapsDB {
 
   }
 
+  function getMapName($id, $type='OBJECT') {
+
+    $table_name = $this->mapsTable();
+    $where = "id = '$id'";
+
+    $query = $this->wpdb->get_results(
+      "
+      SELECT *
+      FROM $table_name
+      WHERE $where
+      ",
+      $type
+    );
+
+    return $query;
+
+  }
+
   function saveMap($id) {
 
     $table_name = $this->mapsTable();
@@ -144,19 +140,16 @@ class gjMapsDB {
 
   }
 
-  function editMapSettings($ms) {
+  function editMapSettings($post) {
 
     $table_name = $this->mapsTable();
 
     $insert = $this->wpdb->update(
       $table_name, 
       array(
-        'name'=>$ms['name'],
-        'c_lat'=>$ms['c_lat'],
-        'c_lng'=>$ms['c_lng'],
-        'm_zoom'=>$ms['m_zoom']
+        'name'=>$post['name']
       ),
-      array('id'=>$ms['id'])
+      array('id'=>$post['id'])
     );
 
     return $insert;
