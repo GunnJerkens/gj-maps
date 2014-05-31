@@ -7,8 +7,6 @@ $adminFunctions = new gjMapsAdmin();
 * This is our POST handling
 */
 
-// var_dump($_POST);
-
 if(!empty($_POST)) {
 
   if($_POST['form_name'] === 'gj_maps_map_name') {
@@ -23,7 +21,22 @@ if(!empty($_POST)) {
 
   }
 
-  var_dump($response);
+  if($_POST['form_name'] === 'gj_maps_poi' ) {
+
+    foreach($_POST as $post) {
+
+      if($post['mode'] === 'update') {
+
+        $updateItems[] = $post;
+        $response = $adminFunctions->editPOI($updateItems);
+
+      }
+
+    }
+
+    var_dump($updateItems);
+
+  }
 
 }
 

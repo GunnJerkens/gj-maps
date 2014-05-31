@@ -79,19 +79,24 @@ class gjMapsAdmin {
       editPOI($poi);
     }
 
-  } 
-
-
+  }
 
   function editPOI($post) {
-    $ms = array();
 
-    $ms['id'] = $map_id;
-    $ms['name'] = $_POST['name'];
-    $ms['c_lat'] = $_POST['c_lat'];
-    $ms['c_lng'] = $_POST['c_lng'];
-    $ms['m_zoom'] = $_POST['m_zoom'];
-    editMapSettings($ms);
+    $databaseFunctions = new gjMapsDB();
+    
+    $poi = array();
+    
+    foreach ($post as $key=>$value) {
+      if ($key !== 'gj_hidden') {
+    
+        $poi[$key] = stripslashes($value);
+    
+      }
+    }
+    
+    $databaseFunctions->editPOI($poi);
+  
   }
 
   function addPOI($post) {
@@ -154,7 +159,7 @@ class gjMapsAdmin {
 
         $error_message = $googleResponseEncoded->get_error_message();
 
-        $response[] = $this->gjMapsMessaging('error', $error_message);
+        $response = $this->gjMapsMessaging('error', $error_message);
 
       }
 
@@ -163,7 +168,7 @@ class gjMapsAdmin {
 
       if( $googleResponse === 'ZERO_RESULTS') {
 
-        $response[] = $this->gjMapsMessaging('error', "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />");
+        $response = $this->gjMapsMessaging('error', "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />");
         $poi['lat'] = '0';
         $poi['lng'] = '0';
 
@@ -175,10 +180,17 @@ class gjMapsAdmin {
 
       }
 
-      $response[] = $databaseFunctions->editPOI($poi);
+      $response = $databaseFunctions->editPOI($poi);
 
-      // var_dump($derp);
+    }
 
+    if($response === 1) {
+
+      $response = $this->gjMapsMessaging('success', 'POI updated successfully');
+
+    } else if ($response === NULL) {
+
+      $response = $this->gjMapsMessaging('success', 'No POI needed updating.');
     }
 
     return $response;

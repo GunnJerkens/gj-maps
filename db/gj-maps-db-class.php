@@ -219,27 +219,31 @@ class gjMapsDB {
 
   }
 
-  function editPOI ($poi) {
+  function editPOI($editItems) {
 
     $table_name = $this->poiTable();
 
-    $update = $this->wpdb->update(
-      $table_name,
-      array(
-        'cat_id'=>$poi['cat_id'],
-        'name'=>$poi['name'],
-        'address'=>$poi['address'],
-        'city'=>$poi['city'],
-        'state'=>$poi['state'],
-        'zip'=>$poi['zip'],
-        'country'=>$poi['country'],
-        'phone'=>$poi['phone'],
-        'url'=>$poi['url'],
-        'lat'=>$poi['lat'],
-        'lng'=>$poi['lng']
-      ),
-      array( 'id'=>$poi['id'] )
-    );
+    foreach($editItems as $poi) {
+
+      $update = $this->wpdb->update(
+        $table_name,
+        array(
+          'cat_id'=>$poi['cat_id'],
+          'name'=>$poi['name'],
+          'address'=>$poi['address'],
+          'city'=>$poi['city'],
+          'state'=>$poi['state'],
+          'zip'=>$poi['zip'],
+          'country'=>$poi['country'],
+          'phone'=>$poi['phone'],
+          'url'=>$poi['url'],
+          'lat'=>$poi['lat'],
+          'lng'=>$poi['lng']
+        ),
+        array( 'id'=>$poi['id'] )
+      );
+
+    }
 
     return $update;
 
