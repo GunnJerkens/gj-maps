@@ -34,8 +34,6 @@ if(!empty($_POST)) {
 
     }
 
-    var_dump($updateItems);
-
   }
 
 }
@@ -51,18 +49,20 @@ echo '<h2 class="nav-tab-wrapper">';
 
 foreach ($map as $key => $value) {
 
-  echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab'.($map_id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
+  echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab '.($map_id === $value->id ? 'nav-tab-active' : '').'">'.$value->name.'</a>';
 
   if($value->id === $map_id) {
     $map_name = $value->name;
-  } else {
-    $map_name = $map[0];
-    $map_name = $map_name->name;
   }
 
 }
 
-  echo '<a href="?page=gj_maps&map_id=new" class="nav-tab">+</a>';
+if(!isset($map_name)) {
+  $map_name = $map[0];
+  $map_name = $map_name->name;
+}
+
+echo '<a href="?page=gj_maps&map_id=new" class="nav-tab">+</a>';
 
 echo '</h2>';
 

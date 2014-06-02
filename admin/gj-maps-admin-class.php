@@ -2,6 +2,14 @@
 
 class gjMapsAdmin {
 
+  private $databaseFunctions;
+
+  function __construct() {
+
+    $this->databaseFunctions = new gjMapsDB();
+
+  }
+
   function gjMapsMessaging($status, $message) {
 
     $response = array (
@@ -21,12 +29,12 @@ class gjMapsAdmin {
 
     if(isset($getData['map_id']) && $getData['map_id'] === 'new') {
 
-      $maxMapID = $databaseFunctions->maxMapID();
+      $maxMapID = $this->databaseFunctions->maxMapID();
       $maxMapID = (array) $maxMapID[0];
       $maxMapID = (int) $maxMapID['MAX(id)'];
       $maxMapID = $maxMapID + 1;
 
-      $databaseFunctions->saveMap($maxMapID);
+      $this->databaseFunctions->saveMap($maxMapID);
       $map_id = $maxMapID;
 
     } else if (isset($getData['map_id'])) {
@@ -45,9 +53,7 @@ class gjMapsAdmin {
 
   function renameMap($post) {
 
-    $databaseFunctions = new gjMapsDB();
-
-    $response = $databaseFunctions->editMapSettings($post);
+    $response = $this->databaseFunctions->editMapSettings($post);
 
     if($response > 0) {
 
@@ -83,7 +89,6 @@ class gjMapsAdmin {
 
   function editPOI($post) {
 
-    $databaseFunctions = new gjMapsDB();
     
     $poi = array();
     
@@ -95,7 +100,7 @@ class gjMapsAdmin {
       }
     }
     
-    $databaseFunctions->editPOI($poi);
+    $this->databaseFunctions->editPOI($poi);
   
   }
 
@@ -135,8 +140,7 @@ class gjMapsAdmin {
 
   function geocodePOI() {
 
-    $databaseFunctions = new gjMapsDB();
-    $query = $databaseFunctions->get_poi('ARRAY_A', 'lat=0');
+    $query = $this->databaseFunctions->get_poi('ARRAY_A', 'lat=0');
 
     foreach ($query as $poi) {
 
@@ -180,7 +184,7 @@ class gjMapsAdmin {
 
       }
 
-      $response = $databaseFunctions->editPOI($poi);
+      $response = $this->databaseFunctions->editPOI($poi);
 
     }
 
@@ -273,6 +277,22 @@ class gjMapsAdmin {
 
   function importData($uploadedFile, $mapID) {
 
+    var_dump($mapID);
+
+    if($mapID === 'new') {
+
+      $maxID = $this->databaseFunctions->maxMapID();
+      $maxID = (array) $maxID[0];
+
+      if($maxID['MAX(id)'] != NULL) {
+        $mapID = ((int) $maxID['MAX(id)']) + 1;
+      }
+
+      $this->databaseFunctions->saveMap($mapID);
+
+    }
+
+
     ini_set('auto_detect_line_endings',TRUE);
 
     $error = false;
@@ -312,7 +332,8 @@ class gjMapsAdmin {
 
       } else {
 
-        $error = true;
+        echo "COUNTS DIDN'T MATCH YO";
+        exit();
 
       }
 
@@ -320,8 +341,8 @@ class gjMapsAdmin {
 
     unset($poi[0]);
 
-    $databaseFunctions = new gjMapsDB();
-    $cat = $databaseFunctions->get_cat('ARRAY_A');
+    $cat = $this->databaseFunctions->get_cat('ARRAY_A');
+
     $cats = array();
 
     foreach ($cat as $key=>$value) {
@@ -365,6 +386,8 @@ class gjMapsAdmin {
 
       }
 
+      $poi[$key]['map_id'] = $mapID;
+
       if (isset($cats[$value['category']])) {
 
         $poi[$key]['cat_id'] = $cats[$value['category']]->id;
@@ -379,7 +402,9 @@ class gjMapsAdmin {
 
     }
 
-    $response = $databaseFunctions->savePOI($poi);
+    var_dump($poi);
+
+    $response = $this->databaseFunctions->savePOI($poi);
     $error = $response;
 
     if(!error) {
@@ -387,8 +412,6 @@ class gjMapsAdmin {
     } else {
       $response = $this->gjMapsMessaging('success', 'CSV uploaded successfully.');
     }
-
-
 
     return $response;
 
@@ -400,9 +423,6 @@ class gjMapsAdmin {
 
   function deleteData($post) {
 
-    $databaseFunctions = new gjMapsDB();
-    
-
     if($post['delete'] === 'default') {
 
       $response = $this->gjMapsMessaging('error', 'You must select data to delete');
@@ -410,19 +430,19 @@ class gjMapsAdmin {
 
     } else if ($post['delete'] === 'delete_categories') {
 
-      $dbResponse = $databaseFunctions->deleteAllCat();
+      $dbResponse = $this->databaseFunctions->deleteAllCat();
 
     } else if ($post['delete'] === 'delete_maps') {
 
-      $dbResponse = $databaseFunctions->deleteAllMaps();
+      $dbResponse = $this->databaseFunctions->deleteAllMaps();
 
     } else if ($post['delete'] === 'delete_poi') {
 
-      $dbResponse = $databaseFunctions->deleteAllPOI();
+      $dbResponse = $this->databaseFunctions->deleteAllPOI();
 
     } else if ($post['delete'] === 'delete_all') {
 
-      $dbResponse = $databaseFunctions->deleteAllData();
+      $dbResponse = $this->databaseFunctions->deleteAllData();
 
     } else {
 

@@ -16,8 +16,6 @@ require_once(plugin_dir_path(__FILE__).'db/gj-maps-db-class.php');
 
 class gjMaps {
 
-  private $loadJS;
-
   function __construct() {
 
     add_action('admin_menu', array($this, 'admin_actions'));
@@ -75,16 +73,12 @@ class gjMaps {
 
   function print_scripts() {
 
-    if ($this->loadJS) {
+    wp_print_scripts('google-maps');
+    wp_print_scripts('gj-maps');
 
-      wp_print_scripts('google-maps');
-      wp_print_scripts('gj-maps');
+    if (get_option('gj_styles') && !(is_admin()) ) {
 
-      if (get_option('gj_styles') && !(is_admin()) ) {
-
-        wp_print_styles('gj-maps-style');
-
-      }
+      wp_print_styles('gj-maps-style');
 
     }
 

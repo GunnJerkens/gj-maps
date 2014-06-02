@@ -1,22 +1,20 @@
 <?php
 
-$databaseFunctions = new gjMapsDB(); 
+$databaseFunctions = new gjMapsDB();
+$adminFunctions = new gjMapsAdmin();
 
 if(isset($_FILES['file']) && isset($_POST)) {
 
   if($_POST['map'] === 'new') {
 
-    $maxID = $databaseFunctions->maxMapID();
-    $mapID = $maxID + 1;
+    $mapID = 'new';
 
   } else {
 
-    $mapID = $databaseFunctions->getMapID($_POST['map']);
-    $mapID = $mapID[0]->id;
+    $mapID = $_POST['map'];
 
   }
 
-  $adminFunctions = new gjMapsAdmin();
   $response = $adminFunctions->importData($_FILES['file'], $mapID);
 
   if($response['status'] === 'success') {
