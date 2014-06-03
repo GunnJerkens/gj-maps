@@ -215,7 +215,6 @@ class gjMapsDB {
 
     }
 
-    var_dump($insert);
     return $insert;
 
   }

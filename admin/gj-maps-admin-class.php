@@ -69,21 +69,35 @@ class gjMapsAdmin {
 
   }
 
-  function deletePOI($post) {
+  function deletePOI($deleteItems) {
 
-    // if (isset($_POST['delete'])) {
-    //   //Delete Selected POI
-    //   deletePOI($_POST['id']);
-    // } else {
-    //   //Update existing POI
-    //   $poi = array();
-    //   foreach ($_POST as $key=>$value) {
-    //     if ($key !== 'gj_hidden') {
-    //       $poi[$key] = stripslashes($value);
-    //     }
-    //   }
-    //   editPOI($poi);
-    // }
+    foreach($deleteItems as $item) {
+
+      $responses[] = $this->databaseFunctions->deletePOI($item['id']);
+
+    }
+
+    foreach($responses as $response) {
+
+      if($response !== 1) {
+
+        $hasError = true;
+
+      }
+
+    }
+
+    if(!$hasError) {
+
+      $response = $this->gjMapsMessaging('success', 'Items deleted successfully.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('error', 'Some items failed to delete');
+
+    }
+
+    return $response;
 
   }
 
