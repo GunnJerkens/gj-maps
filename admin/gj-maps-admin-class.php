@@ -71,71 +71,88 @@ class gjMapsAdmin {
 
   function deletePOI($post) {
 
-    if (isset($_POST['delete'])) {
-      //Delete Selected POI
-      deletePOI($_POST['id']);
-    } else {
-      //Update existing POI
-      $poi = array();
-      foreach ($_POST as $key=>$value) {
-        if ($key !== 'gj_hidden') {
-          $poi[$key] = stripslashes($value);
-        }
-      }
-      editPOI($poi);
-    }
+    // if (isset($_POST['delete'])) {
+    //   //Delete Selected POI
+    //   deletePOI($_POST['id']);
+    // } else {
+    //   //Update existing POI
+    //   $poi = array();
+    //   foreach ($_POST as $key=>$value) {
+    //     if ($key !== 'gj_hidden') {
+    //       $poi[$key] = stripslashes($value);
+    //     }
+    //   }
+    //   editPOI($poi);
+    // }
 
   }
 
   function editPOI($post) {
 
-    
-    $poi = array();
-    
-    foreach ($post as $key=>$value) {
-      if ($key !== 'gj_hidden') {
-    
-        $poi[$key] = stripslashes($value);
-    
-      }
+    $editPOI = $this->databaseFunctions->editPOI($post);
+
+    if($editPOI) {
+
+      $this->gjMapsMessaging('success', 'Points of interest updated successfully.');
+
+    } else {
+
+      $this->gjMapsMessaging('error', 'Something went wrong during the update process.');
+
     }
-    
-    $this->databaseFunctions->editPOI($poi);
   
   }
 
-  function addPOI($post) {
-    $poi = array();
-    foreach ($_POST as $key=>$value) {
-      if ($key !== 'gj_hidden') {
-        $poi[$key] = $value;
+  function createPOI($poi) {
+
+    foreach($poi as $singlePOI) {
+
+      $address = urlencode($singlePOI["address"].', '.$singlePOI['city'].', '.$singlePOI['state'].' '.$singlePOI['zip']);
+      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+      $url .= '&address='.$address;
+
+      $googleResponseEncoded = wp_remote_get($url);
+
+      if(is_wp_error($googleResponseEncoded)) {
+
+        // This is an error!
+
       }
+
+      $googleResponse = json_decode($googleResponseEncoded['body']);
+      if( $googleResponse === 'ZERO_RESULTS') {
+
+        $singlePOI['lat'] = '0';
+        $singlePOI['lng'] = '0';
+
+        // This is an error!
+
+      } else {
+
+        $location = $response2->results[0]->geometry->location;
+        $singlePOI['lat'] = $location->lat;
+        $singlePOI['lng'] = $location->lng;
+
+      }
+
+      $createItems[] = $singlePOI;
+
     }
 
-    $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-    $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-    $url .= '&address='.$address;
+    $response = $this->databaseFunctions->createPOI($createItems);
 
-    $response = wp_remote_get( $url );
-    if( is_wp_error( $response ) ) {
-      $error_message = $response->get_error_message();
-      echo "Something went wrong: $error_message";
-    }
+    if($response === 1) {
 
-    $response2 = json_decode($response['body']);
-    if( $response2 = 'ZERO_RESULTS') {
-      echo "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />";
-      $poi ['lat'] = '0';
-      $poi ['lng'] = '0';
+      $response = $this->gjMapsMessaging('success', 'Successfully created new points of interest.');
+
     } else {
-      $location = $response2->results[0]->geometry->location;
-      $poi['lat'] = $location->lat;
-      $poi['lng'] = $location->lng;
+
+      $response = $this->gjMapsMessaging('error', 'Failed to create points of interest.');
+
     }
 
-    $poi ['map_id'] = $map_id;
-    $POIs = array($poi);
-    savePOI($POIs);
+    return $response;
+
   }
 
   function geocodePOI() {
@@ -161,9 +178,7 @@ class gjMapsAdmin {
 
       if(is_wp_error($googleResponseEncoded)) {
 
-        $error_message = $googleResponseEncoded->get_error_message();
-
-        $response = $this->gjMapsMessaging('error', $error_message);
+        // This is an error!
 
       }
 
@@ -172,9 +187,10 @@ class gjMapsAdmin {
 
       if( $googleResponse === 'ZERO_RESULTS') {
 
-        $response = $this->gjMapsMessaging('error', "Error: Google Maps returned no results for ".$poi['name'].". You will need to add the Lat/Long manually.<br />");
         $poi['lat'] = '0';
         $poi['lng'] = '0';
+
+        // This is an error!
 
       } else {
 
@@ -184,17 +200,18 @@ class gjMapsAdmin {
 
       }
 
-      $response = $this->databaseFunctions->editPOI($poi);
+      $updatePOI[] = $poi;
 
     }
 
-    if($response === 1) {
+    if(!empty($updatePOI)) {
 
-      $response = $this->gjMapsMessaging('success', 'POI updated successfully');
+      $response = $this->databaseFunctions->editPOI($updatePOI);
 
-    } else if ($response === NULL) {
+    } else {
 
-      $response = $this->gjMapsMessaging('success', 'No POI needed updating.');
+      $response = $this->gjMapsMessaging('success', 'There were not points to update.');
+
     }
 
     return $response;

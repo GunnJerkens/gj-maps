@@ -23,14 +23,44 @@ if(!empty($_POST)) {
 
   if($_POST['form_name'] === 'gj_maps_poi' ) {
 
+
     foreach($_POST as $post) {
 
-      if($post['mode'] === 'update') {
+      if(isset($post['delete']) && $post['delete'] === 'on') {
 
-        $updateItems[] = $post;
-        $response = $adminFunctions->editPOI($updateItems);
+        $deleteItems[] = $post;
 
       }
+
+      if(isset($post['mode']) && $post['mode'] === 'update') {
+
+        $updateItems[] = $post;
+
+      }
+
+      if(isset($post['mode']) && $post['mode'] === 'create') {
+
+        $createItems[] = $post;
+
+      }
+
+    }
+
+    if(!empty($deleteItems)) {
+
+      $response = $adminFunctions->deletePOI($deleteItems);
+
+    }
+
+    if(!empty($deleteItems)) {
+
+      $response = $adminFunctions->editPOI($updateItems);
+
+    }
+
+    if(!empty($createItems)) {
+
+      $response = $adminFunctions->createPOI($createItems);
 
     }
 
@@ -132,8 +162,9 @@ if($response['status'] === 'success') {
 
       foreach ($poi as $point) { ?>
 
-        <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>">
+        <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>" data-map="<?php echo $map_id; ?>">
           <input type="hidden" name="<?php echo $point->id; ?>[id]" value="<?php echo $point->id; ?>">
+          <input type="hidden" name="<?php echo $point->id; ?>[map_id]" value="<?php echo $map_id; ?>">
           <input type="hidden" class="mode" name="<?php echo $point->id; ?>[mode]" value="">
           <th class="check-column">
             <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $point->id; ?>[delete]">

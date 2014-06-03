@@ -189,13 +189,13 @@ class gjMapsDB {
 
   }
 
-  function savePOI ($poi) {
+  function createPOI($poi) {
 
     $table_name = $this->poiTable();
 
     foreach ($poi as $key=>$value) {
 
-      $insert[] = $this->wpdb->insert(
+      $insert = $this->wpdb->insert(
         $table_name, 
         array(
           'cat_id'=>$value['cat_id'],
@@ -215,6 +215,7 @@ class gjMapsDB {
 
     }
 
+    var_dump($insert);
     return $insert;
 
   }
@@ -228,19 +229,20 @@ class gjMapsDB {
       $update = $this->wpdb->update(
         $table_name,
         array(
-          'cat_id'=>$poi['cat_id'],
-          'name'=>$poi['name'],
-          'address'=>$poi['address'],
-          'city'=>$poi['city'],
-          'state'=>$poi['state'],
-          'zip'=>$poi['zip'],
-          'country'=>$poi['country'],
-          'phone'=>$poi['phone'],
-          'url'=>$poi['url'],
-          'lat'=>$poi['lat'],
-          'lng'=>$poi['lng']
+          'map_id' => $poi['map_id'],
+          'cat_id' => $poi['cat_id'],
+          'name' => $poi['name'],
+          'address' => $poi['address'],
+          'city' => $poi['city'],
+          'state' => $poi['state'],
+          'zip' => $poi['zip'],
+          'country'=> $poi['country'],
+          'phone' => $poi['phone'],
+          'url' => $poi['url'],
+          'lat' => $poi['lat'],
+          'lng' => $poi['lng']
         ),
-        array( 'id'=>$poi['id'] )
+        array('id'=>$poi['id'])
       );
 
     }
