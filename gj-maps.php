@@ -34,11 +34,16 @@ class gjMaps {
 
   function admin_actions() {
     add_menu_page('GJ Maps', 'GJ Maps', 'administrator', 'gj_maps', array($this, 'admin_edit'), 'dashicons-location-alt');
+    add_submenu_page('gj_maps', 'Categories', 'Categories', 'administrator', 'gj_maps_categories', array($this, 'admin_categories'));
     add_submenu_page('gj_maps', 'Options', 'Options', 'administrator', 'gj_maps_options', array($this, 'admin_options'));
   }
 
   function admin_edit() { 
     include('admin/gj-maps-maps.php');
+  }
+
+  function admin_categories() {
+    include('admin/gj-maps-categories.php');
   }
 
   function admin_options() {
