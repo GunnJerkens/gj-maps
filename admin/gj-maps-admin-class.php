@@ -277,8 +277,7 @@ class gjMapsAdmin {
 
   function importData($uploadedFile, $mapID) {
 
-    var_dump($mapID);
-
+    // Create a new map
     if($mapID === 'new') {
 
       $maxID = $this->databaseFunctions->maxMapID();
@@ -292,11 +291,9 @@ class gjMapsAdmin {
 
     }
 
-
+    // Complete the upload of the CSV
     ini_set('auto_detect_line_endings',TRUE);
 
-    $error = false;
-    $row = 1;
     $poi = array();
 
     if (($handle = fopen($uploadedFile['tmp_name'], "r")) !== FALSE) {
@@ -310,6 +307,7 @@ class gjMapsAdmin {
       fclose($handle);
     }
 
+    // Handle our labels, make sure the CSV matches our reqs
     $labels = array();
 
     foreach ($poi[0] as $key=>$value) {
@@ -332,8 +330,8 @@ class gjMapsAdmin {
 
       } else {
 
-        echo "COUNTS DIDN'T MATCH YO";
-        exit();
+        $response = $this->gjMapsMessaging('error', 'Check your CSV column headers.');
+        return $response;
 
       }
 
@@ -341,41 +339,87 @@ class gjMapsAdmin {
 
     unset($poi[0]);
 
-    $cat = $this->databaseFunctions->get_cat('ARRAY_A');
-
-    $cats = array();
-
-    foreach ($cat as $key=>$value) {
-
-      $cats[$value['name']] = new stdClass;
-      $cats[$value['name']]->id = $value['id']; 
-      $cats[$value['name']]->color = $value['color'];
-
-    }
-
-    $cat = (object) $cats;
+    // This parses through the data
 
     foreach ($poi as $key=>$value) {
 
+      // Sets each category to an integer, creates categories if needed
+      if(isset($value['category'])) {
+
+        $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
+
+        if(empty($categoryMatch)) {
+
+          $newCategory = array(
+            'map_id' => $mapID,
+            'name' => $value['category']
+          );
+
+          $id = $this->databaseFunctions->saveCat($newCategory);
+
+          if($id > 0) {
+
+            $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
+
+            $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
+
+          } else {
+
+            // This is an error!
+
+          }
+
+        } else {
+
+          $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
+
+        }
+
+      } else {
+
+        $newCategory = array(
+          'map_id' => $mapID,
+          'name' => 'default'
+        );
+
+        $id = $this->databaseFunctions->saveCat($newCategory);
+
+        if($id > 0) {
+
+          $categoryMatch = $this->databaseFunctions->getCatID('default', $mapID);
+
+          $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
+
+        } else {
+
+          // This is an error!
+
+        }
+
+      }
+
+
+      // Adds the map idea to each of the rows
+      $poi[$key]['map_id'] = $mapID;
+
+      // Adding lat & lng via Google encode
       $address = urlencode($value["address"].', '.$value['city'].', '.$value['state'].' '.$value['zip']);
       $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
       $url .= '&address='.$address;
 
-      $response = wp_remote_get( $url );
+      $googleResponseEncoded = wp_remote_get($url);
 
-      if( is_wp_error( $response ) ) {
+      if(is_wp_error($googleResponseEncoded)) {
 
-        $error_message = $response->get_error_message();
-        $response = $this->gjMapsMessaging('error', $error_message);
+        // This is an error!
 
-      } 
+      }
 
-      echo $value['address'].' -- '.$value['name'].'<br />';
-      $response2 = json_decode($response['body']);
+      $googleResponse = json_decode($googleResponseEncoded['body']);
 
-      if(isset($response2->results[0])){
+      if(isset($googleResponse->results[0])){
 
-        $location = $response2->results[0]->geometry->location;
+        $location = $googleResponse->results[0]->geometry->location;
         $poi[$key]['lat'] = $location->lat;
         $poi[$key]['lng'] = $location->lng;
 
@@ -386,34 +430,26 @@ class gjMapsAdmin {
 
       }
 
-      $poi[$key]['map_id'] = $mapID;
-
-      if (isset($cats[$value['category']])) {
-
-        $poi[$key]['cat_id'] = $cats[$value['category']]->id;
-
-      } else {
-
-        $poi[$key]['cat_id'] = 1;
-
-      }
-
-      unset($poi[$key]['category']);
 
     }
+
+    $savePOI = $this->databaseFunctions->savePOI($poi);
 
     var_dump($poi);
+    echo '<br>';
+    var_dump($savePOI);
 
-    $response = $this->databaseFunctions->savePOI($poi);
-    $error = $response;
 
-    if(!error) {
-      $response = $this->gjMapsMessaging('error', 'An error was encountered during upload.');
-    } else {
-      $response = $this->gjMapsMessaging('success', 'CSV uploaded successfully.');
-    }
 
-    return $response;
+    // return $response;
+
+
+    // if(!error) {
+    //   $response = $this->gjMapsMessaging('error', 'An error was encountered during upload.');
+    // } else {
+    //   $response = $this->gjMapsMessaging('success', 'CSV uploaded successfully.');
+    // }
+
 
   }
 

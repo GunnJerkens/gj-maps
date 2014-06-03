@@ -287,6 +287,26 @@ class gjMapsDB {
   * Category Database Functions
   */
 
+  function getCatID($name, $mapID, $type='OBJECT') {
+
+    $table_name = $this->catTable();
+    $catName = "name = '$name'";
+    $mapID = "map_id = '$mapID'";
+
+    $query = $this->wpdb->get_results(
+      "
+      SELECT *
+      FROM $table_name
+      WHERE $catName
+      AND $mapID
+      ",
+      $type
+    );
+
+    return $query;
+
+  }
+
   function get_cat($type='OBJECT', $where='1=1') {
 
     $table_name = $this->catTable();
@@ -311,9 +331,10 @@ class gjMapsDB {
     $insert = $this->wpdb->insert(
       $table_name, 
       array(
-        'name'=>$cat['name'],
-        'color'=>$cat['color'],
-        'icon'=>$cat['icon'],
+        'map_id' => $cat['map_id'],
+        'name' => $cat['name'],
+        'color' => $cat['color'],
+        'icon' => $cat['icon'],
       )
     );
 
