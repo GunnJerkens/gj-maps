@@ -103,7 +103,7 @@ echo '</h2>';
 
 $poi = $databaseFunctions->get_poi($type='OBJECT', 'map_id=' . $map_id);
 $cat = $databaseFunctions->get_cat();
-echo '<script>var cat = '.(json_encode($cat)).';</script>';
+echo '<script>var cat = '.(json_encode($cat)).'; var map_id = '.(json_encode($map_id)).';</script>';
 
 /*
 * This is our response messaging

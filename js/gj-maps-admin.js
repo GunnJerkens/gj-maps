@@ -2,16 +2,14 @@ jQuery(document).ready(function($) {
 
   var mapsTable, tableRow, addRow, ID, map, catOptions;
 
-
   mapsTable = $('.gj-maps > tbody:last');
   addRow = $('.add-row');
-
 
   function createRow() {
     addRow.click(function() {
 
       ID = $('.gj-maps > tbody:last').children('tr').last().data('id') + 1;
-      map = $('.gj-maps > tbody:last').children('tr').last().data('map');
+      ID = isNaN(ID) ? 1 : ID + 1;
 
       for(i = 0; i < cat.length; i++) {
 
@@ -23,7 +21,7 @@ jQuery(document).ready(function($) {
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
           '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
           '<input type="hidden" name="' + ID + '[mode]" value="create">',
-          '<input type="hidden" name="' + ID + '[map_id]" value="' + map + '">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map_id + '">',
           '<th class="check-column">',
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',
