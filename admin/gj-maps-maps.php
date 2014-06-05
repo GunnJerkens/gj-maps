@@ -109,8 +109,6 @@ echo '<script>var cat = '.(json_encode($cat)).';</script>';
 * This is our response messaging
 */
 
-
-
 if($response['status'] === 'success') {
 
   echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';

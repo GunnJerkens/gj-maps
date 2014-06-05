@@ -1,6 +1,5 @@
 jQuery(document).ready(function($) {
 
-
   var mapsTable, tableRow, addRow, ID, map, catOptions;
 
 
@@ -48,11 +47,11 @@ jQuery(document).ready(function($) {
   }
   createRow();
 
+
   $('.maps-detect-change').change(function() {
 
     $(this).parents('tr').children('.mode').val('update');
 
   });
-
 
 });

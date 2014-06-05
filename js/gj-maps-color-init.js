@@ -7,4 +7,10 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $('.wp-color-result').click(function() {
+    console.log('yep');
+    $(this).parents('tr').children('.mode').val('update');
+
+  });
+
 });

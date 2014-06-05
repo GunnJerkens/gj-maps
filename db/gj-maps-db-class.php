@@ -353,19 +353,25 @@ class gjMapsDB {
 
     $table_name = $this->catTable();
 
+    var_dump($cat);
+    var_dump($table_name);
+
     $update = $this->wpdb->update( 
       $table_name, 
       $cat, 
       array(
-        'id'=>$cat['id']
+        'id' => $cat['id'],
+        'map_id' => $cat['map_id']
       ) 
     );
+
+    var_dump($update);
 
     return $update;
 
   }
 
-  function deleteCat ($id) {
+  function deleteCat($id) {
 
     $table_name = $this->catTable();
 
