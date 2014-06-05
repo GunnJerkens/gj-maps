@@ -25,6 +25,35 @@ class gjMapsAdmin {
   * GJ-Maps Functions
   */
 
+  function mapsTab($page, $map, $map_id) {
+
+    $page === 'categories' ? $page = 'gj_maps_categories' : $page = 'gj_maps';
+
+    $tabs = '<h2 class="nav-tab-wrapper">';
+
+    foreach ($map as $key => $value) {
+
+      $tabs .= '<a href="?page='.$page.'&map_id='.$value->id.'" class="nav-tab '.($map_id === $value->id ? 'nav-tab-active' : '').'">'.$value->name.'</a>';
+
+      if($value->id === $map_id) {
+        $map_name = $value->name;
+      }
+
+    }
+
+    if(!isset($map_name)) {
+      $map_name = $map[0];
+      $map_name = $map_name->name;
+    }
+
+    $tabs .= '<a href="?page=gj_maps_categories&map_id=new" class="nav-tab">+</a>';
+
+    $tabs .= '</h2>';
+
+    return $tabs;
+
+  }
+
   function tabsMapID($getData) {
 
     if(isset($getData['map_id']) && $getData['map_id'] === 'new') {
@@ -238,6 +267,8 @@ class gjMapsAdmin {
   function editCat($updateItems) {
 
     foreach($updateItems as $item) {
+
+      unset($item['mode']);
 
       $responses[] = $this->databaseFunctions->editCat($item);
 

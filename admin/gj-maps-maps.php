@@ -72,30 +72,10 @@ if(!empty($_POST)) {
 * This is the maps tabbing system
 */
 
-$map_id = $adminFunctions->tabsMapID($_GET);
 $map = $databaseFunctions->get_map();
+$map_id = $adminFunctions->tabsMapID($_GET);
 
-echo '<h2 class="nav-tab-wrapper">';
-
-foreach ($map as $key => $value) {
-
-  echo '<a href="?page=gj_maps&map_id='.$value->id.'" class="nav-tab '.($map_id === $value->id ? 'nav-tab-active' : '').'">'.$value->name.'</a>';
-
-  if($value->id === $map_id) {
-    $map_name = $value->name;
-  }
-
-}
-
-if(!isset($map_name)) {
-  $map_name = $map[0];
-  $map_name = $map_name->name;
-}
-
-echo '<a href="?page=gj_maps&map_id=new" class="nav-tab">+</a>';
-
-echo '</h2>';
-
+echo $adminFunctions->mapsTab('poi', $map, $map_id);
 
 /*
 * These calls are for retrieving the POI data for the table.
@@ -198,7 +178,7 @@ if($response['status'] === 'success') {
     </table>
 
     <div class="gj-buttons">
-      <div class="btn button table-button add-row">Add Row</div>
+      <div class="btn button table-button add-poi-row">Add POI</div>
       <button class="btn button table-button" type="submit">Update POI</button>
     </div>
 

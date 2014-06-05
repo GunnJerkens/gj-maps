@@ -53,8 +53,8 @@ class gjMaps {
   function gj_maps_admin_scripts() {
     if(is_admin()) {
       wp_enqueue_style('wp-color-picker');
-      wp_enqueue_script( 'color-init', plugins_url('js/gj-maps-color-init.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
-      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', false, '0.3');
+      // wp_enqueue_script( 'color-init', plugins_url('js/gj-maps-color-init.js', __FILE__ ), , false, true );
+      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), false, '0.3');
       wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css');
     }
   }

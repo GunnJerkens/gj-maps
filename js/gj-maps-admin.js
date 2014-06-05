@@ -1,12 +1,28 @@
 jQuery(document).ready(function($) {
 
+  function pickColors() {
+    $('.color-picker').wpColorPicker({
+      change: function(event, ui) {
+        colorID = $(this).attr('id');
+        $('#newColor').attr('value', ui.color.toString());
+      }
+    });
+
+    $('.wp-color-result').click(function() {
+      $(this).parents('tr').children('.mode').val('update');
+    });
+  }
+  pickColors();
+
+
   var mapsTable, tableRow, addRow, ID, map, catOptions;
 
   mapsTable = $('.gj-maps > tbody:last');
-  addRow = $('.add-row');
+  addPOIRow = $('.add-poi-row');
+  addCatRow = $('.add-cat-row');
 
-  function createRow() {
-    addRow.click(function() {
+  function createPOIRow() {
+    addPOIRow.click(function() {
 
       ID = $('.gj-maps > tbody:last').children('tr').last().data('id') + 1;
       ID = isNaN(ID) ? 1 : ID + 1;
@@ -43,7 +59,38 @@ jQuery(document).ready(function($) {
 
     });
   }
-  createRow();
+  createPOIRow();
+
+  function createCatRow() {
+    addCatRow.click(function() {
+
+      ID = $('.gj-maps > tbody:last').children('tr').last().data('id') + 1;
+      ID = isNaN(ID) ? 1 : ID + 1;
+
+      tableRow = [
+        '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
+          '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
+          '<input type="hidden" name="' + ID + '[mode]" value="create">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map_id + '">',
+          '<th class="check-column">',
+            '<input type="checkbox" name="' + ID + '[delete]">',
+          '</th>',
+          '<td><input type="text" class="full-width" name="' + ID + '[name]" value=""></td>',
+
+          '<td><input type="text" class="color-picker" name="' + ID + '[color]" value=""></td>',
+          '<td><input type="file" name="' + ID + '[icon]" value=""></td>',
+          '<td><input type="checkbox" name="' + ID + '[hide_list]" value="1"></td>',
+          '<td><input type="checkbox" name="' + ID + '[filter_resist]" value="1"></td>',
+        '</tr>'
+      ].join("\n");
+
+      mapsTable.append(tableRow);
+
+      pickColors();
+
+    });
+  }
+  createCatRow();
 
 
   $('.maps-detect-change').change(function() {

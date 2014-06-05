@@ -1,7 +1,5 @@
 <?php
 
-// var_dump($_POST);
-
 $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
@@ -53,6 +51,12 @@ if(!empty($_POST)) {
 
     }
 
+    if(!empty($createItems)) {
+
+      $response = $adminFunctions->createCat($createItems);
+
+    }
+
   }
 
 }
@@ -61,35 +65,19 @@ if(!empty($_POST)) {
 * This is the maps tabbing system
 */
 
-$map_id = $adminFunctions->tabsMapID($_GET);
 $map = $databaseFunctions->get_map();
+$map_id = $adminFunctions->tabsMapID($_GET);
 
-echo '<h2 class="nav-tab-wrapper">';
+echo $adminFunctions->mapsTab('cat', $map, $map_id);
 
-foreach ($map as $key => $value) {
 
-  echo '<a href="?page=gj_maps_categories&map_id='.$value->id.'" class="nav-tab '.($map_id === $value->id ? 'nav-tab-active' : '').'">'.$value->name.'</a>';
-
-  if($value->id === $map_id) {
-    $map_name = $value->name;
-  }
-
-}
-
-if(!isset($map_name)) {
-  $map_name = $map[0];
-  $map_name = $map_name->name;
-}
-
-echo '<a href="?page=gj_maps_categories&map_id=new" class="nav-tab">+</a>';
-
-echo '</h2>';
 
 /*
-* These calls are for retrieving the POI data for the table.
+* Retrieve the cat data for the table
 */
 
 $cat = $databaseFunctions->get_cat($type='OBJECT', 'map_id=' . $map_id);
+echo '<script>var map_id = '.(json_encode($map_id)).';</script>';
 
 /*
 * This is our response messaging
@@ -103,63 +91,7 @@ if($response['status'] === 'success') {
 
   echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
 
-}
-
-
-// LEGACY::
-
-    if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'Y') {
-      $icon = null;
-      if ($_FILES['icon']) {
-        $upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
-        if (isset($upload['url'])) {
-          $icon = $upload['url'];
-        }
-      }
-
-      //Form data sent
-        global $post;
-        if (isset($_POST['id'])) {
-
-          if (isset($_POST['delete'])) {
-            //Delete Selected cat
-            deleteCat($_POST['id']);
-          } else {
-
-            //Update existing cat
-            $cat = array();
-            $defaultCat = array(
-              "id" => "1",
-              "name" => "category",
-              "color" => "#000000",
-              "hide_list" => 0,
-              "filter_resist" => 0,
-              "icon" => NULL
-              );
-
-            foreach ($_POST as $key=>$value) {
-              if ($key !== 'gj_hidden') {
-                $cat[$key] = stripslashes($value);
-              }
-            }
-            $cat['icon'] = $icon;
-            $cat = array_merge($defaultCat, $cat);
-            editCat($cat);
-          }
- 
-        } else {
-          //Add new Category
-          $cat = array();
-          foreach ($_POST as $key=>$value) {
-            if ($key !== 'gj_hidden') {
-              $cat[$key] = $value;
-            }
-          }
-          $cat['icon'] = $icon;
-          saveCat($cat);
-        }
-
-    }?>
+} ?>
 
 
 <div class="wrap">
@@ -211,8 +143,8 @@ if($response['status'] === 'success') {
     </table>
 
     <div class="gj-buttons">
-      <div class="btn button table-button add-row">Add Category</div>
-      <button class="btn button table-button" type="submit">Update POI</button>
+      <div class="btn button table-button add-cat-row">Add Category</div>
+      <button class="btn button table-button" type="submit">Update Categories</button>
     </div>
 
   </form>
