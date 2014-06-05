@@ -365,7 +365,7 @@ class gjMapsDB {
 
   }
 
-  function deleteCat ($id) {
+  function deleteCat($id) {
 
     $table_name = $this->catTable();
 

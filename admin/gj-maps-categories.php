@@ -17,6 +17,26 @@ if(!empty($_POST)) {
 
   }
 
+  if($_POST['form_name'] === 'gj_maps_cat') {
+
+    foreach($_POST as $post) {
+
+      if(isset($post['delete']) && $post['delete'] === 'on') {
+
+        $deleteItems[] = $post;
+
+      }
+
+    }
+
+    if(!empty($deleteItems)) {
+
+      $response = $adminFunctions->deleteCat($deleteItems);
+
+    }
+
+  }
+
 }
 
 /*
@@ -46,6 +66,12 @@ if(!isset($map_name)) {
 echo '<a href="?page=gj_maps_categories&map_id=new" class="nav-tab">+</a>';
 
 echo '</h2>';
+
+/*
+* These calls are for retrieving the POI data for the table.
+*/
+
+$cat = $databaseFunctions->get_cat($type='OBJECT', 'map_id=' . $map_id);
 
 /*
 * This is our response messaging
@@ -115,10 +141,7 @@ if($response['status'] === 'success') {
           saveCat($cat);
         }
 
-    }
-
-    $cat = $databaseFunctions->get_cat();
-    var_dump($cat); ?>
+    }?>
 
 
 <div class="wrap">
@@ -139,10 +162,10 @@ if($response['status'] === 'success') {
             <input id="cb-select-all-1" type="checkbox">
           </th>
           <th><span>Name</span></th>
-          <th><span>Color</span></th>
+          <th style="width: 250px;"><span>Color</span></th>
           <th><span>Icon</span></th>
-          <th><span>Hide From List</span></th>
-          <th><span>Resist Filtering</span></th>
+          <th><span>Hide Listing</span></th>
+          <th><span>Resist Filter</span></th>
         </tr>
       </thead>
       <tbody><?php
@@ -155,13 +178,13 @@ if($response['status'] === 'success') {
           <input type="hidden" name="<?php echo $category->id; ?>[map_id]" value="<?php echo $map_id; ?>">
           <input type="hidden" class="mode" name="<?php echo $category->id; ?>[mode]" value="">
           <th class="check-column">
-            <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $point->id; ?>[delete]">
+            <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $category->id; ?>[delete]">
           </th>
           <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
           <td><input type="text" name="<?php echo $category->id; ?>[color]" class="color-picker" value="<?php echo $category->color; ?>"></td>
           <td><input type="file" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
-          <td><input type="checkbox" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
-          <td><input type="checkbox" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
+          <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
+          <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
         </tr><?php
 
       } ?>
