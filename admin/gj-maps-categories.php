@@ -1,6 +1,6 @@
 <?php
 
-var_dump($_POST);
+// var_dump($_POST);
 
 $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
@@ -27,11 +27,29 @@ if(!empty($_POST)) {
 
       }
 
+      if(isset($post['mode']) && $post['mode'] === 'update') {
+
+        $updateItems[] = $post;
+
+      }
+
+      if(isset($post['mode']) && $post['mode'] === 'create') {
+
+        $createItems[] = $post;
+
+      }
+
     }
 
     if(!empty($deleteItems)) {
 
       $response = $adminFunctions->deleteCat($deleteItems);
+
+    }
+
+    if(!empty($updateItems)) {
+
+      $response = $adminFunctions->editCat($updateItems);
 
     }
 
@@ -181,8 +199,8 @@ if($response['status'] === 'success') {
             <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $category->id; ?>[delete]">
           </th>
           <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
-          <td><input type="text" name="<?php echo $category->id; ?>[color]" class="color-picker" value="<?php echo $category->color; ?>"></td>
-          <td><input type="file" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
+          <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
+          <td><input type="file" class="maps-detect-change" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
           <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
           <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
         </tr><?php

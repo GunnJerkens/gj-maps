@@ -236,6 +236,38 @@ class gjMapsAdmin {
   * Categories Functions
   */
 
+  function editCat($updateItems) {
+
+    foreach($updateItems as $item) {
+
+      $responses[] = $this->databaseFunctions->editCat($item);
+
+    }
+
+    foreach($responses as $response) {
+
+      if($response !== 1) {
+
+        $hasError = true;
+
+      }
+
+    }
+
+    if(!$hasError) {
+
+      $response = $this->gjMapsMessaging('success', 'Categories updated successfully.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('error', 'Categories failed to update.');
+
+    }
+
+    return $response;
+  
+  }
+
   function deleteCat($deleteItems) {
 
     foreach($deleteItems as $item) {
