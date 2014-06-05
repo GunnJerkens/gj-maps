@@ -30,9 +30,7 @@ class gjMapsAdmin {
     if(isset($getData['map_id']) && $getData['map_id'] === 'new') {
 
       $maxMapID = $this->databaseFunctions->maxMapID();
-      $maxMapID = (array) $maxMapID[0];
-      $maxMapID = (int) $maxMapID['MAX(id)'];
-      $maxMapID = $maxMapID + 1;
+      $maxMapID = ((int) $maxMapID[0]->max_id) + 1;
 
       $this->databaseFunctions->saveMap($maxMapID);
       $map_id = $maxMapID;
@@ -43,7 +41,8 @@ class gjMapsAdmin {
 
     } else {
 
-      $map_id = 1;
+      $map_id = $this->databaseFunctions->minMapID();
+      $map_id = $map_id[0]->low_id;
 
     }
 

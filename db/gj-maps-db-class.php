@@ -73,18 +73,35 @@ class gjMapsDB {
 
   }
 
-  function maxMapID() {
+  function maxMapID($type = 'OBJECT') {
 
     $table_name = $this->mapsTable();
 
     $maxMapID = $this->wpdb->get_results(
       "
-      SELECT MAX(id)
+      SELECT MAX(id) AS 'max_id'
       FROM $table_name
-      "
+      ",
+      $type
     );
 
     return $maxMapID;
+
+  }
+
+  function minMapID($type = 'OBJECT') {
+
+    $table_name = $this->mapsTable();
+
+    $minMapID = $this->wpdb->get_results(
+      "
+      SELECT MIN(id) AS 'low_id'
+      FROM $table_name
+      ",
+      $type
+    );
+
+    return $minMapID;
 
   }
 
