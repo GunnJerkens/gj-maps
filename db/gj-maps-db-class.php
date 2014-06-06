@@ -15,8 +15,8 @@ class gjMapsDB {
   function deleteAllData() {
 
     $response['poi'] = $this->deleteAllPOI();
-    $response['maps'] = $this->deleteAllMaps();
     $response['cat'] = $this->deleteAllCat();
+    $response['maps'] = $this->deleteAllMaps();
 
     return $response;
 
@@ -178,7 +178,9 @@ class gjMapsDB {
     $table_name = $this->mapsTable();
 
     $query = $this->wpdb->query(
-      "TRUNCATE TABLE $table_name"
+      "
+      DELETE FROM $table_name
+      "
     );
 
     return $query;
@@ -189,18 +191,28 @@ class gjMapsDB {
   * POI Database Functions
   */
 
-  function get_poi($type='OBJECT', $where='1=1') {
+  function get_poi($type='OBJECT', $where = NULL) {
 
     $table_name = $this->poiTable();
 
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $where
-      ",
-      $type
-    );
+    if($where !== NULL && $where !== 'new') {
+
+      $where = "map_id = $where";
+
+      $query = $this->wpdb->get_results(
+        "
+        SELECT *
+        FROM $table_name
+        WHERE $where
+        ",
+        $type
+      );
+
+    } else {
+
+      $query = false;
+
+    }
 
     return $query;
 
@@ -325,24 +337,36 @@ class gjMapsDB {
 
   }
 
-  function get_cat($type='OBJECT', $where='1=1') {
+  function get_cat($type='OBJECT', $where = NULL) {
 
     $table_name = $this->catTable();
-  
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $where
-      ",
-      $type
-    );
+
+    if($where !== NULL && $where !== 'new') {
+
+      $where = "map_id = $where";
+
+      $query = $this->wpdb->get_results(
+        "
+        SELECT *
+        FROM $table_name
+        WHERE $where
+        ",
+        $type
+      );
+
+    } else {
+
+      $query = false;
+
+    }
 
     return $query;
   
   }
 
-  function saveCat($cat) {
+  function createCat($cat) {
+
+    var_dump($cat);
 
     $table_name = $this->catTable();
 
@@ -411,7 +435,9 @@ class gjMapsDB {
     $table_name = $this->catTable();
 
     $query = $this->wpdb->query(
-      "TRUNCATE TABLE $table_name"
+      "
+      DELETE FROM $table_name
+      "
     );
 
     return $query;

@@ -27,7 +27,7 @@ class gjMapsAdmin {
 
   function mapsTab($page, $map, $map_id) {
 
-    $page === 'categories' ? $page = 'gj_maps_categories' : $page = 'gj_maps';
+    $page === 'cat' ? $page = 'gj_maps_categories' : $page = 'gj_maps';
 
     $tabs = '<h2 class="nav-tab-wrapper">';
 
@@ -46,7 +46,7 @@ class gjMapsAdmin {
       $map_name = $map_name->name;
     }
 
-    $tabs .= '<a href="?page=gj_maps_categories&map_id=new" class="nav-tab">+</a>';
+    $tabs .= '<a href="?page='.$page.'&map_id=new" class="nav-tab">+</a>';
 
     $tabs .= '</h2>';
 
@@ -148,6 +148,30 @@ class gjMapsAdmin {
   function createPOI($poi) {
 
     foreach($poi as $singlePOI) {
+
+      if(!isset($singlePOI['cat_id'])) {
+
+        $cat = array (
+          'map_id' => $singlePOI['map_id'],
+          'name' => 'Default',
+          'color' => '#000000',
+          'icon' => NULL
+        );
+
+        $dbResponse = $this->databaseFunctions->saveCat($cat);
+
+        if($dbResponse === 1) {
+
+          $singlePOI['cat_id'] = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
+
+        } else {
+
+          // This is an error!
+
+        }
+
+
+      }
 
       $address = urlencode($singlePOI["address"].', '.$singlePOI['city'].', '.$singlePOI['state'].' '.$singlePOI['zip']);
       $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
@@ -263,6 +287,38 @@ class gjMapsAdmin {
   /*
   * Categories Functions
   */
+
+  function createCat($createItems) {
+
+    foreach($createItems as $item) {
+
+      unset($item['mode']);
+
+      $response[] = $this->databaseFunctions->createCat($item);
+
+    }
+
+    foreach($response as $response) {
+
+      if($resposne !== 1) {
+
+        $hasError = true;
+
+      }
+
+    }
+
+    if(!$hasError) {
+
+      $response = $this->gjMapsMessaging('success', 'Categories created successfully.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('error', 'Categories failed to be created.');
+
+    }
+
+  }
 
   function editCat($updateItems) {
 
@@ -586,7 +642,6 @@ class gjMapsAdmin {
     if($post['delete'] === 'default') {
 
       $response = $this->gjMapsMessaging('error', 'You must select data to delete');
-      $dbResponse = NULL;
 
     } else if ($post['delete'] === 'delete_categories') {
 
@@ -604,16 +659,13 @@ class gjMapsAdmin {
 
       $dbResponse = $this->databaseFunctions->deleteAllData();
 
+      if($dbResponse['poi']) {
+        $response = $this->gjMapsMessaging('success', 'All POI deleted along with '.$dbResponse['cat'].' categories and '.$dbResponse['maps'].' maps. So fresh.');
+      }
+
     } else {
 
       $response = $this->gjMapsMessaging('error', 'Something went horribly wrong.');
-      $dbResponse = NULL;
-
-    }
-
-    if($dbResponse !== NULL && $dbResponse !== false) {
-
-      $response = $this->gjMapsMessaging('success', $dbResponse);
 
     }
 
