@@ -3,6 +3,8 @@
 $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
+var_dump($_FILES);
+
 /*
 * This is our POST handling
 */
@@ -26,6 +28,20 @@ if(!empty($_POST)) {
       }
 
       if(isset($post['mode']) && $post['mode'] === 'update') {
+
+        if ($_FILES['icon']) {
+
+          $upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
+
+          if (isset($upload['url'])) {
+
+            $post['icon'] = $upload['url'];
+
+            // var_dump($post['icon']);
+
+          }
+
+        }
 
         $updateItems[] = $post;
 

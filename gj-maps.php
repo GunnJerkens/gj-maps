@@ -22,9 +22,6 @@ class gjMaps {
     add_action('init', array($this, 'register_scripts'));
     add_action('wp_footer', array($this, 'print_scripts'));
     add_action('admin_enqueue_scripts', array($this, 'gj_maps_admin_scripts'));
-    // add_action('admin_enqueue_scripts', array($this, 'mw_enqueue_color_picker'));
-    // add_action('wp_enqueue_scripts', array('gjMapsDB', 'get_poi'));
-    // add_action('wp_enqueue_scripts', array('gjMapsDB', 'get_cat'));
 
     register_activation_hook(__FILE__,  array($this, 'table_install'));
 
@@ -53,8 +50,7 @@ class gjMaps {
   function gj_maps_admin_scripts() {
     if(is_admin()) {
       wp_enqueue_style('wp-color-picker');
-      // wp_enqueue_script( 'color-init', plugins_url('js/gj-maps-color-init.js', __FILE__ ), , false, true );
-      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), false, '0.3');
+      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), false, '0.2');
       wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css');
     }
   }
@@ -64,13 +60,8 @@ class gjMaps {
     if(!is_admin()) {
 
       wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-      wp_register_script('gj-maps-main', plugin_dir_path(__FILE__).'/gj-maps/js/gj-maps-main.js', array('jquery', 'google-maps'), null, true);
-
-      if(get_option('gj_styles')) {
-
-        wp_register_style('gj-maps-style', plugin_dir_path(__FILE__).'gj-maps/style/screen.css', null, true);
-
-      }
+      wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/gj-maps-main.js', array('jquery', 'google-maps'), false, '0.2');
+      wp_register_style('gj-maps-style', plugin_dir_url(__FILE__).'style/screen.css', null, true);
 
     }
 
@@ -79,7 +70,7 @@ class gjMaps {
   function print_scripts() {
 
     wp_print_scripts('google-maps');
-    wp_print_scripts('gj-maps');
+    wp_print_scripts('gj-maps-main');
 
     if (get_option('gj_styles') && !(is_admin()) ) {
 
@@ -155,3 +146,5 @@ class gjMaps {
 
 }
 new gjMaps();
+new gjMapsInject();
+

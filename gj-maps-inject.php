@@ -2,7 +2,11 @@
 
 class gjMapsInject {
 
+  private $databaseFunctions;
+
   function __construct() {
+
+    $this->databaseFunctions = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
 
@@ -15,7 +19,7 @@ class gjMapsInject {
     $cat_default = get_option('gj_cat_default');
     if ($cat_default === "") { $cat_default = "#ffffff"; }
 
-    $gjmapsAPI = $this->frontend();
+    
 
     $gjWrapper = '<div class="gjmaps-wrapper">';
     $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
@@ -33,9 +37,12 @@ class gjMapsInject {
 
 
     extract(shortcode_atts(array(
-      "pos" => 'top'
+      'map' => 'Single',
+      'map_id' => '1',
+      'pos' => 'top'
     ), $atts));
 
+    $gjmapsAPI = $this->frontend($map, $map_id);
 
     if ($pos === 'bottom' OR $pos === 'bot') {
       return $gjmapsAPI.$bottom;
@@ -48,18 +55,24 @@ class gjMapsInject {
     }
   }
 
-  function frontend() {
+  function frontend($map = NULL, $map_id = NULL) {
 
-    $gjMapsDatabase = new gjMapsDB();
+    if($map_id === NULL && $map !== NULL) {
+
+      $map_id = $this->databaseFunctions->getMapID($map);
+
+    }
+
+
 
     //Writes the JS to the page, including POIs and categories
-    $poi = json_encode($gjMapsDatabase->get_poi());
+    $poi = json_encode($this->databaseFunctions->get_poi($type='OBJECT', $map_id));
     echo '<script type="text/javascript">';
     echo 'var poi = ';
     print_r($poi);
     echo ';';
 
-    $poi = json_encode($gjMapsDatabase->get_cat());
+    $poi = json_encode($this->databaseFunctions->get_cat($type='OBJECT', $map_id));
     echo 'var cat = ';
     print_r($poi);
     echo ';';
@@ -86,4 +99,3 @@ class gjMapsInject {
   }
 
 }
-new gjMapsInject();
