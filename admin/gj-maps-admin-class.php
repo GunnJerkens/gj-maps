@@ -149,7 +149,9 @@ class gjMapsAdmin {
 
     foreach($poi as $singlePOI) {
 
-      if(!isset($singlePOI['cat_id'])) {
+      $defaultCatExists = false;
+
+      if(!isset($singlePOI['cat_id']) && $defaultCatExists === false) {
 
         $cat = array (
           'map_id' => $singlePOI['map_id'],
@@ -158,18 +160,22 @@ class gjMapsAdmin {
           'icon' => NULL
         );
 
-        $dbResponse = $this->databaseFunctions->saveCat($cat);
+        $dbResponse = $this->databaseFunctions->createCat($cat);
 
         if($dbResponse === 1) {
 
-          $singlePOI['cat_id'] = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
+          var_dump($singlePOI['map_id']);
+
+          $dbResponse = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
+          $singlePOI['cat_id'] = $dbResponse[0]->id;
+
+          $defaultCatExists = true;
 
         } else {
 
           // This is an error!
 
         }
-
 
       }
 
@@ -300,7 +306,7 @@ class gjMapsAdmin {
 
     foreach($response as $response) {
 
-      if($resposne !== 1) {
+      if($response !== 1) {
 
         $hasError = true;
 
@@ -357,6 +363,8 @@ class gjMapsAdmin {
   function deleteCat($deleteItems) {
 
     foreach($deleteItems as $item) {
+
+      unset($item['delete']);
 
       $responses[] = $this->databaseFunctions->deleteCat($item['id']);
 
@@ -461,10 +469,16 @@ class gjMapsAdmin {
     if($mapID === 'new') {
 
       $maxID = $this->databaseFunctions->maxMapID();
-      $maxID = (array) $maxID[0];
+      $maxID = ((int) $maxID[0]->max_id);
 
-      if($maxID['MAX(id)'] != NULL) {
-        $mapID = ((int) $maxID['MAX(id)']) + 1;
+      if($maxID != NULL) {
+
+        $mapID = $maxID + 1;
+
+      } else {
+
+        $mapID = 1;
+
       }
 
       $this->databaseFunctions->saveMap($mapID);
@@ -535,7 +549,7 @@ class gjMapsAdmin {
             'name' => $value['category']
           );
 
-          $id = $this->databaseFunctions->saveCat($newCategory);
+          $id = $this->databaseFunctions->createCat($newCategory);
 
           if($id > 0) {
 
@@ -562,7 +576,7 @@ class gjMapsAdmin {
           'name' => 'default'
         );
 
-        $id = $this->databaseFunctions->saveCat($newCategory);
+        $id = $this->databaseFunctions->createCat($newCategory);
 
         if($id > 0) {
 
@@ -610,26 +624,11 @@ class gjMapsAdmin {
 
       }
 
-
     }
 
-    $savePOI = $this->databaseFunctions->savePOI($poi);
+    $savePOI = $this->databaseFunctions->createPOI($poi);
 
-    var_dump($poi);
-    echo '<br>';
-    var_dump($savePOI);
-
-
-
-    // return $response;
-
-
-    // if(!error) {
-    //   $response = $this->gjMapsMessaging('error', 'An error was encountered during upload.');
-    // } else {
-    //   $response = $this->gjMapsMessaging('success', 'CSV uploaded successfully.');
-    // }
-
+    // THIS NEED RESPONSE HELP
 
   }
 

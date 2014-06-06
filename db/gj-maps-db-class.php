@@ -366,8 +366,6 @@ class gjMapsDB {
 
   function createCat($cat) {
 
-    var_dump($cat);
-
     $table_name = $this->catTable();
 
     $insert = $this->wpdb->insert(

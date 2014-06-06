@@ -135,7 +135,7 @@ if($response['status'] === 'success') {
             <input type="hidden" name="<?php echo $category->id; ?>[map_id]" value="<?php echo $map_id; ?>">
             <input type="hidden" class="mode" name="<?php echo $category->id; ?>[mode]" value="">
             <th class="check-column">
-              <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $category->id; ?>[delete]">
+              <input type="checkbox" class="delete-box" name="<?php echo $category->id; ?>[delete]">
             </th>
             <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
             <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
