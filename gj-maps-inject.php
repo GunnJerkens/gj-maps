@@ -2,57 +2,92 @@
 
 class gjMapsInject {
 
+  private $gjMaps;
   private $databaseFunctions;
 
   function __construct() {
 
+    $this->gjMaps = new gjMaps();
     $this->databaseFunctions = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
 
   }
 
+  function doScripts() {
+
+    global $post;
+
+    var_dump($post);
+
+    if(!is_admin() && shortcode_exists('gjmaps') && (stripos($post->post_content,'gjmaps') !== false)) {
+
+      $this->gjMaps->print_scripts();
+
+      $loadState = true;
+
+    } else {
+
+      $loadState = false;
+
+    }
+
+    return $loadState;
+
+  }
+
   function shortcode($atts) {
 
-    $this->loadJS = true;
+    $hasScripts = $this->doScripts();
 
-    $cat_default = get_option('gj_cat_default');
-    if ($cat_default === "") { $cat_default = "#ffffff"; }
+    var_dump($hasScripts);
 
-    
+    if($hasScripts) {
 
-    $gjWrapper = '<div class="gjmaps-wrapper">';
-    $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
-    $gjCategories = '
-      <ul class="gjmaps-categories">
-        <li class="gjmaps-category active" data-cat-id="all">
-          <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label"><span>View All</span></label>
-        </li>
-      </ul>
-      ';
-    $gjWrapperClose = '</div>';
+      $this->loadJS = true;
 
-    $top = $right = $left = $gjWrapper.$gjCategories.$gjCanvas.$gjWrapperClose;
-    $bottom = $gjWrapper.$gjCanvas.$gjCategories.$gjWrapperClose;
+      $cat_default = get_option('gj_cat_default');
+      if ($cat_default === "") { $cat_default = "#ffffff"; }
+
+      $gjWrapper = '<div class="gjmaps-wrapper">';
+      $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
+      $gjCategories = '
+        <ul class="gjmaps-categories">
+          <li class="gjmaps-category active" data-cat-id="all">
+            <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label"><span>View All</span></label>
+          </li>
+        </ul>
+        ';
+      $gjWrapperClose = '</div>';
+
+      $top = $right = $left = $gjWrapper.$gjCategories.$gjCanvas.$gjWrapperClose;
+      $bottom = $gjWrapper.$gjCanvas.$gjCategories.$gjWrapperClose;
 
 
-    extract(shortcode_atts(array(
-      'map' => 'Single',
-      'map_id' => '1',
-      'pos' => 'top'
-    ), $atts));
+      extract(shortcode_atts(array(
+        'map' => 'Single',
+        'map_id' => '1',
+        'pos' => 'top'
+      ), $atts));
 
-    $gjmapsAPI = $this->frontend($map, $map_id);
+      $gjmapsAPI = $this->frontend($map, $map_id);
 
-    if ($pos === 'bottom' OR $pos === 'bot') {
-      return $gjmapsAPI.$bottom;
-    } else if ($pos === 'left') {
-      return $gjmapsAPI.$left;
-    } else if ($pos === 'right') {
-      return $gjmapsAPI.$right;
+      if ($pos === 'bottom' OR $pos === 'bot') {
+        return $gjmapsAPI.$bottom;
+      } else if ($pos === 'left') {
+        return $gjmapsAPI.$left;
+      } else if ($pos === 'right') {
+        return $gjmapsAPI.$right;
+      } else {
+        return $gjmapsAPI.$top;
+      }
+
     } else {
-      return $gjmapsAPI.$top;
+
+      // Scripts we're not loaded, abort.
+
     }
+
   }
 
   function frontend($map = NULL, $map_id = NULL) {

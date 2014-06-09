@@ -20,7 +20,6 @@ class gjMaps {
 
     add_action('admin_menu', array($this, 'admin_actions'));
     add_action('init', array($this, 'register_scripts'));
-    add_action('wp_footer', array($this, 'print_scripts'));
     add_action('admin_enqueue_scripts', array($this, 'gj_maps_admin_scripts'));
 
     register_activation_hook(__FILE__,  array($this, 'table_install'));
@@ -57,13 +56,9 @@ class gjMaps {
 
   function register_scripts() {
 
-    if(!is_admin()) {
-
-      wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-      wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/gj-maps-main.js', array('jquery', 'google-maps'), false, '0.2');
-      wp_register_style('gj-maps-style', plugin_dir_url(__FILE__).'style/screen.css', null, true);
-
-    }
+    wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
+    wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/gj-maps-main.js', array('jquery', 'google-maps'), false, '0.2');
+    wp_register_style('gj-maps-style', plugin_dir_url(__FILE__).'style/screen.css', null, true);
 
   }
 
