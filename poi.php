@@ -30,7 +30,7 @@ if ( ! class_exists( 'GJ_api') ) {
 
       }
 
-      public function gj_POI_frontend() {
+      public static function gj_POI_frontend() {
          if ( ! isset($GJ_api) ) {
             $GJ_api = new GJ_api();
          }
