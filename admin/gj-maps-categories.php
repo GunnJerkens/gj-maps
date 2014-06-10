@@ -3,11 +3,13 @@
 $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
-var_dump($_FILES);
-
 /*
 * This is our POST handling
 */
+
+var_dump($_FILES);
+
+var_dump($_POST);
 
 if(!empty($_POST)) {
 
@@ -29,15 +31,25 @@ if(!empty($_POST)) {
 
       if(isset($post['mode']) && $post['mode'] === 'update') {
 
-        if ($_FILES['icon']) {
+        foreach($_FILES as $file) {
 
-          $upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
+          // var_dump($file);
 
-          if (isset($upload['url'])) {
+          if (isset($file['name']) && isset($file['type'])) {
 
-            $post['icon'] = $upload['url'];
+            // var_dump($file);
 
-            // var_dump($post['icon']);
+            $upload = wp_handle_upload($file['name'], array('test_form'=>false));
+
+            // var_dump($upload);
+
+            if (isset($upload['url'])) {
+
+              $post['icon'] = $upload['url'];
+
+              // var_dump($post);
+
+            }
 
           }
 
@@ -126,7 +138,7 @@ if($response['status'] === 'success') {
       <button type="submit" class="btn button">Change Map Name</button>
     </form>
 
-    <form name="gj_maps_cat" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
       <input type="hidden" name="form_name" value="gj_maps_cat">
       <table class="wp-list-table widefat fixed gj-maps">
         <thead class="">
@@ -155,7 +167,7 @@ if($response['status'] === 'success') {
             </th>
             <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
             <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
-            <td><input type="file" class="maps-detect-change" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
+            <td><input type="file" class="maps-detect-change" name="icon[<?php echo $category->id; ?>]" value="<?php echo $category->icon; ?>"></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
           </tr><?php

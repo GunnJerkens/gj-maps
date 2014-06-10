@@ -164,8 +164,6 @@ class gjMapsAdmin {
 
         if($dbResponse === 1) {
 
-          var_dump($singlePOI['map_id']);
-
           $dbResponse = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
           $singlePOI['cat_id'] = $dbResponse[0]->id;
 

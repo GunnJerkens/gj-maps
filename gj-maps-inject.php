@@ -38,8 +38,6 @@ class gjMapsInject {
 
     $hasScripts = $this->doScripts();
 
-    var_dump($hasScripts);
-
     if($hasScripts) {
 
       $this->loadJS = true;
