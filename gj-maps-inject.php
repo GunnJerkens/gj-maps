@@ -2,12 +2,10 @@
 
 class gjMapsInject {
 
-  private $gjMaps;
   private $databaseFunctions;
 
   function __construct() {
 
-    $this->gjMaps = new gjMaps();
     $this->databaseFunctions = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
@@ -18,11 +16,11 @@ class gjMapsInject {
 
     global $post;
 
-    var_dump($post);
+    $gjMaps = new gjMaps();
 
     if(!is_admin() && shortcode_exists('gjmaps') && (stripos($post->post_content,'gjmaps') !== false)) {
 
-      $this->gjMaps->print_scripts();
+      $gjMaps->print_scripts();
 
       $loadState = true;
 
