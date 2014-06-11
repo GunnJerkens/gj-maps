@@ -7,9 +7,6 @@ $adminFunctions = new gjMapsAdmin();
 * This is our POST handling
 */
 
-var_dump($_FILES);
-
-var_dump($_POST);
 
 if(!empty($_POST)) {
 
@@ -21,33 +18,35 @@ if(!empty($_POST)) {
 
   if($_POST['form_name'] === 'gj_maps_cat') {
 
-    foreach($_POST as $post) {
+    foreach($_POST as $postKey=>$postValue) {
 
-      if(isset($post['delete']) && $post['delete'] === 'on') {
+      if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
 
-        $deleteItems[] = $post;
+        $deleteItems[] = $postValue;
 
       }
 
-      if(isset($post['mode']) && $post['mode'] === 'update') {
+      if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
 
-        foreach($_FILES as $file) {
+        foreach($_FILES as $fileKey=>$fileValue) {
 
-          // var_dump($file);
+          if($postKey === $fileKey) {
 
-          if (isset($file['name']) && isset($file['type'])) {
+            $icon['name'] = isset($fileValue['name']['icon']) ? $fileValue['name']['icon'] : '';
+            $icon['type'] = isset($fileValue['type']['icon']) ? $fileValue['type']['icon'] : '';
+            $icon['tmp_name'] = isset($fileValue['tmp_name']['icon']) ? $fileValue['tmp_name']['icon'] : '';
+            $icon['error'] = isset($fileValue['error']['icon']) ? $fileValue['error']['icon'] : '';
+            $icon['size'] = isset($fileValue['size']['icon']) ? $fileValue['size']['icon'] : '';
 
-            // var_dump($file);
+            if(isset($icon['name'])) {
 
-            $upload = wp_handle_upload($file['name'], array('test_form'=>false));
+              $upload = wp_handle_upload($icon, array('test_form'=>false));
 
-            // var_dump($upload);
+              if(isset($upload['url'])) {
 
-            if (isset($upload['url'])) {
+                $postValue['icon'] = $upload['url'];
 
-              $post['icon'] = $upload['url'];
-
-              // var_dump($post);
+              }
 
             }
 
@@ -55,17 +54,19 @@ if(!empty($_POST)) {
 
         }
 
-        $updateItems[] = $post;
+        $updateItems[] = $postValue;
 
       }
 
-      if(isset($post['mode']) && $post['mode'] === 'create') {
+      if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
 
-        $createItems[] = $post;
+        $createItems[] = $postValue;
 
       }
 
     }
+
+    var_dump($updateItems);
 
     if(!empty($deleteItems)) {
 
@@ -167,7 +168,7 @@ if($response['status'] === 'success') {
             </th>
             <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
             <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
-            <td><input type="file" class="maps-detect-change" name="icon[<?php echo $category->id; ?>]" value="<?php echo $category->icon; ?>"></td>
+            <td><img src="<?php echo $category->icon; ?>"><input type="file" class="maps-detect-change" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
           </tr><?php
