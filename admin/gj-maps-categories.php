@@ -66,8 +66,6 @@ if(!empty($_POST)) {
 
     }
 
-    var_dump($updateItems);
-
     if(!empty($deleteItems)) {
 
       $response = $adminFunctions->deleteCat($deleteItems);

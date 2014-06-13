@@ -63,17 +63,16 @@ class gjMapsInject {
       extract(shortcode_atts(array(
         'map' => 'Single',
         'map_id' => '1',
-        'pos' => 'top'
+        'position' => 'top',
+        'latitude' => get_option('gj_maps_center_lat'),
+        'longitude' => get_option('gj_maps_center_lng'),
+        'zoom' => get_option('gj_maps_map_zoom')
       ), $atts));
 
-      $gjmapsAPI = $this->frontend($map, $map_id);
+      $gjmapsAPI = $this->frontend($map, $map_id, $latitude, $longitude, $zoom);
 
       if ($pos === 'bottom' OR $pos === 'bot') {
         return $gjmapsAPI.$bottom;
-      } else if ($pos === 'left') {
-        return $gjmapsAPI.$left;
-      } else if ($pos === 'right') {
-        return $gjmapsAPI.$right;
       } else {
         return $gjmapsAPI.$top;
       }
@@ -86,15 +85,13 @@ class gjMapsInject {
 
   }
 
-  function frontend($map = NULL, $map_id = NULL) {
+  function frontend($map = NULL, $map_id = NULL, $latitude = NULL, $longitude = NULL, $zoom = NULL) {
 
     if($map_id === NULL && $map !== NULL) {
 
       $map_id = $this->databaseFunctions->getMapID($map);
 
     }
-
-
 
     //Writes the JS to the page, including POIs and categories
     $poi = json_encode($this->databaseFunctions->get_poi($type='OBJECT', $map_id));
@@ -108,21 +105,19 @@ class gjMapsInject {
     print_r($poi);
     echo ';';
 
-    $gj_poi_list = get_option('gj_poi_list');
-    $center_lat = get_option('gj_center_lat');
-    $center_lng = get_option('gj_center_lng');
-    $gj_map_zoom = get_option('gj_map_zoom');
-    $gj_map_styles = get_option('gj_map_styles');
-    $gj_label_color = get_option('gj_label_color');
+    echo 'var center_lat = '.($latitude ? $latitude : '34.0459231').';';
+    echo 'var center_lng = '.($longitude ? $longitude : '-118.2504648').';';
+    echo 'var map_zoom = '.($zoom ? $zoom : '14').';';
+
+    $gj_poi_list = get_option('gj_maps_poi_list');
+    $gj_map_styles = get_option('gj_maps_map_styles');
+    $gj_label_color = get_option('gj_maps_label_color');
 
     // Strip slashes and remove whitespace
     $map_styles = stripslashes($gj_map_styles);
     $map_styles = preg_replace("/\s+/", "", $map_styles);
 
     echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
-    echo 'var center_lat = '.($center_lat ? $center_lat : '34.0459231').';';
-    echo 'var center_lng = '.($center_lng ? $center_lng : '-118.2504648').';';
-    echo 'var map_zoom = '.($gj_map_zoom ? $gj_map_zoom : '14').';';
     echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
     echo 'var map_styles = '.($gj_map_styles ? $map_styles : '0').';';
     echo '</script>';

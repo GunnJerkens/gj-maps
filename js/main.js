@@ -13,6 +13,7 @@ function indexPOIData() {
     catIndexed[cat[i].id] = cat[i];
   }
 }
+
 function setupPOILists() {
   var i, len;
   var markup = '';
@@ -68,6 +69,7 @@ function setupPOILists() {
     });
   }
 }
+
 function markupCategoryList(cat) {
   var markup, i, len, address, symbolPath, color, background;
   if (label_color === "background") {
@@ -100,6 +102,7 @@ function markupCategoryList(cat) {
 
   return markup;
 }
+
 function showPOIInfo(poi) {
   var content, linkName, $header, mapTop, streetViewData;
   content = '<div class="poi-info" style="overflow:hidden;">' +
@@ -133,6 +136,7 @@ function showPOIInfo(poi) {
     $(document.body).animate({scrollTop: mapTop}, 300);
   }
 }
+
 function searchPOI(query) {
   var pattern, i, len;
   if (!isNaN(query)) {
@@ -146,6 +150,7 @@ function searchPOI(query) {
     }
   }
 }
+
 function captureStreetViewLinks() {
   $('a[href^="#street-view"]:not(.gj-street-view)').each(function() {
     var streetViewHash = $(this).attr('href').replace(/^.*(#street-view)/, '$1');
@@ -155,6 +160,7 @@ function captureStreetViewLinks() {
     });
   });
 }
+
 function parseStreetViewHash(hash, point) {
   var povMatch, pov;
   povMatch = hash.match(/^#street-view\/([^\/]+)\/(-?[0-9.]+)\/(-?[0-9.]+)(\/([0-9]+))?(\/(-?[0-9.]+)\/(-?[0-9.]+))?.*/);
@@ -178,6 +184,7 @@ function parseStreetViewHash(hash, point) {
     return false;
   }
 }
+
 function showStreetView(data) {
   var point, pov;
   if (!data.hasOwnProperty('point')) {
@@ -187,6 +194,7 @@ function showStreetView(data) {
   map.streetView.setPosition(new google.maps.LatLng(data.lat, data.lng));
   map.streetView.setPov(data.pov);
 }
+
 function placeMarkers(forceFit) {
   var i, len, isMatch, position, markerOptions;
   map.streetView.setVisible(false);
@@ -252,6 +260,7 @@ function placeMarkers(forceFit) {
     }
   }
 }
+
 function initMap() {
   var streetViewData, styles;
 
