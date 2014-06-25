@@ -66,10 +66,19 @@ class gjMapsInject {
         'position' => 'top',
         'latitude' => get_option('gj_maps_center_lat'),
         'longitude' => get_option('gj_maps_center_lng'),
-        'zoom' => get_option('gj_maps_map_zoom')
+        'zoom' => get_option('gj_maps_map_zoom'),
+        'api' => null
       ), $atts));
 
-      $gjmapsAPI = $this->frontend($map, $map_id, $latitude, $longitude, $zoom);
+      $gjmapsAPI = $this->frontend(array(
+          'map' => $map,
+          'map_id' => $map_id,
+          'latitude' => $latitude,
+          'longitude' => $longitude,
+          'zoom' => $zoom,
+          'api' => $api
+        )
+      );
 
       if ($pos === 'bottom' OR $pos === 'bot') {
         return $gjmapsAPI.$bottom;
@@ -85,41 +94,54 @@ class gjMapsInject {
 
   }
 
-  function frontend($map = NULL, $map_id = NULL, $latitude = NULL, $longitude = NULL, $zoom = NULL) {
+  function frontend($mapSettings) {
 
-    if($map_id === NULL && $map !== NULL) {
+    if($mapSettings['api'] != null) {
 
-      $map_id = $this->databaseFunctions->getMapID($map);
+      $json = @file_get_contents($mapSettings['api']);
+      $data = json_decode($json);
+
+      $poi = json_encode($data->poi);
+      $cat = json_encode($data->cat);
+
+    } else {
+
+      if($mapSettings['map_id'] === NULL && $mapSettings['map !== NULL']) {
+
+        $mapSettings['map_id'] = $this->databaseFunctions->getMapID($map);
+
+      }
+
+      $poi = json_encode($this->databaseFunctions->get_poi($type='OBJECT', $mapSettings['map_id']));
+      $cat = json_encode($this->databaseFunctions->get_cat($type='OBJECT', $mapSettings['map_id']));
 
     }
 
-    //Writes the JS to the page, including POIs and categories
-    $poi = json_encode($this->databaseFunctions->get_poi($type='OBJECT', $map_id));
     echo '<script type="text/javascript">';
+
     echo 'var poi = ';
     print_r($poi);
     echo ';';
 
-    $poi = json_encode($this->databaseFunctions->get_cat($type='OBJECT', $map_id));
     echo 'var cat = ';
-    print_r($poi);
+    print_r($cat);
     echo ';';
 
-    echo 'var center_lat = '.($latitude ? $latitude : '34.0459231').';';
-    echo 'var center_lng = '.($longitude ? $longitude : '-118.2504648').';';
-    echo 'var map_zoom = '.($zoom ? $zoom : '14').';';
+    echo 'var center_lat = '.($mapSettings['latitude'] ? $mapSettings['latitude'] : '34.0459231').';';
+    echo 'var center_lng = '.($mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648').';';
+    echo 'var map_zoom = '.($mapSettings['zoom'] ? $mapSettings['zoom'] : '14').';';
 
     $gj_poi_list = get_option('gj_maps_poi_list');
     $gj_map_styles = get_option('gj_maps_map_styles');
     $gj_label_color = get_option('gj_maps_label_color');
 
     // Strip slashes and remove whitespace
-    $map_styles = stripslashes($gj_map_styles);
-    $map_styles = preg_replace("/\s+/", "", $map_styles);
+    $gj_map_styles = stripslashes($gj_map_styles);
+    $gj_map_styles = preg_replace("/\s+/", "", $gj_map_styles);
 
     echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
     echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
-    echo 'var map_styles = '.($gj_map_styles ? $map_styles : '0').';';
+    echo 'var map_styles = '.($gj_map_styles ? $gj_map_styles : '0').';';
     echo '</script>';
 
   }
