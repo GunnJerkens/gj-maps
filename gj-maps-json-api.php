@@ -34,8 +34,9 @@ class gjMapsAPI {
   */
   public function sniff_requests(){
     global $wp;
-    if(isset($wp->query_vars['gjmaps_api'])){
-      $this->send_response();
+    if(isset($wp->query_vars['gjmaps_api'])) {
+      $mapID = $wp->query_vars['gjmaps_api'];
+      $this->send_response($mapID);
       exit;
     }
   }
@@ -43,7 +44,7 @@ class gjMapsAPI {
   /** Response Handler
   * This sends a JSON response to the browser
   */
-  protected function send_response(){
+  protected function send_response($mapID){
     $gjMapsDatabase = new gjMapsDB();
 
     $gj_poi_list = get_option('gj_poi_list');
@@ -52,8 +53,8 @@ class gjMapsAPI {
     $center_lng = get_option('gj_center_lng');
 
     $data = array(
-      'poi' => $gjMapsDatabase->get_poi(),
-      'cat' => $cat = $gjMapsDatabase->get_cat(),
+      'poi' => $gjMapsDatabase->get_poi($type='OBJECT', $mapID),
+      'cat' => $gjMapsDatabase->get_cat($type='OBJECT', $mapID),
       'poi_list' => $gj_poi_list,
       'map_styles' => $gj_map_styles,
       'center_lat' => $center_lat,
