@@ -57,7 +57,7 @@ function setupPOILists() {
     var $cat;
     $cat = $('.gjmaps-category');
 
-    if ($(window).innerWidth() > 768px) {
+    if($(window).innerWidth() > 768) {
 
       if($cat.length > 2) {
         percent = ((100-($cat.length*2))/$cat.length) + '%';
