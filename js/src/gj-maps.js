@@ -53,54 +53,25 @@ function setupPOILists() {
     }
   });
 
-  //
-  // Commenting this out for now, we are no longer using mCustomerScrollbar
-  //
-
-  // if (poi_list === 1) {
-  //   $(".gjmaps-category ul").mCustomScrollbar({
-  //     scrollButtons: {
-  //       enable: true
-  //     }
-  //   });
-  //   $(".poi-category li").click(function(event) {
-  //     var poi = poiIndexed[$(this).attr("data-poi-id")];
-  //     map.panTo(poi.marker.getPosition());
-  //     if (filter && filter.length && filter.indexOf(poi.cat_id) === -1) {
-  //       filter = [poi.cat_id];
-  //       placeMarkers();
-  //     }
-  //     showPOIInfo(poi);
-  //   });
-  // }
-
   function resizeCategories() {
-
     var $cat;
-
     $cat = $('.gjmaps-category');
 
-    if (Modernizr.mq('(min-width: 768px)')) {
+    if ($(window).innerWidth() > 768px) {
 
       if($cat.length > 2) {
-        console.log(cat.length);
-        percent = ((102 - ($cat.length + 1))/($cat.length + 1)) + '%';
-        console.log(percent);
+        percent = ((100-($cat.length*2))/$cat.length) + '%';
       } else {
         percent = '50%';
       }
 
     } else {
-
       percent = '100%';
-
     }
 
     $cat.css('width',percent);
-
   }
   resizeCategories();
-
 }
 
 function markupCategoryList(cat) {
