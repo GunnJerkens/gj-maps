@@ -27,31 +27,32 @@ div.gjmaps-wrapper {
 
 ## usage
 
-To import a CSV use the column names:
+### csv import
+Column names (all required):
 [category, name, address, city, state, zip, country, phone, url]
 
+### map placement
 Use the shortcode `[gjmaps]` in your content to place the maps.
 
 Shortcode options include:
+| Option | Value | Required | Notes |
+| :----- | :---: | :------: | ----: |
+| map    | string | optional | defaults to map_id |
+| map_id | integer | optional | required if map/api not present |
+| position | string | optional | top or bottom, defaults top |
+| latitude | integer | optional | defaults to options setting |
+| longitude | integer | optional | defaults to options setting |
+| zoom | integer | optional | defaults to options setting |
+| api | string | optional | overrides map/map_id, url must have map id |
 
-```
-'map'       => 'Single', (optional, defaults to map_id)
-'map_id'    => '1', (optional, defaults to 1)
-'position'  => 'top', (optional, top or bottom - refers to html structure)
-'latitude'  => 33.8274746, (optional, defaults to options setting)
-'longitude' => -118.1475189, (optional, defaults to options setting)
-'zoom'      => 14, (optional, defaults to options setting)
-'api'       => http://example.com/?gjmaps_api=1 (optional, requires a map_id)
-```
-
-### the_content
+#### the_content
 
 
 `[gjmaps map_id="4" position="bottom" zoom="16"]`
 
-### do_shortcode
+#### do_shortcode
 
-`<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"'); ?>
+`<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"'); ?>`
 
 ## issues
 [GitHub Issues](https://github.com/GunnJerkens/gj-maps/issues)
