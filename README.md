@@ -53,7 +53,7 @@ Shortcode options include:
 
 #### do_shortcode
 
-`<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"'); ?>`
+`<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"]'); ?>`
 
 ## api
 
