@@ -37,7 +37,7 @@ Use the shortcode `[gjmaps]` in your content to place the maps.
 Shortcode options include:
 
 | Option | Value | Required | Notes |
-| :----- | :---: | :------: | ----: |
+| :----- | :---: | :------: | :---- |
 | map    | string | optional | defaults to map_id |
 | map_id | integer | optional | required if map/api not present |
 | position | string | optional | top or bottom, defaults top |
