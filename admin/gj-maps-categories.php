@@ -135,14 +135,22 @@ if($response['status'] === 'success') {
 
   echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
 
-} ?>
+} 
+
+/*
+* Sets our POST action
+*/
+
+$current_uri = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
+$parsed_uri = parse_url($current_uri);
+$post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps_categories&map_id='.$map_id : $current_uri; ?>
 
 
 <div class="wrap"><?php
 
   if($cat !== false) { ?>
 
-    <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
       <input type="text" name="name" placeholder="Map Name" value="<?php echo $map_name; ?>"/>
@@ -150,7 +158,7 @@ if($response['status'] === 'success') {
     </form>
     <a href="?page=gj_maps_categories&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
 
-    <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_cat">
       <table class="wp-list-table widefat fixed gj-maps">
         <thead class="">
