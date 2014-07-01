@@ -4,6 +4,18 @@ $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
 /*
+* This is our DELETE handling
+*/
+
+if(isset($_GET['delete'])) {
+
+  $delete_map_id = $_GET['delete'];
+
+  $response = $adminFunctions->deleteMap($delete_map_id);
+
+}
+
+/*
 * This is our POST handling
 */
 
@@ -136,6 +148,7 @@ if($response['status'] === 'success') {
       <input type="text" name="name" placeholder="Map Name" value="<?php echo $map_name; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
     </form>
+    <a href="?page=gj_maps_categories&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
 
     <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
       <input type="hidden" name="form_name" value="gj_maps_cat">

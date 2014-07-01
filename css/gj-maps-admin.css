@@ -3,3 +3,20 @@
   margin: 0;
   padding: 10px;
 }
+
+#delete {
+  float:right;
+  padding: 10px 5px;
+  color: red;
+  text-decoration: none;
+}
+
+table.gj-maps {
+  margin-bottom: 15px;
+}
+
+.gj-buttons {
+  float: left;
+  overflow: hidden;
+}
+

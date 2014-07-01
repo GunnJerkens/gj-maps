@@ -626,13 +626,33 @@ class gjMapsAdmin {
 
     $savePOI = $this->databaseFunctions->createPOI($poi);
 
-    // THIS NEED RESPONSE HELP
+    // THIS NEEDS RESPONSE HELP
 
   }
 
   /*
   * Options-Delete Functions
   */
+
+  function deleteMap($map_id) {
+
+    $responsePOI = $this->databaseFunctions->deleteMapPOI($map_id);
+    $responseCat = $this->databaseFunctions->deleteMapCat($map_id);
+    $responseMap = $this->databaseFunctions->deleteMap($map_id);
+
+    if($responsePOI === false || $responseCat === false || $responseMap === false) {
+
+      $response = $this->gjMapsMessaging('error', 'Something went wrong during the delete process.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('success', 'Map '.$map_id.' was successfully deleted.');
+
+    }
+
+    return $response;
+
+  }
 
   function deleteData($post) {
 

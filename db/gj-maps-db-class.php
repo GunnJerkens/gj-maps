@@ -173,6 +173,24 @@ class gjMapsDB {
 
   }
 
+  function deleteMap($map_id) {
+
+    $table_name = $this->mapsTable();
+
+    $query = $this->wpdb->query(
+      $this->wpdb->prepare(
+        "
+        DELETE FROM $table_name
+        WHERE id = %d
+        ",
+        $map_id
+      )
+    );
+
+    return $query;
+
+  }
+
   function deleteAllMaps() {
 
     $table_name = $this->mapsTable();
@@ -188,7 +206,11 @@ class gjMapsDB {
   }
 
   /*
+  * 
   * POI Database Functions
+  * 
+  * @since 0.3
+  *
   */
 
   function get_poi($type='OBJECT', $where = NULL) {
@@ -296,6 +318,24 @@ class gjMapsDB {
       );
 
     }
+
+    return $query;
+
+  }
+
+  function deleteMapPOI($map_id) {
+
+    $table_name = $this->poiTable();
+
+    $query = $this->wpdb->query(
+      $this->wpdb->prepare(
+        "
+        DELETE FROM $table_name
+        WHERE map_id = %d
+        ",
+        $map_id
+      )
+    );
 
     return $query;
 
@@ -416,6 +456,24 @@ class gjMapsDB {
         WHERE id = %d
         ",
         $id
+      )
+    );
+
+    return $query;
+
+  }
+
+  function deleteMapCat($map_id) {
+
+    $table_name = $this->catTable();
+
+    $query = $this->wpdb->query(
+      $this->wpdb->prepare(
+        "
+        DELETE FROM $table_name
+        WHERE map_id = %d
+        ",
+        $map_id
       )
     );
 
