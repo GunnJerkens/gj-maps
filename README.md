@@ -55,6 +55,12 @@ Shortcode options include:
 
 `<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"'); ?>`
 
+## api
+
+By default each maps has its own API (JSON) endpoint available for consumption by other gj-maps installations. The trailing id number is a requirement else the data will be entirely false.
+
+`http://example.com/gjmaps_api=4`
+
 ## issues
 [GitHub Issues](https://github.com/GunnJerkens/gj-maps/issues)
 
