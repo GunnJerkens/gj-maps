@@ -35,6 +35,7 @@ Column names (all required):
 Use the shortcode `[gjmaps]` in your content to place the maps.
 
 Shortcode options include:
+
 | Option | Value | Required | Notes |
 | :----- | :---: | :------: | ----: |
 | map    | string | optional | defaults to map_id |
