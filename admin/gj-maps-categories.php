@@ -19,7 +19,6 @@ if(isset($_GET['delete'])) {
 * This is our POST handling
 */
 
-
 if(!empty($_POST)) {
 
   if($_POST['form_name'] === 'gj_maps_map_name') {
