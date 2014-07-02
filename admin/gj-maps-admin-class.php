@@ -190,7 +190,8 @@ class gjMapsAdmin {
       }
 
       $googleResponse = json_decode($googleResponseEncoded['body']);
-      if( $googleResponse === 'ZERO_RESULTS') {
+
+      if($googleResponse === 'ZERO_RESULTS') {
 
         $singlePOI['lat'] = '0';
         $singlePOI['lng'] = '0';
@@ -199,9 +200,20 @@ class gjMapsAdmin {
 
       } else {
 
-        $location = $response2->results[0]->geometry->location;
-        $singlePOI['lat'] = $location->lat;
-        $singlePOI['lng'] = $location->lng;
+        if(isset($googleResponse->results[0])) {
+
+          $location = $googleResponse->results[0]->geometry->location;
+          $singlePOI['lat'] = $location->lat;
+          $singlePOI['lng'] = $location->lng;
+
+        } else {
+
+          $singlePOI['lat'] = '0';
+          $singlePOI['lng'] = '0';
+
+          // This is an error!
+
+        }
 
       }
 
