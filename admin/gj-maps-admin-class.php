@@ -41,7 +41,7 @@ class gjMapsAdmin {
 
     }
 
-    if(!isset($map_name)) {
+    if(!isset($map_name) && isset($map[0])) {
       $map_name = $map[0];
       $map_name = $map_name->name;
     }

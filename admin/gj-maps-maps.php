@@ -92,7 +92,15 @@ if(!empty($_POST)) {
 */
 
 $map = $databaseFunctions->get_map();
-$map_id = $createMap === false ? $_POST['id'] : $adminFunctions->tabsMapID($_GET);
+
+if(isset($createMap) && $createMap === false) {
+
+  $map_id = $_POST['id'];
+
+} else {
+
+  $map_id = $adminFunctions->tabsMapID($_GET);
+}
 
 echo $adminFunctions->mapsTab('poi', $map, $map_id);
 
@@ -108,15 +116,19 @@ echo '<script>var cat = '.(json_encode($cat)).'; var map_id = '.(json_encode($ma
 * This is our response messaging
 */
 
-if($response['status'] === 'success') {
+if(isset($response)) {
 
-  echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+  if($response['status'] === 'success') {
 
-} else if ($response['status'] === 'error') {
+    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
 
-  echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+  } else if ($response['status'] === 'error') {
 
-} 
+    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+
+  }
+
+}
 
 /*
 * Sets our POST action
@@ -139,7 +151,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
     <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
-      <input type="text" name="name" placeholder="Map Name" value="<?php echo $map_name; ?>"/>
+      <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map[0]->name) ? $map[0]->name : ''; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
     </form>
     <a href="?page=gj_maps&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
@@ -212,18 +224,22 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
         <button class="btn button table-button" type="submit">Update POI</button>
       </div>
 
-    </form>
+    </form><?php
 
-    <div class="tablenav bottom">
-      <div class="tablenav-pages">
-        <span class="displaying-num"><?php echo $pagination['total_items'].' items'; ?></span>
-        <span class="pagination-links"><a class="first-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the first page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=1">«</a>
-        <a class="prev-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the previous page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] - 1 > 0 ? $pagination['current_page'] - 1 : $pagination['current_page']; ?>">‹</a>
-        <span class="paging-input"><?php echo $pagination['current_page']; ?> of <span class="total-pages"><?php echo $pagination['pages'] == 0 ? '1' : $pagination['pages']; ?></span></span>
-        <a class="next-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the next page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? $pagination['current_page'] : $pagination['current_page'] + 1; ?>">›</a>
-        <a class="last-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the last page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['pages']; ?>">»</a></span>
-      </div>
-    </div><?php
+    if(isset($pagination)) { ?>
+
+      <div class="tablenav bottom">
+        <div class="tablenav-pages">
+          <span class="displaying-num"><?php echo $pagination['total_items'].' items'; ?></span>
+          <span class="pagination-links"><a class="first-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the first page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=1">«</a>
+          <a class="prev-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the previous page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] - 1 > 0 ? $pagination['current_page'] - 1 : $pagination['current_page']; ?>">‹</a>
+          <span class="paging-input"><?php echo $pagination['current_page']; ?> of <span class="total-pages"><?php echo $pagination['pages'] == 0 ? '1' : $pagination['pages']; ?></span></span>
+          <a class="next-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the next page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? $pagination['current_page'] : $pagination['current_page'] + 1; ?>">›</a>
+          <a class="last-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the last page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['pages']; ?>">»</a></span>
+        </div>
+      </div><?php
+
+    }
 
   } else {
 
