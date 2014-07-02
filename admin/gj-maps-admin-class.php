@@ -99,6 +99,8 @@ class gjMapsAdmin {
 
   function deletePOI($deleteItems) {
 
+    $hasError = false;
+
     foreach($deleteItems as $item) {
 
       $responses[] = $this->databaseFunctions->deletePOI($item['id']);
