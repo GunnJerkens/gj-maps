@@ -38,19 +38,17 @@ if(!empty($_POST)) {
 
     foreach($_POST as $post) {
 
+      
+
       if(isset($post['delete']) && $post['delete'] === 'on') {
 
         $deleteItems[] = $post;
 
-      }
-
-      if(isset($post['mode']) && $post['mode'] === 'update') {
+      } elseif(isset($post['mode']) && $post['mode'] === 'update') {
 
         $updateItems[] = $post;
 
-      }
-
-      if(isset($post['mode']) && $post['mode'] === 'create') {
+      } elseif(isset($post['mode']) && $post['mode'] === 'create') {
 
         $createItems[] = $post;
 
@@ -64,7 +62,7 @@ if(!empty($_POST)) {
 
     }
 
-    if(!empty($deleteItems)) {
+    if(!empty($updateItems)) {
 
       $response = $adminFunctions->editPOI($updateItems);
 
