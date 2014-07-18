@@ -29,7 +29,7 @@ if(!empty($_POST)) {
 
   if($_POST['form_name'] === 'geocode') {
 
-    $response = $adminFunctions->geocodePOI();
+    $response = $adminFunctions->geocodePOI($_GET['map_id']);
 
   }
 

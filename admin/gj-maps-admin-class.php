@@ -239,9 +239,9 @@ class gjMapsAdmin {
 
   }
 
-  function geocodePOI() {
+  function geocodePOI($map_id) {
 
-    $query = $this->databaseFunctions->get_poi('ARRAY_A', 'lat=0');
+    $query = $this->databaseFunctions->get_poi('ARRAY_A', $map_id, 'lat = 0');
 
     foreach ($query as $poi) {
 

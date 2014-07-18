@@ -213,7 +213,7 @@ class gjMapsDB {
   *
   */
 
-  function get_poi($type='OBJECT', $where = NULL) {
+  function get_poi($type='OBJECT', $where = NULL, $and = NULL) {
 
     $table_name = $this->poiTable();
 
@@ -221,11 +221,18 @@ class gjMapsDB {
 
       $where = "map_id = $where";
 
+      if($and !== NULL) {
+        $and = "AND $and";
+      } else {
+        $and = '';
+      }
+
       $query = $this->wpdb->get_results(
         "
         SELECT *
         FROM $table_name
         WHERE $where
+        $and
         ",
         $type
       );
