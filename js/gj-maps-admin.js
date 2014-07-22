@@ -110,16 +110,7 @@ jQuery(document).ready(function($) {
 
     $('table').find("[data-column='" + column + "']").addClass('active');
 
-
   });
 
 });
-
-
-
-
-
-
-
-
 

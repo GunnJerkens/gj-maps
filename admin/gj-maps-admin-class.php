@@ -10,6 +10,16 @@ class gjMapsAdmin {
 
   }
 
+  /**
+  * 
+  * Default messaging for the admin class.
+  *
+  * Requires status and message as strings, returns an array.
+  * 
+  * @since 0.3
+  *
+  **/
+
   function gjMapsMessaging($status, $message) {
 
     $response = array (
@@ -21,9 +31,15 @@ class gjMapsAdmin {
 
   }
 
-  /*
-  * GJ-Maps Functions
-  */
+  /**
+  *
+  * Creates the tabs on maps and categories pages.
+  * 
+  * Requries page, map and map_id, returns a string.
+  *
+  * @since 0.3
+  *
+  **/
 
   function mapsTab($page, $map, $map_id) {
 
@@ -54,9 +70,19 @@ class gjMapsAdmin {
 
   }
 
-  function tabsMapID($getData) {
+  /**
+  *
+  * Return the map_id on maps and cats.
+  * 
+  * Requires the $_GET.
+  *
+  * @since 0.3
+  *
+  **/
 
-    if(isset($getData['map_id']) && $getData['map_id'] === 'new') {
+  function tabsMapID($get) {
+
+    if(isset($get['map_id']) && $get['map_id'] === 'new') {
 
       $maxMapID = $this->databaseFunctions->maxMapID();
       $maxMapID = ((int) $maxMapID[0]->max_id) + 1;
@@ -64,9 +90,9 @@ class gjMapsAdmin {
       $this->databaseFunctions->saveMap($maxMapID);
       $map_id = $maxMapID;
 
-    } else if (isset($getData['map_id'])) {
+    } else if (isset($get['map_id'])) {
 
-      $map_id = $getData['map_id'];
+      $map_id = $get['map_id'];
 
     } else {
 
@@ -78,6 +104,16 @@ class gjMapsAdmin {
     return $map_id;
 
   }
+
+  /**
+  *
+  * Rename the map.
+  * 
+  * Requires the $_POST.
+  *
+  * @since 0.3
+  *
+  **/
 
   function renameMap($post) {
 
@@ -96,6 +132,174 @@ class gjMapsAdmin {
     return $response;
 
   }
+
+  /**
+  *
+  * Geocode the POI
+  *
+  * Uses usleep to geocode at a rate of 8/s, under the Google API limit of 10/s
+  * 
+  * Requires the map_id, returns a standard $response
+  *
+  * @since 0.1
+  *
+  **/
+
+  function geocodePOI($map_id) {
+
+    $query = $this->databaseFunctions->get_poi('ARRAY_A', $map_id, 'lat = 0');
+
+    foreach($query as $poi) {
+
+      if($poi['address'] && $poi['zip']) {
+
+        $address = urlencode($poi["address"].', '.$poi['zip']);
+
+      } else {
+
+        $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
+
+      }
+
+      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+      $url .= '&address='.$address;
+
+      $googleResponseEncoded = wp_remote_get($url);
+
+      if(!is_wp_error($googleResponseEncoded)) {
+
+        $googleResponse = json_decode($googleResponseEncoded['body']);
+
+        if($googleResponse === 'ZERO_RESULTS') {
+
+          $poi['lat'] = '0';
+          $poi['lng'] = '0';
+
+        } else {
+
+          $location = $googleResponse->results[0]->geometry->location;
+          $poi['lat'] = $location->lat;
+          $poi['lng'] = $location->lng;
+
+        }
+
+        $updatePOI[] = $poi;
+
+      }
+
+      usleep(125000);
+
+    }
+
+    if(!empty($updatePOI)) {
+
+      $this->databaseFunctions->editPOI($updatePOI);
+
+      $response = $this-gjMapsMessaging('success', 'Updated coordinates successfully');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('success', 'There were not points to update.');
+
+    }
+
+    return $response;
+
+  }
+
+  /**
+  *
+  * Create the POI
+  * 
+  * Requires the $poi, an array of poi data
+  *
+  * @since 0.1
+  *
+  **/
+
+  function createPOI($poi) {
+
+    foreach($poi as $singlePOI) {
+
+      $defaultCatExists = false;
+
+      if(!isset($singlePOI['cat_id']) && $defaultCatExists === false) {
+
+        $cat = array (
+          'map_id' => $singlePOI['map_id'],
+          'name' => 'Default',
+          'color' => '#000000',
+          'icon' => NULL
+        );
+
+        $dbResponse = $this->databaseFunctions->createCat($cat);
+
+        if($dbResponse === 1) {
+
+          $dbResponse = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
+          $singlePOI['cat_id'] = $dbResponse[0]->id;
+
+          $defaultCatExists = true;
+
+        }
+
+      }
+
+      $createItems[] = $singlePOI;
+
+    }
+
+    $response = $this->databaseFunctions->createPOI($createItems);
+
+    if($response === 1) {
+
+      $response = $this->gjMapsMessaging('success', 'Successfully created new points of interest.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('error', 'Failed to create points of interest.');
+
+    }
+
+    return $response;
+
+  }
+
+  /**
+  *
+  * Edit the POI
+  * 
+  * Requires the $_POST, the array of POI data
+  *
+  * @since 0.1
+  *
+  **/
+
+  function editPOI($post) {
+
+    $editPOI = $this->databaseFunctions->editPOI($post);
+
+    if($editPOI) {
+
+      $this->gjMapsMessaging('success', 'Points of interest updated successfully.');
+
+    } else {
+
+      $this->gjMapsMessaging('error', 'Something went wrong during the update process.');
+
+    }
+  
+  }
+
+  /**
+  *
+  * Delete the POI
+  * 
+  * Requires an array of POI 'id' to delete
+  *
+  * @since 0.3
+  *
+  **/
 
   function deletePOI($deleteItems) {
 
@@ -131,176 +335,9 @@ class gjMapsAdmin {
 
   }
 
-  function editPOI($post) {
 
-    $editPOI = $this->databaseFunctions->editPOI($post);
 
-    if($editPOI) {
 
-      $this->gjMapsMessaging('success', 'Points of interest updated successfully.');
-
-    } else {
-
-      $this->gjMapsMessaging('error', 'Something went wrong during the update process.');
-
-    }
-  
-  }
-
-  function createPOI($poi) {
-
-    foreach($poi as $singlePOI) {
-
-      $defaultCatExists = false;
-
-      if(!isset($singlePOI['cat_id']) && $defaultCatExists === false) {
-
-        $cat = array (
-          'map_id' => $singlePOI['map_id'],
-          'name' => 'Default',
-          'color' => '#000000',
-          'icon' => NULL
-        );
-
-        $dbResponse = $this->databaseFunctions->createCat($cat);
-
-        if($dbResponse === 1) {
-
-          $dbResponse = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
-          $singlePOI['cat_id'] = $dbResponse[0]->id;
-
-          $defaultCatExists = true;
-
-        } else {
-
-          // This is an error!
-
-        }
-
-      }
-
-      $address = urlencode($singlePOI["address"].', '.$singlePOI['city'].', '.$singlePOI['state'].' '.$singlePOI['zip']);
-      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-      $url .= '&address='.$address;
-
-      $googleResponseEncoded = wp_remote_get($url);
-
-      if(is_wp_error($googleResponseEncoded)) {
-
-        // This is an error!
-
-      }
-
-      $googleResponse = json_decode($googleResponseEncoded['body']);
-
-      if($googleResponse === 'ZERO_RESULTS') {
-
-        $singlePOI['lat'] = '0';
-        $singlePOI['lng'] = '0';
-
-        // This is an error!
-
-      } else {
-
-        if(isset($googleResponse->results[0])) {
-
-          $location = $googleResponse->results[0]->geometry->location;
-          $singlePOI['lat'] = $location->lat;
-          $singlePOI['lng'] = $location->lng;
-
-        } else {
-
-          $singlePOI['lat'] = '0';
-          $singlePOI['lng'] = '0';
-
-          // This is an error!
-
-        }
-
-      }
-
-      $createItems[] = $singlePOI;
-
-    }
-
-    $response = $this->databaseFunctions->createPOI($createItems);
-
-    if($response === 1) {
-
-      $response = $this->gjMapsMessaging('success', 'Successfully created new points of interest.');
-
-    } else {
-
-      $response = $this->gjMapsMessaging('error', 'Failed to create points of interest.');
-
-    }
-
-    return $response;
-
-  }
-
-  function geocodePOI($map_id) {
-
-    $query = $this->databaseFunctions->get_poi('ARRAY_A', $map_id, 'lat = 0');
-
-    foreach ($query as $poi) {
-
-      if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
-
-        $address = urlencode($poi["address"].', '.$poi['zip']);
-
-      } else {
-
-        $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-
-      }
-
-      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-      $url .= '&address='.$address;
-
-      $googleResponseEncoded = wp_remote_get($url);
-
-      if(is_wp_error($googleResponseEncoded)) {
-
-        // This is an error!
-
-      }
-
-
-      $googleResponse = json_decode($googleResponseEncoded['body']);
-
-      if( $googleResponse === 'ZERO_RESULTS') {
-
-        $poi['lat'] = '0';
-        $poi['lng'] = '0';
-
-        // This is an error!
-
-      } else {
-
-        $location = $googleResponse->results[0]->geometry->location;
-        $poi['lat'] = $location->lat;
-        $poi['lng'] = $location->lng;
-
-      }
-
-      $updatePOI[] = $poi;
-
-    }
-
-    if(!empty($updatePOI)) {
-
-      $response = $this->databaseFunctions->editPOI($updatePOI);
-
-    } else {
-
-      $response = $this->gjMapsMessaging('success', 'There were not points to update.');
-
-    }
-
-    return $response;
-
-  }
 
   /*
   * Categories Functions

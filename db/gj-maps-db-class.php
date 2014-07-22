@@ -281,7 +281,7 @@ class gjMapsDB {
 
     $table_name = $this->poiTable();
 
-    foreach($editItems as $poi) {
+    foreach($editItems as $poi) { // this should get moved to the admin class
 
       $update = $this->wpdb->update(
         $table_name,
