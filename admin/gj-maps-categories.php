@@ -129,7 +129,8 @@ echo $adminFunctions->mapsTab('cat', $map, $map_id);
 */
 
 $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
-echo '<script>var map_id = '.(json_encode($map_id)).';</script>';
+wp_localize_script('gj_maps_admin_js', 'map_id', $map_id);
+
 
 /*
 * This is our response messaging
