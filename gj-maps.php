@@ -11,8 +11,8 @@
 
 require_once(plugin_dir_path(__FILE__).'gj-maps-inject.php');
 require_once(plugin_dir_path(__FILE__).'gj-maps-json-api.php');
-require_once(plugin_dir_path(__FILE__).'admin/gj-maps-admin-class.php');
-require_once(plugin_dir_path(__FILE__).'db/gj-maps-db-class.php');
+require_once(plugin_dir_path(__FILE__).'inc/gj-maps-admin-class.php');
+require_once(plugin_dir_path(__FILE__).'inc/gj-maps-db-class.php');
 
 class gjMaps {
 
