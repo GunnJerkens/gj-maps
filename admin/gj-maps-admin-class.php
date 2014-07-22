@@ -107,6 +107,36 @@ class gjMapsAdmin {
 
   /**
   *
+  * Delete Map
+  * 
+  * Requires the map_id, returns the response array
+  *
+  * @since 0.3
+  *
+  **/
+
+  function deleteMap($map_id) {
+
+    $responsePOI = $this->databaseFunctions->deleteMapPOI($map_id);
+    $responseCat = $this->databaseFunctions->deleteMapCat($map_id);
+    $responseMap = $this->databaseFunctions->deleteMap($map_id);
+
+    if($responsePOI === false || $responseCat === false || $responseMap === false) {
+
+      $response = $this->gjMapsMessaging('error', 'Something went wrong during the delete process.');
+
+    } else {
+
+      $response = $this->gjMapsMessaging('success', 'Map '.$map_id.' was successfully deleted.');
+
+    }
+
+    return $response;
+
+  }
+
+  /**
+  *
   * Rename the map.
   * 
   * Requires the $_POST.
@@ -335,13 +365,15 @@ class gjMapsAdmin {
 
   }
 
-
-
-
-
-  /*
-  * Categories Functions
-  */
+  /**
+  *
+  * Create categories
+  * 
+  * Expects an array of items to create
+  *
+  * @since 0.1
+  *
+  **/
 
   function createCat($createItems) {
 
@@ -374,6 +406,16 @@ class gjMapsAdmin {
     }
 
   }
+
+  /**
+  *
+  * Edit categories
+  * 
+  * Expects an array of items to update
+  *
+  * @since 0.1
+  *
+  **/
 
   function editCat($updateItems) {
 
@@ -409,6 +451,16 @@ class gjMapsAdmin {
   
   }
 
+  /**
+  *
+  * Delete categories
+  * 
+  * Expects an array of categories to delete, returns a response array
+  *
+  * @since 0.1
+  *
+  **/
+
   function deleteCat($deleteItems) {
 
     foreach($deleteItems as $item) {
@@ -443,9 +495,15 @@ class gjMapsAdmin {
 
   }
 
-  /*
-  * Options-Settings Functions
-  */
+  /**
+  *
+  * Update settings
+  * 
+  * Expects the post object, returns a response array
+  *
+  * @since 0.1
+  *
+  **/
 
   function updateSettings($post) {
 
@@ -479,6 +537,16 @@ class gjMapsAdmin {
 
   }
 
+  /**
+  *
+  * Get settings
+  * 
+  * Expects no arguments, returns the settings array
+  *
+  * @since 0.1
+  *
+  **/
+
   function getSettings() {
 
     $style = get_option('gj_maps_use_styles');
@@ -508,13 +576,18 @@ class gjMapsAdmin {
   }
 
 
-  /*
-  * Options-Import Functions
-  */
+  /**
+  *
+  * Import CSV
+  * 
+  * Expects the uploaded file and a mapID
+  *
+  * @since 0.1
+  *
+  **/
 
   function importData($uploadedFile, $mapID) {
 
-    // Create a new map
     if($mapID === 'new') {
 
       $maxID = $this->databaseFunctions->maxMapID();
@@ -580,10 +653,10 @@ class gjMapsAdmin {
 
     }
 
+    // Unset the headers
     unset($poi[0]);
 
     // This parses through the data
-
     foreach ($poi as $key=>$value) {
 
       // Sets each category to an integer, creates categories if needed
@@ -633,77 +706,38 @@ class gjMapsAdmin {
 
           $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
 
-        } else {
-
-          // This is an error!
-
         }
 
       }
 
 
-      // Adds the map idea to each of the rows
+      // Adds the map id to each of the rows
       $poi[$key]['map_id'] = $mapID;
 
-      // Adding lat & lng via Google encode
-      $address = urlencode($value["address"].', '.$value['city'].', '.$value['state'].' '.$value['zip']);
-      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-      $url .= '&address='.$address;
-
-      $googleResponseEncoded = wp_remote_get($url);
-
-      if(is_wp_error($googleResponseEncoded)) {
-
-        // This is an error!
-
-      }
-
-      $googleResponse = json_decode($googleResponseEncoded['body']);
-
-      if(isset($googleResponse->results[0])){
-
-        $location = $googleResponse->results[0]->geometry->location;
-        $poi[$key]['lat'] = $location->lat;
-        $poi[$key]['lng'] = $location->lng;
-
-      } else {
-
-        $poi[$key]['lat'] = 0;
-        $poi[$key]['lng'] = 0;
-
-      }
+      // Set our lat/lng to 0, it's too taxing to 
+      // upload an unknown sized csv and to geocode
+      $poi[$key]['lat'] = 0;
+      $poi[$key]['lng'] = 0;
 
     }
 
     $savePOI = $this->databaseFunctions->createPOI($poi);
 
-    // THIS NEEDS RESPONSE HELP
-
-  }
-
-  /*
-  * Options-Delete Functions
-  */
-
-  function deleteMap($map_id) {
-
-    $responsePOI = $this->databaseFunctions->deleteMapPOI($map_id);
-    $responseCat = $this->databaseFunctions->deleteMapCat($map_id);
-    $responseMap = $this->databaseFunctions->deleteMap($map_id);
-
-    if($responsePOI === false || $responseCat === false || $responseMap === false) {
-
-      $response = $this->gjMapsMessaging('error', 'Something went wrong during the delete process.');
-
-    } else {
-
-      $response = $this->gjMapsMessaging('success', 'Map '.$map_id.' was successfully deleted.');
-
-    }
+    $response = $this->gjMapsMessaging('success', 'CSV data successfully uploaded.');
 
     return $response;
 
   }
+
+  /**
+  *
+  * Bulk delete data
+  * 
+  * Requires the post, returns the response array
+  *
+  * @since 0.3
+  *
+  **/
 
   function deleteData($post) {
 
