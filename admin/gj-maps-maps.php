@@ -110,7 +110,7 @@ $poi = $databaseFunctions->get_poi($type='OBJECT', $map_id);
 $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
 
 wp_localize_script('gj_maps_admin_js', 'cat', $cat);
-wp_localize_script('gj_maps_admin_js', 'map_id', $map_id);
+wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
 
 /*
 * This is our response messaging

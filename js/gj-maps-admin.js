@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
   pickColors();
 
 
-  var mapsTable, tableRow, addRow, ID, map, catOptions;
+  var mapsTable, tableRow, addRow, ID, catOptions;
 
   mapsTable = $('.gj-maps > tbody:last');
   addPOIRow = $('.add-poi-row');
@@ -37,7 +37,7 @@ jQuery(document).ready(function($) {
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
           '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
           '<input type="hidden" name="' + ID + '[mode]" value="create">',
-          '<input type="hidden" name="' + ID + '[map_id]" value="' + map_id + '">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map.id + '">',
           '<th class="check-column">',
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',
@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
           '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
           '<input type="hidden" name="' + ID + '[mode]" value="create">',
-          '<input type="hidden" name="' + ID + '[map_id]" value="' + map_id + '">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map.id + '">',
           '<th class="check-column">',
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',
