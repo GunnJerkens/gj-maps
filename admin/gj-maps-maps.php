@@ -108,7 +108,9 @@ echo $adminFunctions->mapsTab('poi', $map, $map_id);
 
 $poi = $databaseFunctions->get_poi($type='OBJECT', $map_id);
 $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
-echo '<script>var cat = '.(json_encode($cat)).'; var map_id = '.(json_encode($map_id)).';</script>';
+
+wp_localize_script('gj_maps_admin_js', 'cat', $cat);
+wp_localize_script('gj_maps_admin_js', 'map_id', $map_id);
 
 /*
 * This is our response messaging
@@ -164,7 +166,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
             </th>
             <th class="th-name"><span>Name</span></th>
             <th class="th-category"><span>Category</span></th>
-            <th data-column="address" class="th-header"><span>Address</span></th>
+            <th data-column="address" class="th-header active"><span>Address</span></th>
             <th data-column="city" class="th-header"><span>City</span></th>
             <th data-column="state" class="th-header"><span>State</span></th>
             <th data-column="zip" class="th-header"><span>Zip</span></th>
