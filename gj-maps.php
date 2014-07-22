@@ -85,46 +85,52 @@ class gjMaps {
 
     //MAPS table
     $sql_maps = "CREATE TABLE $gj_maps (
-      id mediumint(9) NOT NULL AUTO_INCREMENT,
-      name VARCHAR(55) NOT NULL,
-      c_lat float(12,8),
-      c_lng float(12,8),
-      m_zoom longtext,
-      PRIMARY KEY (id)
-    );";
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        name VARCHAR(55) NOT NULL,
+        c_lat float(12,8),
+        c_lng float(12,8),
+        m_zoom longtext,
+        PRIMARY KEY (id)
+      )
+      CHARACTER SET utf8
+      COLLATE utf8_unicode_ci;";
 
     //CAT table
     $sql_cat = "CREATE TABLE $gj_cat (
-      id mediumint(9) NOT NULL AUTO_INCREMENT,
-      map_id mediumint(9) NOT NULL,
-      name VARCHAR(55) NOT NULL,
-      color VARCHAR(7) NOT NULL DEFAULT '#000000',
-      icon VARCHAR(255),
-      hide_list VARCHAR(1),
-      filter_resist VARCHAR(1),
-      PRIMARY KEY (id),
-      FOREIGN KEY (map_id) REFERENCES $gj_maps(id)
-    );";
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        map_id mediumint(9) NOT NULL,
+        name VARCHAR(55) NOT NULL,
+        color VARCHAR(7) NOT NULL DEFAULT '#000000',
+        icon VARCHAR(255),
+        hide_list VARCHAR(1),
+        filter_resist VARCHAR(1),
+        PRIMARY KEY (id),
+        FOREIGN KEY (map_id) REFERENCES $gj_maps(id)
+      )
+      CHARACTER SET utf8
+      COLLATE utf8_unicode_ci;";
 
     //POI table
     $sql_poi = "CREATE TABLE $gj_poi (
-      id mediumint(9) NOT NULL AUTO_INCREMENT,
-      map_id mediumint(9) NOT NULL,
-      cat_id mediumint(9) NOT NULL,
-      name VARCHAR(255) NOT NULL,
-      address VARCHAR(255) NOT NULL,
-      city tinytext NOT NULL,
-      state tinytext NOT NULL,
-      zip tinytext,
-      country tinytext,
-      phone tinytext,
-      url VARCHAR(255) DEFAULT '' NOT NULL,
-      lat float(12,8) NOT NULL,
-      lng float(12,8) NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (cat_id) REFERENCES $gj_cat(id),
-      FOREIGN KEY (map_id) REFERENCES $gj_maps(id)
-     );";
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        map_id mediumint(9) NOT NULL,
+        cat_id mediumint(9) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        city tinytext NOT NULL,
+        state tinytext NOT NULL,
+        zip tinytext,
+        country tinytext,
+        phone tinytext,
+        url VARCHAR(255) DEFAULT '' NOT NULL,
+        lat float(12,8) NOT NULL,
+        lng float(12,8) NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (cat_id) REFERENCES $gj_cat(id),
+        FOREIGN KEY (map_id) REFERENCES $gj_maps(id)
+      )
+      CHARACTER SET utf8
+      COLLATE utf8_unicode_ci;";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql_maps . $sql_cat . $sql_poi);
