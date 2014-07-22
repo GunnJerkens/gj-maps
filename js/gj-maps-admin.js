@@ -99,4 +99,27 @@ jQuery(document).ready(function($) {
 
   });
 
+  $(".widen").focus(function() {
+
+    var column, $header;
+
+    $header = $('.th-header');
+
+    $header.removeClass('active');
+    column = $(this).data('column');
+
+    $('table').find("[data-column='" + column + "']").addClass('active');
+
+
+  });
+
 });
+
+
+
+
+
+
+
+
+

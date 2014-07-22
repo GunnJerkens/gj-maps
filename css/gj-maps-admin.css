@@ -15,6 +15,26 @@ table.gj-maps {
   margin-bottom: 15px;
 }
 
+.th-name {
+  width: 250px;
+}
+
+.th-category {
+  width: 200px;
+}
+
+table.gj-maps input {
+  width: 100%;
+}
+
+table.gj-maps input[type=checkbox] {
+  width: auto;
+}
+
+th.th-header.active {
+  width: 250px;
+}
+
 .gj-buttons {
   float: left;
   overflow: hidden;
