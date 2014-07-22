@@ -158,66 +158,69 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
 
     <form name="gj_maps_poi" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_poi">
-      <table class="wp-list-table widefat fixed gj-maps">
-        <thead class="">
-          <tr>
-            <th scope="col" id="cb" class="column-cb check-column">
-              <input id="cb-select-all-1" type="checkbox">
-            </th>
-            <th class="th-name"><span>Name</span></th>
-            <th class="th-category"><span>Category</span></th>
-            <th data-column="address" class="th-header active"><span>Address</span></th>
-            <th data-column="city" class="th-header"><span>City</span></th>
-            <th data-column="state" class="th-header"><span>State</span></th>
-            <th data-column="zip" class="th-header"><span>Zip</span></th>
-            <th data-column="country" class="th-header"><span>Country</span></th>
-            <th data-column="phone" class="th-header"><span>Phone</span></th>
-            <th data-column="url" class="th-header"><span>URL</span></th>
-            <th data-column="latitude" class="th-header"><span>Latitude</span></th>
-            <th data-column="longitude" class="th-header"><span>Longitude</span></th>
-          </tr>
-        </thead>
-        <tbody><?php
+
+      <div id="gj-table-container">
+        <table class="wp-list-table widefat fixed gj-maps">
+          <thead class="">
+            <tr>
+              <th scope="col" id="cb" class="column-cb check-column">
+                <input id="cb-select-all-1" type="checkbox">
+              </th>
+              <th class="th-name"><span>Name</span></th>
+              <th class="th-category"><span>Category</span></th>
+              <th data-column="address" class="th-header active"><span>Address</span></th>
+              <th data-column="city" class="th-header"><span>City</span></th>
+              <th data-column="state" class="th-header"><span>State</span></th>
+              <th data-column="zip" class="th-header"><span>Zip</span></th>
+              <th data-column="country" class="th-header"><span>Country</span></th>
+              <th data-column="phone" class="th-header"><span>Phone</span></th>
+              <th data-column="url" class="th-header"><span>URL</span></th>
+              <th data-column="latitude" class="th-header"><span>Latitude</span></th>
+              <th data-column="longitude" class="th-header"><span>Longitude</span></th>
+            </tr>
+          </thead>
+          <tbody><?php
 
 
-        foreach ($poi as $point) { ?>
+          foreach ($poi as $point) { ?>
 
-          <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>" data-map="<?php echo $map_id; ?>">
-            <input type="hidden" name="<?php echo $point->id; ?>[id]" value="<?php echo $point->id; ?>">
-            <input type="hidden" name="<?php echo $point->id; ?>[map_id]" value="<?php echo $map_id; ?>">
-            <input type="hidden" class="mode" name="<?php echo $point->id; ?>[mode]" value="">
-            <th class="check-column">
-              <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $point->id; ?>[delete]">
-            </th>
-            <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[name]" value="<?php echo $point->name; ?>"></td>
-            <td>
-              <select class="maps-detect-change" name="<?php echo $point->id; ?>[cat_id]"><?php
+            <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>" data-map="<?php echo $map_id; ?>">
+              <input type="hidden" name="<?php echo $point->id; ?>[id]" value="<?php echo $point->id; ?>">
+              <input type="hidden" name="<?php echo $point->id; ?>[map_id]" value="<?php echo $map_id; ?>">
+              <input type="hidden" class="mode" name="<?php echo $point->id; ?>[mode]" value="">
+              <th class="check-column">
+                <input type="checkbox" class="maps-detect-change delete-box" name="<?php echo $point->id; ?>[delete]">
+              </th>
+              <td><input type="text" class="maps-detect-change full-width" name="<?php echo $point->id; ?>[name]" value="<?php echo $point->name; ?>"></td>
+              <td>
+                <select class="maps-detect-change" name="<?php echo $point->id; ?>[cat_id]"><?php
 
-                foreach ($cat as $key=>$value) {
+                  foreach ($cat as $key=>$value) {
 
-                  if ( $point->cat_id == $value->id ) {
-                    echo '<option value='.$value->id.' selected>'.$value->name.'</option>';
-                  } else {
-                    echo '<option value='.$value->id.'>'.$value->name.'</option>';
-                  }
+                    if ( $point->cat_id == $value->id ) {
+                      echo '<option value='.$value->id.' selected>'.$value->name.'</option>';
+                    } else {
+                      echo '<option value='.$value->id.'>'.$value->name.'</option>';
+                    }
 
-                } ?>
+                  } ?>
 
-              </select>
-            </td>
-            <td><input data-column="address" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[address]" value="<?php echo $point->address; ?>"></td>
-            <td><input data-column="city" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[city]" value="<?php echo $point->city; ?>"></td>
-            <td><input data-column="state" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[state]" value="<?php echo $point->state; ?>"></td>
-            <td><input data-column="zip" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[zip]" value="<?php echo $point->zip; ?>"></td>
-            <td><input data-column="country" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[country]" value="<?php echo $point->country; ?>"></td>
-            <td><input data-column="phone" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[phone]" value="<?php echo $point->phone; ?>"></td>
-            <td><input data-column="url" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[url]" value="<?php echo $point->url; ?>"></td>
-            <td><input data-column="latitude" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[lat]" id="lat<?php echo $point->id; ?>" value="<?php echo $point->lat; ?>"></td>
-            <td><input data-column="longitude" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[lng]" id="lng<?php echo $point->id; ?>" value="<?php echo $point->lng; ?>"></td><?php
-        } ?>
-          </tr>
-        </tbody>
-      </table>
+                </select>
+              </td>
+              <td><input data-column="address" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[address]" value="<?php echo $point->address; ?>"></td>
+              <td><input data-column="city" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[city]" value="<?php echo $point->city; ?>"></td>
+              <td><input data-column="state" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[state]" value="<?php echo $point->state; ?>"></td>
+              <td><input data-column="zip" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[zip]" value="<?php echo $point->zip; ?>"></td>
+              <td><input data-column="country" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[country]" value="<?php echo $point->country; ?>"></td>
+              <td><input data-column="phone" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[phone]" value="<?php echo $point->phone; ?>"></td>
+              <td><input data-column="url" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[url]" value="<?php echo $point->url; ?>"></td>
+              <td><input data-column="latitude" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[lat]" id="lat<?php echo $point->id; ?>" value="<?php echo $point->lat; ?>"></td>
+              <td><input data-column="longitude" type="text" class="widen maps-detect-change full-width" name="<?php echo $point->id; ?>[lng]" id="lng<?php echo $point->id; ?>" value="<?php echo $point->lng; ?>"></td><?php
+          } ?>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="gj-buttons">
         <div class="btn button table-button add-poi-row">Add POI</div>

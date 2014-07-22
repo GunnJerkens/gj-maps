@@ -11,7 +11,12 @@
   text-decoration: none;
 }
 
+#gj-table-container {
+  width: 100%;
+  overflow-x: scroll
+}
 table.gj-maps {
+  width: 1500px;
   margin-bottom: 15px;
 }
 
