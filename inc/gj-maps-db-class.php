@@ -66,9 +66,15 @@ class gjMapsDB {
   }
 
 
-  /*
-  * Map Database Functions
-  */
+  /**
+  * 
+  * DEPRECATED -- Get Map(s)
+  *
+  * Takes a type and where statement, defaults to Object && 1=1
+  * 
+  * @since 0.1
+  *
+  **/
 
   function get_map($type='OBJECT', $where='1=1') {
     global $wpdb;
@@ -87,6 +93,37 @@ class gjMapsDB {
     return $query;
 
   }
+
+  /**
+  * 
+  * Get Maps
+  *
+  * Takes an options array (type, map_id), will return all maps if no map id
+  * 
+  * @since 0.3
+  *
+  **/
+
+  function getMaps($options) {
+
+    $table_name = $this->mapsTable();
+
+    $type = isset($options['type']) ? $options['type'] : 'OBJECT';
+    $where = isset($options['map_id']) ? "WHERE id = '".$options['map_id']."'" : '';
+
+    $query = $this->wpdb->get_results(
+      "
+      SELECT *
+      FROM $table_name
+      $where
+      ",
+      $type
+    );
+
+    return $query;
+
+  }
+
 
   function maxMapID($type = 'OBJECT') {
 

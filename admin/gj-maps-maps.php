@@ -90,8 +90,6 @@ if(!empty($_POST)) {
 * This is the maps tabbing system
 */
 
-$map = $databaseFunctions->get_map();
-
 if(isset($createMap) && $createMap === false) {
 
   $map_id = $_POST['id'];
@@ -99,8 +97,11 @@ if(isset($createMap) && $createMap === false) {
 } else {
 
   $map_id = $adminFunctions->tabsMapID($_GET);
+
 }
 
+$map = $databaseFunctions->get_map();
+$map_name = $databaseFunctions->getMaps(array('map_id' => $map_id));
 echo $adminFunctions->mapsTab('poi', $map, $map_id);
 
 /*
@@ -110,7 +111,7 @@ echo $adminFunctions->mapsTab('poi', $map, $map_id);
 $pagination = $adminFunctions->gjMapsPaginateTable(30);
 $options = array(
   'type' => 'OBJECT',
-  'map_id' => 1,
+  'map_id' => $map_id,
   'offset' => $pagination['sql_offset'],
   'length' => $pagination['sql_length']
   );
@@ -166,7 +167,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
     <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
-      <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map[0]->name) ? $map[0]->name : ''; ?>"/>
+      <input type="text" name="name" placeholder="Map Name" value="<?php echo !empty($map_name[0]->name) ? $map_name[0]->name : ''; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
     </form>
     <a href="?page=gj_maps&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
