@@ -33,6 +33,67 @@ class gjMapsAdmin {
 
   /**
   *
+  * Creates the maps pagination
+  *
+  * Expects an integer, returns an array for pagination
+  *
+  * @since 0.3
+  *
+  **/
+
+  function gjMapsPaginateTable($showItems) {
+
+    $rows = $this->databaseFunctions->countRows();
+
+    $totalItems = (array) $rows[0];
+    $totalItems = $totalItems['COUNT(*)'];
+    $pages = ceil($totalItems / $showItems);
+
+    $currentPage = 1;
+
+    $url = parse_url($_SERVER['REQUEST_URI']);
+    parse_str($url['query'], $urlArray);
+
+    if(isset($urlArray['paged'])) {
+      $currentPage = $urlArray['paged'];
+    }
+
+    $sqlOffset = ($currentPage * $showItems) - ($showItems);
+
+    $pagination = array(
+      'rows' => $rows,
+      'show_items' => $showItems,
+      'total_items' => $totalItems,
+      'pages' => $pages,
+      'current_page' => $currentPage,
+      'sql_offset' => $sqlOffset,
+      'sql_length' => $showItems
+    );
+
+    return $pagination;
+
+  }
+
+  /**
+  *
+  * Builds the url for pagination
+  *
+  * Push through the $_GET data
+  *
+  * @since 0.3
+  *
+  **/
+
+  function gjMapsBuildURL() {
+
+    $base = '?page=gj_maps';
+
+    return $base;
+
+  }
+
+  /**
+  *
   * Creates the tabs on maps and categories pages.
   * 
   * Requries page, map and map_id, returns a string.

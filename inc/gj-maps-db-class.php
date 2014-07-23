@@ -50,6 +50,21 @@ class gjMapsDB {
 
   }
 
+  function countRows($type='OBJECT') {
+
+    $table_name = $this->poitable();
+
+    $count = $this->wpdb->get_results(
+      "
+      SELECT COUNT(*) 
+      FROM $table_name
+      "
+    );
+
+    return $count;
+
+  }
+
 
   /*
   * Map Database Functions
@@ -205,13 +220,15 @@ class gjMapsDB {
 
   }
 
-  /*
+  /**
   * 
-  * POI Database Functions
-  * 
-  * @since 0.3
+  * DEPRECATED -- Retrieve POI
   *
-  */
+  * Takes the TYPE, WHERE and a single AND statement, returns an OBJECT by default
+  * 
+  * @since 0.1
+  *
+  **/
 
   function get_poi($type='OBJECT', $where = NULL, $and = NULL) {
 
@@ -246,6 +263,66 @@ class gjMapsDB {
     return $query;
 
   }
+
+  /**
+  * 
+  * Retrieve POI
+  *
+  * Requires an options array(type, map_id[required], offset, length, lat) & returns an object of results
+  * 
+  * @since 0.3
+  *
+  **/
+
+  function getPOI($options) {
+
+    $table_name = $this->poiTable();
+
+    $type = isset($options['type']) ? $options['type'] : 'OBJECT';
+    $where = isset($options['map_id']) && $options['map_id'] !== NULL && $options['map_id'] !== 'new' ? "map_id = '".$options['map_id']."'" : false;
+
+    if(isset($options['lat'])) {
+
+      $where .= " AND lat = ".$options['lat'];
+
+    }
+
+    if(isset($options['offset']) && isset($options[length])) {
+
+      $where .= " LIMIT ".$options['offset'].", ".$options['length'];
+
+    }
+
+    if($where) {
+
+      $query = $this->wpdb->get_results(
+        "
+        SELECT *
+        FROM $table_name
+        WHERE $where
+        ",
+        $type
+        );
+
+    } else {
+
+      $query = 'Map ID option malformed.';
+
+    }
+
+    return $query;
+
+  }
+
+  /**
+  *
+  * Create POI
+  *
+  * Expects an array of POI data
+  *
+  * @since 0.1
+  *
+  **/
 
   function createPOI($poi) {
 

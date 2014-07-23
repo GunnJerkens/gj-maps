@@ -3,6 +3,7 @@
 $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
+
 /*
 * This is our DELETE handling
 */
@@ -106,7 +107,15 @@ echo $adminFunctions->mapsTab('poi', $map, $map_id);
 * These calls are for retrieving the POI data for the table.
 */
 
-$poi = $databaseFunctions->get_poi($type='OBJECT', $map_id);
+$pagination = $adminFunctions->gjMapsPaginateTable(30);
+$options = array(
+  'type' => 'OBJECT',
+  'map_id' => 1,
+  'offset' => $pagination['sql_offset'],
+  'length' => $pagination['sql_length']
+  );
+
+$poi = $databaseFunctions->getPOI($options);
 $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
 
 wp_localize_script('gj_maps_admin_js', 'cat', $cat);
@@ -129,6 +138,12 @@ if(isset($response)) {
   }
 
 }
+
+/*
+* Sets up the pagination && urls
+*/
+
+$url = $adminFunctions->gjMapsBuildURL();
 
 /*
 * Sets our POST action
@@ -234,11 +249,31 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
       <div class="tablenav bottom">
         <div class="tablenav-pages">
           <span class="displaying-num"><?php echo $pagination['total_items'].' items'; ?></span>
-          <span class="pagination-links"><a class="first-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the first page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=1">«</a>
-          <a class="prev-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" title="Go to the previous page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] - 1 > 0 ? $pagination['current_page'] - 1 : $pagination['current_page']; ?>">‹</a>
-          <span class="paging-input"><?php echo $pagination['current_page']; ?> of <span class="total-pages"><?php echo $pagination['pages'] == 0 ? '1' : $pagination['pages']; ?></span></span>
-          <a class="next-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the next page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? $pagination['current_page'] : $pagination['current_page'] + 1; ?>">›</a>
-          <a class="last-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" title="Go to the last page" href="?page=gj_redirect&tab=gj_redirect_redirects&paged=<?php echo $pagination['pages']; ?>">»</a></span>
+          <span class="pagination-links">
+            <a 
+              class="first-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" 
+              title="Go to the first page" href="<?php echo $url.'&paged=1'; ?>">«
+            </a>
+            <a 
+              class="prev-page <?php echo $pagination['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" 
+              title="Go to the previous page" 
+              href="<?php echo $url.'&paged='.($pagination['current_page'] - 1 > 0 ? $pagination['current_page'] - 1 : $pagination['current_page']); ?>">‹
+            </a>
+            <span 
+              class="paging-input"><?php echo $pagination['current_page']; ?> of 
+              <span class="total-pages"><?php echo $pagination['pages'] == 0 ? '1' : $pagination['pages']; ?></span>
+            </span>
+            <a 
+              class="next-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" 
+              title="Go to the next page" 
+              href="<?php echo $url.'&paged='.($pagination['current_page'] + 1 > $pagination['pages'] ? $pagination['current_page'] : $pagination['current_page'] + 1); ?>">›
+            </a>
+            <a 
+              class="last-page <?php echo $pagination['current_page'] + 1 > $pagination['pages'] ? 'disabled' : ''; ?>" 
+              title="Go to the last page" 
+              href="<?php echo $url.'&paged='.$pagination['pages']; ?>">»
+            </a>
+          </span>
         </div>
       </div><?php
 
