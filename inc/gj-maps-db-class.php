@@ -12,18 +12,14 @@ class gjMapsDB {
 
   }
 
-  function deleteAllData() {
-
-    $response['poi'] = $this->deleteAllPOI();
-    $response['cat'] = $this->deleteAllCat();
-    $response['maps'] = $this->deleteAllMaps();
-
-    return $response;
-
-  }
-
-  /*
-  * Table Name Functions
+  /**
+  *
+  * Set maps table
+  *
+  * Just a helper function to set our default maps table
+  *
+  * @since 0.3
+  *
   */
 
   function mapsTable() {
@@ -34,6 +30,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Set poi table
+  *
+  * Just a helper function to set our default poi table
+  *
+  * @since 0.3
+  *
+  */
+
   function poiTable() {
 
     $table = $this->wpdb->prefix.'gjm_poi';
@@ -42,6 +48,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Set cat table
+  *
+  * Just a helper function to set our default cat table
+  *
+  * @since 0.3
+  *
+  */
+
   function catTable() {
 
     $table = $this->wpdb->prefix.'gjm_cat';
@@ -49,6 +65,17 @@ class gjMapsDB {
     return $table;
 
   }
+
+  /**
+  *
+  * Count poi 
+  *
+  * Just a helper function to count the number of poi, accepts a return type argument
+  * and defaults to 'OBJECT'
+  *
+  * @since 0.3
+  *
+  */
 
   function countRows($type='OBJECT') {
 
@@ -62,6 +89,26 @@ class gjMapsDB {
     );
 
     return $count;
+
+  }
+
+  /**
+  *
+  * Delete all data
+  *
+  * Built to delete all data, does not accept any argments, returns a $response array
+  *
+  * @since 0.3
+  *
+  */
+
+  function deleteAllData() {
+
+    $response['poi'] = $this->deleteAllPOI();
+    $response['cat'] = $this->deleteAllCat();
+    $response['maps'] = $this->deleteAllMaps();
+
+    return $response;
 
   }
 
@@ -124,6 +171,15 @@ class gjMapsDB {
 
   }
 
+  /**
+  * 
+  * Max map id
+  *
+  * Accepts a type to return, defaults to 'OBJECT'
+  * 
+  * @since 0.3
+  *
+  **/
 
   function maxMapID($type = 'OBJECT') {
 
@@ -141,6 +197,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  * 
+  * Min map id
+  *
+  * Accepts a type to return, defaults to 'OBJECT'
+  * 
+  * @since 0.3
+  *
+  **/
+
   function minMapID($type = 'OBJECT') {
 
     $table_name = $this->mapsTable();
@@ -156,6 +222,16 @@ class gjMapsDB {
     return $minMapID;
 
   }
+
+  /**
+  * 
+  * Get map id
+  *
+  * Requires a name argument, optionally accepts a type argument to return with a default of 'OBJECT'
+  * 
+  * @since 0.3
+  *
+  **/
 
   function getMapID($name, $type='OBJECT') {
 
@@ -175,6 +251,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  * 
+  * Get map name
+  *
+  * Requires a id argument, optionally accepts a type argument to return with a default of 'OBJECT'
+  * 
+  * @since 0.3
+  *
+  **/
+
   function getMapName($id, $type='OBJECT') {
 
     $table_name = $this->mapsTable();
@@ -193,6 +279,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  * 
+  * Save map
+  *
+  * Requires an id argument for the newly created map, returns an integer, 0 or 1
+  * 
+  * @since 0.3
+  *
+  **/
+
   function saveMap($id) {
 
     $table_name = $this->mapsTable();
@@ -209,6 +305,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  * 
+  * Edit map
+  *
+  * Requires the $post as an argument, returns an integer, 0 or 1
+  * 
+  * @since 0.3
+  *
+  **/
+
   function editMapSettings($post) {
 
     $table_name = $this->mapsTable();
@@ -224,6 +330,16 @@ class gjMapsDB {
     return $insert;
 
   }
+
+  /**
+  * 
+  * Delete map
+  *
+  * Requires the map_id as an argument, returns an integer, 0 or 1
+  * 
+  * @since 0.3
+  *
+  **/
 
   function deleteMap($map_id) {
 
@@ -242,6 +358,16 @@ class gjMapsDB {
     return $query;
 
   }
+
+  /**
+  * 
+  * Delete ALL maps
+  *
+  * Requires and accepts no arguments
+  * 
+  * @since 0.3
+  *
+  **/
 
   function deleteAllMaps() {
 
@@ -355,7 +481,7 @@ class gjMapsDB {
   *
   * Create POI
   *
-  * Expects an array of POI data
+  * Expects an array of POI data, returns an integer, 0 or 1
   *
   * @since 0.1
   *
@@ -391,6 +517,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Edit POI
+  *
+  * Expects an array of POI data to edit, returns an integer, 0 or 1
+  *
+  * @since 0.1
+  *
+  **/
+
   function editPOI($editItems) {
 
     $table_name = $this->poiTable();
@@ -422,6 +558,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Delete POI
+  *
+  * Requires a POI id as an argument, returns an integer, 0 or 1
+  *
+  * @since 0.1
+  *
+  **/
+
   function deletePOI($id = false) {
 
     $table_name = $this->poiTable();
@@ -444,6 +590,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Delete POI
+  *
+  * Requires a map id as an argument, returns an integer, 0 or 1
+  *
+  * @since 0.3
+  *
+  **/
+
   function deleteMapPOI($map_id) {
 
     $table_name = $this->poiTable();
@@ -462,6 +618,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Delete POI
+  *
+  * Requires a map id as an argument, returns an integer, 0 or 1
+  *
+  * @since 0.3
+  *
+  **/
+
   function deleteAllPOI() {
 
     $table_name = $this->poiTable();
@@ -474,9 +640,15 @@ class gjMapsDB {
 
   }
 
-  /*
-  * Category Database Functions
-  */
+  /**
+  *
+  * Get category id
+  *
+  * Requires a category name and map id, option argument is the return type
+  *
+  * @since 0.3
+  *
+  **/
 
   function getCatID($name, $mapID, $type='OBJECT') {
 
@@ -497,6 +669,16 @@ class gjMapsDB {
     return $query;
 
   }
+
+  /**
+  *
+  * Get category
+  *
+  * Optional return $type and $where that should be map_id
+  *
+  * @since 0.1
+  *
+  **/
 
   function get_cat($type='OBJECT', $where = NULL) {
 
@@ -525,6 +707,16 @@ class gjMapsDB {
   
   }
 
+  /**
+  *
+  * Create category
+  *
+  * Pass in an array of category date, returns an integer 0/1
+  *
+  * @since 0.1
+  *
+  **/
+
   function createCat($cat) {
 
     $table_name = $this->catTable();
@@ -542,6 +734,16 @@ class gjMapsDB {
     return $insert;
 
   }
+
+  /**
+  *
+  * Edit category
+  *
+  * Pass in an array of category date, returns an integer 0/1
+  *
+  * @since 0.1
+  *
+  **/
 
   function editCat($cat) {
 
@@ -566,6 +768,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Delete category
+  *
+  * Pass in the category id, returns an integer 0/1
+  *
+  * @since 0.3
+  *
+  **/
+
   function deleteCat($id) {
 
     $table_name = $this->catTable();
@@ -584,6 +796,16 @@ class gjMapsDB {
 
   }
 
+  /**
+  *
+  * Delete all map categories
+  *
+  * Pass in the map id returns an integer 0/1
+  *
+  * @since 0.3
+  *
+  **/
+
   function deleteMapCat($map_id) {
 
     $table_name = $this->catTable();
@@ -601,6 +823,16 @@ class gjMapsDB {
     return $query;
 
   }
+
+  /**
+  *
+  * Delete all category
+  *
+  * Accepts no arguments, returns an integer 0/1
+  *
+  * @since 0.3
+  *
+  **/
 
   function deleteAllCat() {
 
