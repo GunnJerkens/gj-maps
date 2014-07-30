@@ -108,7 +108,7 @@ echo $adminFunctions->mapsTab('poi', $map, $map_id);
 * These calls are for retrieving the POI data for the table.
 */
 
-$pagination = $adminFunctions->gjMapsPaginateTable(30);
+$pagination = $adminFunctions->gjMapsPaginateTable($map_id, 30);
 $options = array(
   'type' => 'OBJECT',
   'map_id' => $map_id,

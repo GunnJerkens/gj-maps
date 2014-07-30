@@ -81,12 +81,7 @@ class gjMapsDB {
 
     $table_name = $this->poitable();
 
-    $count = $this->wpdb->get_results(
-      "
-      SELECT COUNT(*) 
-      FROM $table_name
-      "
-    );
+    $count = $this->wpdb->get_results("SELECT map_id, COUNT(*) FROM `gj_gjm_poi` GROUP BY map_id;");
 
     return $count;
 

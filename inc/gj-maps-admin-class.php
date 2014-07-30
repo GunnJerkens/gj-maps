@@ -41,13 +41,23 @@ class gjMapsAdmin {
   *
   **/
 
-  function gjMapsPaginateTable($showItems) {
+  function gjMapsPaginateTable($map_id, $showItems) {
 
-    $rows = $this->databaseFunctions->countRows();
+    $count = $this->databaseFunctions->countRows();
 
-    $totalItems = (array) $rows[0];
-    $totalItems = $totalItems['COUNT(*)'];
-    $pages = ceil($totalItems / $showItems);
+    foreach($count as $map) {
+
+      if($map->map_id === $map_id) {
+
+        $map = (array) $map;
+        $count = (int) $map{'COUNT(*)'};
+        break;
+      }
+
+
+    }
+
+    $pages = ceil($count / $showItems);
 
     $currentPage = 1;
 
@@ -61,9 +71,8 @@ class gjMapsAdmin {
     $sqlOffset = ($currentPage * $showItems) - ($showItems);
 
     $pagination = array(
-      'rows' => $rows,
       'show_items' => $showItems,
-      'total_items' => $totalItems,
+      'total_items' => $count,
       'pages' => $pages,
       'current_page' => $currentPage,
       'sql_offset' => $sqlOffset,
@@ -292,7 +301,7 @@ class gjMapsAdmin {
 
       $this->databaseFunctions->editPOI($updatePOI);
 
-      $response = $this-gjMapsMessaging('success', 'Updated coordinates successfully');
+      $response = $this->gjMapsMessaging('success', 'Updated coordinates successfully');
 
     } else {
 
