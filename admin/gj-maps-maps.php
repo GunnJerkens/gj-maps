@@ -144,7 +144,7 @@ if(isset($response)) {
 * Sets up the pagination && urls
 */
 
-$url = $adminFunctions->gjMapsBuildURL();
+$url = $adminFunctions->gjMapsBuildURL($map_id);
 
 /*
 * Sets our POST action

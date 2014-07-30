@@ -84,9 +84,15 @@ class gjMapsAdmin {
   *
   **/
 
-  function gjMapsBuildURL() {
+  function gjMapsBuildURL($map_id = NULL) {
 
     $base = '?page=gj_maps';
+
+    if($map_id != NULL || $map_id !== 'new') {
+
+      $base .= '&map_id='.$map_id; 
+
+    }
 
     return $base;
 
