@@ -47,17 +47,25 @@ class gjMapsAdmin {
 
     foreach($count as $map) {
 
+      $totalItems = 0;
+
       if($map->map_id === $map_id) {
 
         $map = (array) $map;
-        $count = (int) $map{'COUNT(*)'};
+        $totalItems = (int) $map{'COUNT(*)'};
         break;
-      }
 
+      }
 
     }
 
-    $pages = ceil($count / $showItems);
+    $pages = 1;
+
+    if($totalItems != 0) {
+
+      $pages = ceil($totalItems / $showItems);
+
+    }
 
     $currentPage = 1;
 
@@ -65,14 +73,16 @@ class gjMapsAdmin {
     parse_str($url['query'], $urlArray);
 
     if(isset($urlArray['paged'])) {
+
       $currentPage = $urlArray['paged'];
+
     }
 
     $sqlOffset = ($currentPage * $showItems) - ($showItems);
 
     $pagination = array(
       'show_items' => $showItems,
-      'total_items' => $count,
+      'total_items' => $totalItems,
       'pages' => $pages,
       'current_page' => $currentPage,
       'sql_offset' => $sqlOffset,
