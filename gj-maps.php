@@ -48,16 +48,23 @@ class gjMaps {
 
   function gj_maps_admin_scripts() {
     if(is_admin()) {
+
       wp_enqueue_style('wp-color-picker');
-      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), false, '0.2');
-      wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css');
+
+      $adminJS = 'js/gj-maps-admin.js';
+      $adminJSFilePath = plugin_dir_path(__FILE__) . $adminJS;
+      wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), filemtime($adminJSFilePath), true);
+
+      $adminCSS = 'css/gj-maps-admin.css';
+      $adminCSSFilePath = plugin_dir_path(__FILE__) . $adminCSSFilePath;
+      wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css', array(), filemtime($adminCSSFilePath));
     }
   }
 
   function register_scripts() {
 
     wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-    wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, '0.2');
+    wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
     wp_register_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
 
   }
