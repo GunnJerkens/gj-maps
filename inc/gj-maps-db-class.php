@@ -500,9 +500,7 @@ class gjMapsDB {
           'zip'=>$value['zip'],
           'country'=>$value['country'],
           'phone'=>$value['phone'],
-          'url'=>$value['url'],
-          'lat'=>$value['lat'],
-          'lng'=>$value['lng']
+          'url'=>$value['url']
         )
       );
 
@@ -526,7 +524,7 @@ class gjMapsDB {
 
     $table_name = $this->poiTable();
 
-    foreach($editItems as $poi) { // this should get moved to the admin class
+    foreach($editItems as $poi) {
 
       $update = $this->wpdb->update(
         $table_name,
@@ -716,13 +714,16 @@ class gjMapsDB {
 
     $table_name = $this->catTable();
 
+    $color = isset($cat['color']) ? $cat['color'] : '';
+    $icon = isset($cat['icon']) ? $cat['icon'] : '';
+
     $insert = $this->wpdb->insert(
       $table_name, 
       array(
         'map_id' => $cat['map_id'],
         'name' => $cat['name'],
-        'color' => $cat['color'],
-        'icon' => $cat['icon'],
+        'color' => $color,
+        'icon' => $icon
       )
     );
 

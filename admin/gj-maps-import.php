@@ -37,7 +37,7 @@ $maps = $databaseFunctions->get_map(); ?>
     <table class="form-table">
       <tr>
         <th><label for="file">Choose CSV</label></th>
-        <td><input type="file" name="file" value="<?php echo $upload; ?>" size="20"></td>
+        <td><input type="file" name="file" value="" size="20"></td>
       </tr>
       <tr>
         <th><label for="map">Select Map</label></th>
