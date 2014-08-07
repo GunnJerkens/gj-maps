@@ -242,7 +242,9 @@ class gjMapsDB {
       $type
     );
 
-    return $query;
+    $mapID = $query[0]->id;
+
+    return $mapID;
 
   }
 

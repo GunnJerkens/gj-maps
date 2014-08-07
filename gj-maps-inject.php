@@ -61,8 +61,8 @@ class gjMapsInject {
 
 
       extract(shortcode_atts(array(
-        'map' => 'Single',
-        'map_id' => '1',
+        'map' => null,
+        'map_id' => null,
         'position' => 'top',
         'latitude' => get_option('gj_maps_center_lat'),
         'longitude' => get_option('gj_maps_center_lng'),
@@ -90,10 +90,6 @@ class gjMapsInject {
 
       }
 
-    } else {
-
-      // Scripts we're not loaded, abort.
-
     }
 
   }
@@ -110,9 +106,20 @@ class gjMapsInject {
 
     } else {
 
-      if($mapSettings['map_id'] === NULL && $mapSettings['map !== NULL']) {
+      var_dump($mapSettings);
 
-        $mapSettings['map_id'] = $this->databaseFunctions->getMapID($map);
+      if($mapSettings['map_id'] === null && $mapSettings['map'] !== null) {
+
+        $mapSettings['map_id'] = $this->databaseFunctions->getMapID($mapSettings['map']);
+
+      } elseif($mapSettings['map'] === null && $mapSettings['map_id'] !== null) {
+
+        $mapSettings['map'] = $this->databaseFunctions->getMapName($mapSettings['map_id']);
+
+      } else {
+
+        $mapSettings['map'] = 'Map 1';
+        $mapSettings['map_id'] = '1';
 
       }
 
