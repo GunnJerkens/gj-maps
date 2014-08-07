@@ -56,7 +56,7 @@ class gjMaps {
       wp_enqueue_script('gj_maps_admin_js', plugin_dir_url(__FILE__) . 'js/gj-maps-admin.js', array( 'wp-color-picker' ), filemtime($adminJSFilePath), true);
 
       $adminCSS = 'css/gj-maps-admin.css';
-      $adminCSSFilePath = plugin_dir_path(__FILE__) . $adminCSSFilePath;
+      $adminCSSFilePath = plugin_dir_path(__FILE__) . $adminCSS;
       wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css', array(), filemtime($adminCSSFilePath));
     }
   }

@@ -445,7 +445,7 @@ class gjMapsDB {
 
     }
 
-    if(isset($options['offset']) && isset($options[length])) {
+    if(isset($options['offset']) && isset($options['length'])) {
 
       $where .= " LIMIT ".$options['offset'].", ".$options['length'];
 

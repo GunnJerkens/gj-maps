@@ -44,6 +44,7 @@ class gjMapsAdmin {
   function gjMapsPaginateTable($map_id, $showItems) {
 
     $count = $this->databaseFunctions->countRows();
+    $totalItems = 0;
 
     foreach($count as $map) {
 
