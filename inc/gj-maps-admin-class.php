@@ -464,6 +464,8 @@ class gjMapsAdmin {
 
   function createCat($createItems) {
 
+    $hasError = false;
+
     foreach($createItems as $item) {
 
       unset($item['mode']);
@@ -491,6 +493,8 @@ class gjMapsAdmin {
       $response = $this->gjMapsMessaging('error', 'Categories failed to be created.');
 
     }
+
+    return $response;
 
   }
 
@@ -549,6 +553,8 @@ class gjMapsAdmin {
   **/
 
   function deleteCat($deleteItems) {
+
+    $hasError = false;
 
     foreach($deleteItems as $item) {
 
