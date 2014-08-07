@@ -108,19 +108,27 @@ echo $adminFunctions->mapsTab('poi', $map, $map_id);
 * These calls are for retrieving the POI data for the table.
 */
 
-$pagination = $adminFunctions->gjMapsPaginateTable($map_id, 30);
-$options = array(
-  'type' => 'OBJECT',
-  'map_id' => $map_id,
-  'offset' => $pagination['sql_offset'],
-  'length' => $pagination['sql_length']
-  );
+if($map_id != null) {
 
-$poi = $databaseFunctions->getPOI($options);
-$cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
+  $pagination = $adminFunctions->gjMapsPaginateTable($map_id, 30);
+  $options = array(
+    'type' => 'OBJECT',
+    'map_id' => $map_id,
+    'offset' => $pagination['sql_offset'],
+    'length' => $pagination['sql_length']
+    );
 
-wp_localize_script('gj_maps_admin_js', 'cat', $cat);
-wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
+  $poi = $databaseFunctions->getPOI($options);
+  $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
+
+  wp_localize_script('gj_maps_admin_js', 'cat', $cat);
+  wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
+
+} else {
+
+  $poi = false;
+
+}
 
 /*
 * This is our response messaging
