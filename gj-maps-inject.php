@@ -80,10 +80,14 @@ class gjMapsInject {
         )
       );
 
-      if ($pos === 'bottom' OR $pos === 'bot') {
+      if ($position === 'bottom' OR $position === 'bot') {
+
         return $gjmapsAPI.$bottom;
+
       } else {
+
         return $gjmapsAPI.$top;
+
       }
 
     } else {
