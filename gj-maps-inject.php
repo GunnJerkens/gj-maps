@@ -106,8 +106,6 @@ class gjMapsInject {
 
     } else {
 
-      var_dump($mapSettings);
-
       if($mapSettings['map_id'] === null && $mapSettings['map'] !== null) {
 
         $mapSettings['map_id'] = $this->databaseFunctions->getMapID($mapSettings['map']);
