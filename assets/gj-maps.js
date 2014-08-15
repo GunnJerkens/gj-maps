@@ -6,7 +6,7 @@ function initMaps() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
   var markers = [];
 
