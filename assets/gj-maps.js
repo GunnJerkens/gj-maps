@@ -17,17 +17,24 @@ function initMap() {
     var marker, i;
 
     var markerDescription = function(poiInfo) {
-      var content;
+      var content, contentLines, linkName;
 
       content = '<div id="hook"><h4>' + poiInfo['name'] + '</h4>';
       content += '<p>';
-      if ( poiInfo.address ) {
-        content += poiInfo.address + '<br>';
+
+      contentLines = [];
+      if ( poiInfo.address )
+        contentLines.push(  poiInfo.address );
+      if ( poiInfo.city && poiInfo.state && poiInfo.zip )
+        contentLines.push( poiInfo.city + ', ' + poiInfo.state + ' ' + poiInfo.zip );
+      if ( poiInfo.phone )
+        contentLines.push( poiInfo.phone );
+      if ( poiInfo.url ) {
+        linkName = poiInfo.url.replace(/^https?:\/\/|\/$/g, '');
+        contentLines.push( '<a href="'+poiInfo.url+'" target="_blank">'+linkName+'</a>' );
       }
-      if ( poiInfo.city && poiInfo.state && poiInfo.zip ) {
-        content += poiInfo.city + ', ' + poiInfo.state + ' ' + poiInfo.zip + '<br>';
-      }
-      content += poiInfo.phone;
+
+      content += contentLines.join('<br>');
       content += '</p></div>';
 
       return content;
