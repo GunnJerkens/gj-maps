@@ -6,14 +6,19 @@
 
 			if ($_FILES['icon']) {
 				$upload = wp_handle_upload($_FILES['icon'], array('test_form'=>false));
-				$icon = $upload['url'];
+				if (isset($upload['url'])) {
+					$icon = $upload['url'];
+				}
+				else {
+					echo "The icon failed to upload.";
+				}
 			}
 
 			//Form data sent
 				global $post;
 				if ($_POST['id']) {
 
-					if ($_POST['delete']) {
+					if (isset($_POST['delete'])) {
 						//Delete Selected cat
 						deleteCat($_POST['id']);
 					} else {
@@ -27,7 +32,7 @@
 						$cat['icon'] = $icon;
 						editCat($cat);
 					}
-
+ 
 				} else {
 					//Add new Category
 					$cat = array();
@@ -43,11 +48,11 @@
 		}
 
 		$GJ_cat = new GJ_cat();
-        $cat = $GJ_cat->gj_get_cat();
+    $cat = $GJ_cat->gj_get_cat();
 
 		?>
 		<div class="wrap">
-			<?php    echo "<h2>" . __( 'GJ Maps Categories', 'gj_trdom' ) . "</h2>"; ?>
+			<?php echo "<h2>" . __( 'GJ Maps - Categories', 'gj_trdom' ) . "</h2>"; ?>
 
 			<h4>Add New</h4>
 				<form name="gj_form" method="post" enctype="multipart/form-data"  action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">

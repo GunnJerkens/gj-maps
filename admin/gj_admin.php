@@ -24,34 +24,34 @@
 
         } else if ($_POST['geocode']) {
           //Update geocodes
-               global $wpdb;
+          global $wpdb;
 
-               if ( ! isset($GJ_api) || ! $GJ_api ) {
-                  $GJ_api = new GJ_api();
-               }
-               $query = $GJ_api->gj_get_POI('ARRAY_A', 'lat=0');
+          if ( ! isset($GJ_api) || ! $GJ_api ) {
+              $GJ_api = new GJ_api();
+          }
+          $query = $GJ_api->gj_get_POI('ARRAY_A', 'lat=0');
 
-               foreach ($query as $poi) {
+          foreach ($query as $poi) {
             if ($poi['address'] && $poi['zip']) { // these two are most reliable, if you have them
               $address = urlencode($poi["address"].', '.$poi['zip']);
             } else {
               $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
             }
             $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-              $url .= '&address='.$address;
+            $url .= '&address='.$address;
 
-              $response = wp_remote_get( $url );
+            $response = wp_remote_get( $url );
             if( is_wp_error( $response ) ) {
-               $error_message = $response->get_error_message();
-               echo "Something went wrong: $error_message";
+              $error_message = $response->get_error_message();
+              echo "Something went wrong: $error_message";
             }
 
             $response2 = json_decode($response['body']);
-              $location = $response2->results[0]->geometry->location;
-              $poi['lat'] = $location->lat;
-              $poi['lng'] = $location->lng;
-              editPOI($poi);
-               }
+            $location = $response2->results[0]->geometry->location;
+            $poi['lat'] = $location->lat;
+            $poi['lng'] = $location->lng;
+            editPOI($poi);
+          }
 
         } else {
           //Add new POI
@@ -91,7 +91,7 @@
 
     ?>
     <div class="wrap">
-      <?php    echo "<h2>" . __( 'GJ Maps Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
+      <?php    echo "<h2>" . __( 'GJ Maps - Points Of Interest', 'gj_trdom' ) . "</h2>"; ?>
 
       <h4>Add New</h4>
         <form name="gj_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
@@ -175,10 +175,6 @@
 
           <label for="phone">Phone Number: 
           <input type="text" name="phone" placeholder="Phone Number" value="<?php echo $object->phone; ?>"/>
-          </label>
-
-          <label for="description">Description: 
-          <input type="text" name="description" placeholder="Description" value="<?php echo $object->description; ?>"/>
           </label>
 
           <label for="url">URL: 

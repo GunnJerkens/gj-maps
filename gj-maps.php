@@ -10,9 +10,10 @@
 
 include('poi.php');
 include('category.php');
+include('json_api.php');
 
 
-//ADMIN MENUS
+// Admin menus
 function gj_admin_edit() {
 	include('admin/gj_admin.php');
 }
@@ -21,9 +22,6 @@ function gj_admin_categories() {
 }
 function gj_admin_import() {  
 	include('admin/gj_import.php'); 
-}  
-function gj_admin_delete() {
-	include ('admin/gj_delete.php');
 }
 function gj_admin_options() {
 	include ('admin/gj_options.php');
@@ -32,22 +30,23 @@ function gj_admin_actions() {
 	add_menu_page( "GJ Maps", "GJ Maps", 'administrator', "gj_maps", "gj_admin_edit" );
 	add_submenu_page("gj_maps", "Categories", "Categories", 'administrator', "gj_admin_categories", "gj_admin_categories");
 	add_submenu_page("gj_maps", "Import CSV", "Import CSV", 'administrator', "gj_admin_import", "gj_admin_import");
-	add_submenu_page("gj_maps", "GJ Maps Delete", "GJ Maps Delete", 'administrator', "gj_admin_delete", "gj_admin_delete");
 	add_submenu_page("gj_maps", "Settings", "Settings", 'administrator', "gj_admin_options", "gj_admin_options");
 }
 add_action('admin_menu', 'gj_admin_actions');
 
 
-//ADD GMAPS AND STYLES
+// Add scripts && styles // todo -- grunt/sass w/ default stylesheet
 function gj_add_styles () {
+	wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
 	if (get_option('gj_styles') && !(is_admin()) ) {
-		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
-		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gjmaps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
+		wp_enqueue_script('gj-maps', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps.js', array('jquery', 'google-maps'), null, true);
+		wp_enqueue_script('mscrollbar', WP_PLUGIN_URL.'/gj-maps/assets/jquery.mCustomScrollbar.min.js', array('jquery'), null, true);
+		wp_enqueue_style('gj-maps-style', WP_PLUGIN_URL.'/gj-maps/assets/gj-maps-style.css', null, true);
 	}
 }
 add_action('get_header', 'gj_add_styles');
 
-//Color Picker
+//Color picker
 add_action( 'admin_enqueue_scripts', 'mw_enqueue_color_picker' );
 function mw_enqueue_color_picker( $hook_suffix ) {
 	// first check that $hook_suffix is appropriate for your admin page
@@ -55,16 +54,16 @@ function mw_enqueue_color_picker( $hook_suffix ) {
 	wp_enqueue_script( 'color-init', plugins_url('assets/color-init.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
 }
 
-//INIT DB
-
+// Init database
 function gj_table_install () {
 
 	global $wpdb;
 
-	global $wpdb;
+	$gj_cat = $wpdb->prefix . "gj_cat";
+	$gj_poi = $wpdb->prefix . "gj_poi";
 
 	//CAT table
-	$sql_cat = "CREATE TABLE wp_gj_cat (
+	$sql_cat = "CREATE TABLE $gj_cat (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		   name VARCHAR(55) NOT NULL,
 		   color VARCHAR(7) NOT NULL,
@@ -73,7 +72,7 @@ function gj_table_install () {
 			   );";
 
 	//POI table
-	$sql_poi = "CREATE TABLE wp_gj_poi (
+	$sql_poi = "CREATE TABLE $gj_poi (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		   cat_id mediumint(9) NOT NULL,
 		   name VARCHAR(255) NOT NULL,
@@ -83,12 +82,11 @@ function gj_table_install () {
 		   zip tinytext,
 		   country tinytext,
 		   phone tinytext,
-		   description tinytext,
 		   url VARCHAR(255) DEFAULT '' NOT NULL,
-		   lat float NOT NULL,
-		   lng float NOT NULL,
+		   lat float(12,8) NOT NULL,
+		   lng float(12,8) NOT NULL,
 		   PRIMARY KEY (id),
-		   FOREIGN KEY (cat_id) REFERENCES wp_gj_cat(id)
+		   FOREIGN KEY (cat_id) REFERENCES $gj_cat(id)
 			   );";
 
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -100,4 +98,50 @@ function gj_table_install () {
 
 register_activation_hook(__FILE__,'gj_table_install');
 
+// Register [gjmaps] shortcode -- need to fix hard coded color and add as menu option!
+function gjmaps_shortcode($atts){
+	global $GJ_api;
+	$cat_default = get_option('gj_cat_default');
+	$gjmapsAPI = $GJ_api->gj_POI_frontend();
 
+	$top = '
+	  <div class="gjmaps-wrapper">
+		  <ul class="gjmaps-categories">
+	      <li class="gjmaps-category" data-cat-id="">
+	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label">View All</label>
+	      </li>
+	    </ul>
+	    <div id="map-canvas" class="gjmaps-map-canvas"></div>
+		</div>
+	';
+
+	$bottom = '
+		<div id="map-canvas" class="gjmaps-map-canvas"></div>
+		<div class="gjmaps-wrapper">
+		  <ul class="gjmaps-categories">
+	      <li class="gjmaps-category" data-cat-id="">
+	        <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label">View All</label>
+	      </li>
+	    </ul>
+		</div>
+	';
+	// todo -- add layout for left & right
+	$left = '<div><p>todo</p></div>';
+	$right = '<div><p>todo</p></div';
+
+	extract(shortcode_atts(array(
+			"pos" => 'top'
+		), $atts));
+
+
+	if ($pos === 'bottom') {
+		return $gjmapsAPI.$bottom;
+	} else if ($pos === 'left') {
+		return $gjmapsAPI.$left;
+	} else if ($pos === 'right') {
+		return $gjmapsAPI.$right;
+	} else {
+		return $gjmapsAPI.$top;
+	}
+}
+add_shortcode( 'gjmaps', 'gjmaps_shortcode' );

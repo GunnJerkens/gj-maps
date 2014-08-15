@@ -70,9 +70,7 @@ function deletePOI ($id = false) {
     );
   } else {
     $wpdb->query(
-      $wpdb->prepare(
         "TRUNCATE TABLE $table_name"
-       )
      );
    }
 }
