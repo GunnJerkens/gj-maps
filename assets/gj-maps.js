@@ -16,6 +16,23 @@ function initMap() {
 
     var marker, i;
 
+    var markerDescription = function(poiInfo) {
+      var content;
+
+      content = '<div id="hook"><h4>' + poiInfo['name'] + '</h4>';
+      content += '<p>';
+      if ( poiInfo.address ) {
+        content += poiInfo.address + '<br>';
+      }
+      if ( poiInfo.city && poiInfo.state && poiInfo.zip ) {
+        content += poiInfo.city + ', ' + poiInfo.state + ' ' + poiInfo.zip + '<br>';
+      }
+      content += poiInfo.phone;
+      content += '</p></div>';
+
+      return content;
+    };
+
     if (cat_name) {
 
       for (i = 0; i < poi.length; i++) {
@@ -32,10 +49,7 @@ function initMap() {
 
           google.maps.event.addListener(marker, 'click', (function(marker, i) {
             return function() {
-              var content = '<div id="hook"><h4>' + poi[i]['name'] + '</h4>';
-              content += '<p>' + poi[i]['address'] + '<br />';
-              content += poi[i]['phone'] + '</div>';
-              infowindow.setContent(content);
+              infowindow.setContent( markerDescription(poi[i]) );
               infowindow.open(map, marker);
             }
           })(marker, i));
@@ -56,10 +70,7 @@ function initMap() {
 
         google.maps.event.addListener(marker, 'click', (function(marker, i) {
           return function() {
-            var content = '<div id="hook"><h4>' + poi[i]['name'] + '</h4>';
-            content += '<p>' + poi[i]['address'] + '<br />';
-            content += poi[i]['phone'] + '</div>';
-            infowindow.setContent(content);
+            infowindow.setContent( markerDescription(poi[i]) );
             infowindow.open(map, marker);
             var l = $('#hook').parent().parent().parent().siblings();
           }
