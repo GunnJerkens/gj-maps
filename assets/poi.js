@@ -177,7 +177,7 @@ function placeMarkers(forceFit) {
 		}
 	}
 }
-function initMap() {
+function initOldMap() {
 	mapOptions = {
 		zoom: map_zoom,
 		center: new google.maps.LatLng(0, 0),
