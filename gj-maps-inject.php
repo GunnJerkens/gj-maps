@@ -18,7 +18,7 @@ class gjMapsInject {
 
     $gjMaps = new gjMaps();
 
-    if(!is_admin() && shortcode_exists('gjmaps') && (stripos($post->post_content,'gjmaps') !== false)) {
+    if(!is_admin() && shortcode_exists('gjmaps')) {
 
       $gjMaps->print_scripts();
 
