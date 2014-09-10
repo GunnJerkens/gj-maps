@@ -46,7 +46,7 @@ Shortcode options include:
 | zoom | integer | optional | defaults to options setting |
 | api | string | optional* | overrides map/map_id, url must have map id |
 
-* One of the three [map, map_id, api] is required.
+*one of the three [map, map_id, api] is required.
 
 #### the_content
 
