@@ -38,13 +38,15 @@ Shortcode options include:
 
 | Option | Value | Required | Notes |
 | :----- | :---: | :------: | :---- |
-| map    | string | optional | defaults to map_id |
-| map_id | integer | optional | required if map/api not present |
+| map    | string | optional* | defaults to map_id |
+| map_id | integer | optional* | required if map/api not present |
 | position | string | optional | top or bottom, defaults top |
 | latitude | integer | optional | defaults to options setting |
 | longitude | integer | optional | defaults to options setting |
 | zoom | integer | optional | defaults to options setting |
-| api | string | optional | overrides map/map_id, url must have map id |
+| api | string | optional* | overrides map/map_id, url must have map id |
+
+* One of the three [map, map_id, api] is required.
 
 #### the_content
 
@@ -53,7 +55,7 @@ Shortcode options include:
 
 #### do_shortcode
 
-`<?php echo do_shortcode('[gjmaps api="http://example.com/gjmaps_api=4"]'); ?>`
+`<?php echo do_shortcode('[gjmaps api="http://example.com?gjmaps_api=4"]'); ?>`
 
 ## api
 
