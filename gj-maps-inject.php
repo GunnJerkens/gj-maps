@@ -101,8 +101,8 @@ class gjMapsInject {
       $json = @file_get_contents($mapSettings['api']);
       $data = json_decode($json);
 
-      $poi = json_encode($data->poi);
-      $cat = json_encode($data->cat);
+      $poi = $data->poi;
+      $cat = $data->cat;
 
     } else {
 
@@ -121,10 +121,30 @@ class gjMapsInject {
 
       }
 
-      $poi = json_encode($this->databaseFunctions->get_poi($type='OBJECT', $mapSettings['map_id']));
-      $cat = json_encode($this->databaseFunctions->get_cat($type='OBJECT', $mapSettings['map_id']));
+      $poi = $this->databaseFunctions->get_poi($type='OBJECT', $mapSettings['map_id']);
+      $cat = $this->databaseFunctions->get_cat($type='OBJECT', $mapSettings['map_id']);
 
     }
+
+    if(get_option('gj_maps_poi_num')) {
+      foreach($cat as $singleCat) {
+        $count = 1;
+        foreach($poi as $singlePOI) {
+          if($singlePOI->cat_id === $singleCat->id) {
+            $singlePOI->num = $count;
+            $count++;
+          }
+        }
+      }
+    }
+
+    $poi = json_encode($poi);
+    $cat = json_encode($cat);
+
+    /*
+    *  This is all really shitty and needs to be rewritten using wp_localize_script
+    *  09/15/14 ps
+    */
 
     echo '<script type="text/javascript">';
 
@@ -141,6 +161,7 @@ class gjMapsInject {
     echo 'var map_zoom = '.($mapSettings['zoom'] ? $mapSettings['zoom'] : '14').';';
 
     $gj_poi_list = get_option('gj_maps_poi_list');
+    $gj_poi_num = get_option('gj_maps_poi_num');
     $gj_map_styles = get_option('gj_maps_map_styles');
     $gj_label_color = get_option('gj_maps_label_color');
 
@@ -149,6 +170,7 @@ class gjMapsInject {
     $gj_map_styles = preg_replace("/\s+/", "", $gj_map_styles);
 
     echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
+    echo 'var poi_number = '.($gj_poi_num ? $gj_poi_num : '0').';';
     echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
     echo 'var map_styles = '.($gj_map_styles ? $gj_map_styles : '0').';';
     echo '</script>';

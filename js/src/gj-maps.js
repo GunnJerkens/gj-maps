@@ -1,21 +1,23 @@
 jQuery(document).ready(function($) {
 
-  var poi_number = true;
-
   var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 
   iconAnchor = new google.maps.Point(5, 33);
 
   function indexPOIData() {
+
     var i, len;
+
     poiIndexed = {};
     for (i = 0, len = poi.length; i < len; i++) {
       poiIndexed[poi[i].id] = poi[i];
     }
+
     catIndexed = {};
     for (i = 0, len = cat.length; i < len; i++) {
       catIndexed[cat[i].id] = cat[i];
     }
+
   }
 
   function setupPOILists() {
@@ -124,14 +126,11 @@ jQuery(document).ready(function($) {
 
     if (poi_list === 1) {
 
-      catCount = 1;
-
       for (i = 0, len = poi.length; i < len; i++) {
         if (poi[i].cat_id == cat.id) {
           markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
           if (poi_number) {
-            markup += '<span>' + catCount + ' </span>';
-            catCount++;
+            markup += '<span>' + poi[i].num + ' </span>';
           }
           markup += poi[i].name + '</li>';
         }
@@ -236,7 +235,6 @@ jQuery(document).ready(function($) {
 
           if (poiCat) {
             markerOptions.icon = {
-              value: '1',
               url: poiCat.icon,
               anchor: iconAnchor,
             };
@@ -304,8 +302,8 @@ jQuery(document).ready(function($) {
 
   google.maps.event.addDomListener(window, 'load', initMap);
 
+  // This registers our click event on the POI list items
   $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
-
     var id, marker;
 
     id = $(this).data('poi-id');
@@ -321,7 +319,6 @@ jQuery(document).ready(function($) {
     if(marker != false) {
       showPOIInfo(marker);
     }
-
   });
 
 });
