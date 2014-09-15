@@ -4,16 +4,24 @@ $adminFunctions = new gjMapsAdmin();
 
 if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'settings_update') {
 
-  $post = $_POST;
-  $response = $adminFunctions->updateSettings($post);
+  if(1 === check_admin_referer('gj-maps-settings')) {
 
-  if($response['status'] === 'success') {
+    $post = $_POST;
+    $response = $adminFunctions->updateSettings($post);
 
-    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    if($response['status'] === 'success') {
+
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+
+    } else {
+
+      echo '<div id="message" class="error"><p>Settings failed to update.</p></div>';
+
+    }
 
   } else {
 
-    echo '<div id="message" class="error"><p>Settings failed to update.</p></div>';
+    die('Permission denied');
 
   }
 
@@ -26,6 +34,7 @@ $settings = $adminFunctions->getSettings(); ?>
   <h3>Basic Settings</h3>
   <form name="gj_maps_settings" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
     <input type="hidden" name="gj_hidden" value="settings_update">
+    <?php wp_nonce_field('gj-maps-settings'); ?>
     <table class="form-table">
       <tr>
         <th><label for="use_styles">Styles</label></th>
@@ -44,6 +53,10 @@ $settings = $adminFunctions->getSettings(); ?>
       <tr>
         <th><label for="poi_list">Show POI List</label></th>
         <td><input type="checkbox" name="poi_list" <?php echo $settings['poi_list'] ? 'checked' : ''; ?>></td>
+      </tr>
+      <tr>
+        <th><label for="poi_num">Numbered POI</label></th>
+        <td><input type="checkbox" name="poi_num" <?php echo $settings['poi_num'] ? 'checked' : ''; ?>></td>
       </tr>
       <tr>
         <th><label for="cat_default">View All Default Color</label></th>

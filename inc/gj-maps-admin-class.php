@@ -609,6 +609,9 @@ class gjMapsAdmin {
     $poi_list = isset($_POST['poi_list']);
     update_option('gj_maps_poi_list', $poi_list);
 
+    $poi_num = isset($_POST['poi_num']);
+    update_option('gj_maps_poi_num', $poi_num);
+
     $cat_default = $_POST['cat_default'];
     update_option('gj_maps_cat_default', $cat_default);
 
@@ -645,6 +648,7 @@ class gjMapsAdmin {
     $style = get_option('gj_maps_use_styles');
     $label_color = get_option('gj_maps_label_color');
     $poi_list = get_option('gj_maps_poi_list');
+    $poi_num = get_option('gj_maps_poi_num');
     $cat_default = get_option('gj_maps_cat_default');
     $center_lat = get_option('gj_maps_center_lat');
     $center_lng = get_option('gj_maps_center_lng');
@@ -657,6 +661,7 @@ class gjMapsAdmin {
       'use_styles' => $style,
       'label_color' => $label_color,
       'poi_list' => $poi_list,
+      'poi_num' => $poi_num,
       'cat_default' => $cat_default,
       'center_lat' => $center_lat,
       'center_lng' => $center_lng,
