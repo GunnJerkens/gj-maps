@@ -1,5 +1,7 @@
 jQuery(document).ready(function($) {
 
+  var poi_number = true;
+
   var map, filter, mapOptions, mapBounds, markerBounds, poiIndexed, catIndexed, iconAnchor, infoWindow;
 
   iconAnchor = new google.maps.Point(5, 33);
@@ -92,32 +94,51 @@ jQuery(document).ready(function($) {
   }
 
   function markupCategoryList(cat) {
-    var markup, i, len, address, symbolPath, color, background;
+
+    var markup, i, len, address, symbolPath, color, background, catCount;
+
+    background = '';
+    color = '';
+
     if (label_color === "background") {
+
       if (cat.icon) {
         symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
         background = 'background-image: url(' + symbolPath + ');';
       } else {
         background = '';
       }
+
       color = 'background-color: ' + cat.color +';';
+
     } else if (label_color === "text") {
+
       background = '';
       color = 'color: ' + cat.color + ';';
-    } else {
-      background = '';
-      color = '';
+
     }
+
     markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
-      '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + cat.name + '</span></div>' +
-      '<ul>';
+      '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
+      cat.name + '</span></div>' + '<ul>';
+
     if (poi_list === 1) {
+
+      catCount = 1;
+
       for (i = 0, len = poi.length; i < len; i++) {
         if (poi[i].cat_id == cat.id) {
-          markup += '<li class="poi" data-poi-id="' + poi[i].id + '">' + poi[i].name + '</li>';
+          markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
+          if (poi_number) {
+            markup += '<span>' + catCount + ' </span>';
+            catCount++;
+          }
+          markup += poi[i].name + '</li>';
         }
       }
+
     }
+
     markup += '</ul>' +
       '</li>';
 
@@ -164,20 +185,6 @@ jQuery(document).ready(function($) {
 
   }
 
-  function searchPOI(query) {
-    var pattern, i, len;
-    if (!isNaN(query)) {
-      return poiIndexed[Number(query)];
-    } else {
-      pattern = new RegExp(query, 'i');
-      for (i = 0, len = poi.length; i < len; i++) {
-        if (pattern.test(poi[i].name)) {
-          return poi[i];
-        }
-      }
-    }
-  }
-
   function placeMarkers(forceFit) {
 
     var i, len, isMatch, position, markerOptions;
@@ -205,12 +212,14 @@ jQuery(document).ready(function($) {
       );
 
       if (typeof poi[i].marker !== "undefined") {
+
         if (isMatch) {
           poi[i].marker.setMap(map);
           markerBounds.extend(poi[i].marker.getPosition());
         } else {
           poi[i].marker.setMap(null);
         }
+
       } else if(isMatch) {
 
         if (Number(poi[i].lat) && Number(poi[i].lng)) {
@@ -227,6 +236,7 @@ jQuery(document).ready(function($) {
 
           if (poiCat) {
             markerOptions.icon = {
+              value: '1',
               url: poiCat.icon,
               anchor: iconAnchor,
             };
@@ -240,6 +250,7 @@ jQuery(document).ready(function($) {
 
           markerBounds.extend(position);
         }
+
       }
 
     }
@@ -292,5 +303,25 @@ jQuery(document).ready(function($) {
   indexPOIData();
 
   google.maps.event.addDomListener(window, 'load', initMap);
+
+  $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
+
+    var id, marker;
+
+    id = $(this).data('poi-id');
+    marker = false;
+
+    for(i = 0; poi.length > i; i++) {
+      if(poi[i].id == id) {
+        marker = poi[i];
+        break;
+      }
+    }
+
+    if(marker != false) {
+      showPOIInfo(marker);
+    }
+
+  });
 
 });
