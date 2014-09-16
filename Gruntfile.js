@@ -30,17 +30,6 @@ module.exports = function (grunt) {
       }
     },
 
-    imagemin: {
-      dynamic: {
-        files: [{
-          expand: true,
-          cwd: 'img/src',
-          src: ['*.{png,jpg,gif}'],
-          dest: 'img/'
-        }]
-      }
-    },
-
     watch: {
       options: {
         livereload: true
@@ -53,14 +42,10 @@ module.exports = function (grunt) {
         files: ['img/ui/*.png'],
         tasks: ['compass']
       },
-      images: {
-        files: ['img/src/*.{png,jpg,gif}'],
-        tasks: ['imagemin']
-      }
     },
   });
 
   // Development task checks and concatenates JS, compiles SASS preserving comments and nesting, runs dev server, and starts watch
-  grunt.registerTask('default', ['compass', 'concat', 'imagemin', 'watch']);
+  grunt.registerTask('default', ['compass', 'concat', 'watch']);
 
 };
