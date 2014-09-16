@@ -171,6 +171,7 @@ class gjMapsInject {
 
     echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
     echo 'var poi_number = '.($gj_poi_num ? $gj_poi_num : '0').';';
+    echo 'var poi_icon_url = '.($gj_poi_num ? '"'.plugin_dir_url(__FILE__) . 'img/trans.png"' : '0').';';
     echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
     echo 'var map_styles = '.($gj_map_styles ? $gj_map_styles : '0').';';
     echo '</script>';

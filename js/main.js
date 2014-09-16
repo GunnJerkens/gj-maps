@@ -146,6 +146,8 @@ jQuery(document).ready(function($) {
 
   function showPOIInfo(poi) {
 
+    console.log(poi);
+
     var content, linkName, $header, mapTop;
 
     content = '<div class="poi-info" style="overflow:hidden;">' +
@@ -227,20 +229,44 @@ jQuery(document).ready(function($) {
 
           position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
 
-          markerOptions = {
-            position: position,
-            map: map,
-            title: poi[i].name
-          };
+          if(!poi_number) {
 
-          if (poiCat) {
-            markerOptions.icon = {
-              url: poiCat.icon,
-              anchor: iconAnchor,
+            markerOptions = {
+              position: position,
+              map: map,
+              title: poi[i].name
             };
-          }
 
-          poi[i].marker = new google.maps.Marker(markerOptions);
+            if (poiCat) {
+              markerOptions.icon = {
+                url: poiCat.icon,
+                anchor: iconAnchor,
+              };
+            }
+
+            poi[i].marker = new google.maps.Marker(markerOptions);
+
+          } else {
+
+            poi[i].marker = new MarkerWithLabel({
+              position: position,
+              draggable: false,
+              map: map,
+              icon: poi_icon_url,
+              labelContent: poi[i].num,
+              labelAnchor: new google.maps.Point(12,0),
+              labelClass: "gj-maps-marker-label",
+              labelStyle: {
+                "width": "25px",
+                "height": "25px",
+                "paddingTop": "4px",
+                "color": "white",
+                "background": poiCat.color,
+                "border-radius": "50%"
+              }
+            });
+
+          }
 
           google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
             showPOIInfo(poi[i]);
