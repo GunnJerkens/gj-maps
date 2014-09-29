@@ -10,28 +10,25 @@ class gjMapsInject {
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
 
+    define('DISABLE_GJ_MAPS', FALSE);
+
   }
 
   function doScripts() {
-
     global $post;
-
     $gjMaps = new gjMaps();
 
-    if(!is_admin() && shortcode_exists('gjmaps')) {
+    if(!is_admin() && shortcode_exists('gjmaps') && !constant('DISABLE_GJ_MAPS')) {
 
       $gjMaps->print_scripts();
 
-      $loadState = true;
+      return true;
 
     } else {
 
-      $loadState = false;
+      return false;
 
     }
-
-    return $loadState;
-
   }
 
   function shortcode($atts) {

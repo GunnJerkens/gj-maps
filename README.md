@@ -63,6 +63,15 @@ By default each maps has its own API (JSON) endpoint available for consumption b
 
 `http://example.com/?gjmaps_api=4`
 
+## disable
+
+You can define a constant on a page template prior to `get_header()` to disable gj-maps from loading any scripts. This is helpful and suggested if you are
+running another Google Maps application on the page. Our maps default to the latest stable version of maps, currently `3.17`.
+
+```
+define('DISABLE_GJ_MAPS', true);
+```
+
 ## issues
 [GitHub Issues](https://github.com/GunnJerkens/gj-maps/issues)
 

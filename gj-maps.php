@@ -63,7 +63,7 @@ class gjMaps {
 
   function register_scripts() {
 
-    wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false', null, null);
+    wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3&sensor=false', null, null);
     wp_register_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps'), false, true);
     wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
     wp_register_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
