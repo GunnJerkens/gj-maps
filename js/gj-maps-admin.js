@@ -33,11 +33,13 @@ jQuery(document).ready(function($) {
 
       }
 
+      console.log(map)
+
       tableRow = [
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
           '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
           '<input type="hidden" name="' + ID + '[mode]" value="create">',
-          '<input type="hidden" name="' + ID + '[map_id]" value="' + map + '">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map.id + '">',
           '<th class="check-column">',
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',
@@ -71,7 +73,7 @@ jQuery(document).ready(function($) {
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
           '<input type="hidden" name="' + ID + '[id]" value="' + ID + '">',
           '<input type="hidden" name="' + ID + '[mode]" value="create">',
-          '<input type="hidden" name="' + ID + '[map_id]" value="' + map + '">',
+          '<input type="hidden" name="' + ID + '[map_id]" value="' + map.id + '">',
           '<th class="check-column">',
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',

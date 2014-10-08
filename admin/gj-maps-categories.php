@@ -129,7 +129,7 @@ echo $adminFunctions->mapsTab('cat', $map, $map_id);
 */
 
 $cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
-wp_localize_script('gj_maps_admin_js', 'map', $map_id);
+wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
 
 
 /*
