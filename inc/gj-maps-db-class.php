@@ -470,7 +470,7 @@ class gjMapsDB {
 
     }
 
-    return $query;
+    return stripslashes_deep($query);
 
   }
 
@@ -698,7 +698,7 @@ class gjMapsDB {
 
     }
 
-    return $query;
+    return stripslashes_deep($query);
   
   }
 
