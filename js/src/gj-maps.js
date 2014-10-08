@@ -63,7 +63,7 @@ jQuery(document).ready(function($) {
       infoWindow.close();
       placeMarkers();
 
-      if (catID === "") {
+      if (catID === "all") {
         map.panTo(mapOptions.center);
         map.setZoom(mapOptions.zoom);
       }
@@ -71,28 +71,20 @@ jQuery(document).ready(function($) {
     });
 
     function resizeCategories() {
-
-      var $cat;
-
-      $cat = $('.gjmaps-category');
+      var $cat = $('.gjmaps-category');
 
       if($(window).innerWidth() > 768) {
-
         if($cat.length > 2) {
           percent = ((100-($cat.length*2))/$cat.length) + '%';
         } else {
           percent = '50%';
         }
-
       } else {
         percent = '100%';
       }
-
       $cat.css('width',percent);
     }
-
     resizeCategories();
-
   }
 
   function markupCategoryList(cat) {
@@ -145,8 +137,6 @@ jQuery(document).ready(function($) {
   }
 
   function showPOIInfo(poi) {
-
-    console.log(poi);
 
     var content, linkName, $header, mapTop;
 
