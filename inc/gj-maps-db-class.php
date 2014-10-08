@@ -420,7 +420,7 @@ class gjMapsDB {
 
     }
 
-    return $query;
+    return stripslashes_deep($query);
 
   }
 
