@@ -16,6 +16,14 @@ module.exports = function (grunt) {
       }
     },
 
+    uglify: {
+      min: {
+        files: {
+          'js/main.js': ['js/src/*.js']
+        }
+      }
+    },
+
     compass: {
       dist: {
         options: {
@@ -37,15 +45,12 @@ module.exports = function (grunt) {
       scripts: {
         files: ['js/src/*.js'],
         tasks: ['concat']
-      },
-      styles: {
-        files: ['img/ui/*.png'],
-        tasks: ['compass']
-      },
-    },
+      }
+    }
   });
 
-  // Development task checks and concatenates JS, compiles SASS preserving comments and nesting, runs dev server, and starts watch
+  // Default runs concat and compass with live reload, build compiles for production
   grunt.registerTask('default', ['compass', 'concat', 'watch']);
+  grunt.registerTask('build', ['compass', 'uglify']);
 
 };
