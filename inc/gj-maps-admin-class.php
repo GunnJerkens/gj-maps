@@ -510,6 +510,8 @@ class gjMapsAdmin {
 
   function editCat($updateItems) {
 
+    $hasError = false;
+
     foreach($updateItems as $item) {
 
       unset($item['mode']);
