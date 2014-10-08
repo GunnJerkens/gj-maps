@@ -728,7 +728,7 @@ class gjMapsAdmin {
 
     foreach ($poi[0] as $key=>$value) {
 
-      $labels[$value] = $value;
+      $labels[$value] = strtolower($value);
 
     }
 
