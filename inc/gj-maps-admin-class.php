@@ -614,6 +614,9 @@ class gjMapsAdmin {
     $poi_num = isset($_POST['poi_num']);
     update_option('gj_maps_poi_num', $poi_num);
 
+    $poi_filter_load = isset($_POST['poi_filter_load']);
+    update_option('gj_poi_filter_load', $poi_filter_load);
+
     $cat_default = $_POST['cat_default'];
     update_option('gj_maps_cat_default', $cat_default);
 
@@ -636,40 +639,26 @@ class gjMapsAdmin {
   }
 
   /**
-  *
-  * Get settings
-  * 
-  * Expects no arguments, returns the settings array
-  *
-  * @since 0.1
-  *
-  **/
+   * Returns the global maps settings
+   * 
+   * @return object
+   *
+   * @since 0.1
+   */
+  public static function getSettings() {
 
-  function getSettings() {
+    $settings = new StdClass();
 
-    $style = get_option('gj_maps_use_styles');
-    $label_color = get_option('gj_maps_label_color');
-    $poi_list = get_option('gj_maps_poi_list');
-    $poi_num = get_option('gj_maps_poi_num');
-    $cat_default = get_option('gj_maps_cat_default');
-    $center_lat = get_option('gj_maps_center_lat');
-    $center_lng = get_option('gj_maps_center_lng');
-    $map_zoom = get_option('gj_maps_map_zoom');
-    $map_styles = get_option('gj_maps_map_styles');
-
-    $map_styles_strip = stripslashes($map_styles);
-
-    $settings = array(
-      'use_styles' => $style,
-      'label_color' => $label_color,
-      'poi_list' => $poi_list,
-      'poi_num' => $poi_num,
-      'cat_default' => $cat_default,
-      'center_lat' => $center_lat,
-      'center_lng' => $center_lng,
-      'map_zoom' => $map_zoom,
-      'map_styles' => $map_styles_strip
-    );
+    $settings->use_styles      = get_option('gj_maps_use_styles');
+    $settings->label_color     = get_option('gj_maps_label_color');
+    $settings->poi_list        = get_option('gj_maps_poi_list');
+    $settings->poi_num         = get_option('gj_maps_poi_num');
+    $settings->poi_filter_load = get_option('gj_poi_filter_load');
+    $settings->cat_default     = get_option('gj_maps_cat_default');
+    $settings->center_lat      = get_option('gj_maps_center_lat');
+    $settings->center_lng      = get_option('gj_maps_center_lng');
+    $settings->map_zoom        = get_option('gj_maps_map_zoom');
+    $settings->map_styles      = stripslashes(get_option('gj_maps_map_styles'));
 
     return $settings;
 

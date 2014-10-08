@@ -157,10 +157,11 @@ class gjMapsInject {
     echo 'var center_lng = '.($mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648').';';
     echo 'var map_zoom = '.($mapSettings['zoom'] ? $mapSettings['zoom'] : '14').';';
 
-    $gj_poi_list = get_option('gj_maps_poi_list');
-    $gj_poi_num = get_option('gj_maps_poi_num');
-    $gj_map_styles = get_option('gj_maps_map_styles');
-    $gj_label_color = get_option('gj_maps_label_color');
+    $gj_poi_list        = get_option('gj_maps_poi_list');
+    $gj_poi_num         = get_option('gj_maps_poi_num');
+    $gj_poi_filter_load = get_option('gj_poi_filter_load');
+    $gj_map_styles      = get_option('gj_maps_map_styles');
+    $gj_label_color     = get_option('gj_maps_label_color');
 
     // Strip slashes and remove whitespace
     $gj_map_styles = stripslashes($gj_map_styles);
@@ -168,6 +169,7 @@ class gjMapsInject {
 
     echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
     echo 'var poi_number = '.($gj_poi_num ? $gj_poi_num : '0').';';
+    echo 'var poi_filter_load = '.($gj_poi_filter_load ? $gj_poi_filter_load : '0').';';
     echo 'var poi_icon_url = '.($gj_poi_num ? '"'.plugin_dir_url(__FILE__) . 'img/trans.png"' : '0').';';
     echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
     echo 'var map_styles = '.($gj_map_styles ? $gj_map_styles : '0').';';
