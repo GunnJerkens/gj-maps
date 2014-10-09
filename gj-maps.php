@@ -19,9 +19,7 @@ class gjMaps {
   function __construct() {
 
     add_action('admin_menu', array($this, 'admin_actions'));
-    // add_action('init', array($this, 'register_scripts'));
     add_action('admin_enqueue_scripts', array($this, 'gj_maps_admin_scripts'));
-
     register_activation_hook(__FILE__,  array($this, 'table_install'));
 
     $this->api = new gjMapsAPI();
@@ -59,31 +57,6 @@ class gjMaps {
       $adminCSSFilePath = plugin_dir_path(__FILE__) . $adminCSS;
       wp_enqueue_style('gj_maps_admin_css', plugin_dir_url(__FILE__) . 'css/gj-maps-admin.css', array(), filemtime($adminCSSFilePath));
     }
-  }
-
-  function register_scripts() {
-
-    wp_register_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3&sensor=false', null, null);
-    wp_register_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps'), false, true);
-    wp_register_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
-    wp_register_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
-
-  }
-
-  function print_scripts() {
-
-    // wp_print_scripts('google-maps');
-
-    // if(get_option('gj_maps_poi_num')) {
-    //   wp_print_scripts('gj-maps-mwl');
-    // }
-
-    // wp_print_scripts('gj-maps-main');
-
-    // if (get_option('gj_maps_use_styles') && !(is_admin()) ) {
-    //   wp_print_styles('gj-maps-screen');
-    // }
-
   }
 
   function table_install() {
