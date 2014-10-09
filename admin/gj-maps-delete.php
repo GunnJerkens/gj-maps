@@ -1,35 +1,33 @@
 <?php
 
 if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_maps_delete') {
+  if(1 === check_admin_referer('gj-maps-delete')) {
+    $adminFunctions = new gjMapsAdmin();
 
-  $adminFunctions = new gjMapsAdmin();
+    $response = $adminFunctions->deleteData($_POST);
 
-  $response = $adminFunctions->deleteData($_POST);
-
-  if($response['status'] === 'success') {
-
-    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-
-  } else if ($response['status'] === 'error') {
-
-    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
-
-  } 
-
+    if($response['status'] === 'success') {
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    } else if ($response['status'] === 'error') {
+      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+    }
+  } else {
+    die('Permission denied.');
+  }
 } ?>
-
 
 <div class="wrap">
   <h4>Are you sure you want to delete all data?</h4>
   <form name="gj_maps_delete" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
     <input type="hidden" name="gj_hidden" value="gj_maps_delete">
+    <?php wp_nonce_field('gj-maps-delete'); ?>
     <table class="form-table">
       <tr>
         <th><label for="delete">Select Data</label></th>
         <td>
           <select name="delete">
             <option value="default" selected>Do Not Delete</option>
-<!--             <option value="delete_categories">Delete All Categories</option>
+      <!--  <option value="delete_categories">Delete All Categories</option>
             <option value="delete_maps">Delete All Maps</option>
             <option value="delete_poi">Delete All POI</option> -->
             <option value="delete_all">Delete All Data</option>

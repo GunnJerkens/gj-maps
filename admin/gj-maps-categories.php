@@ -20,89 +20,66 @@ if(isset($_GET['delete'])) {
 */
 
 if(!empty($_POST)) {
+  if(1 === check_admin_referer('gj-maps-cat')) {
 
-  if($_POST['form_name'] === 'gj_maps_map_name') {
+    if($_POST['form_name'] === 'gj_maps_map_name') {
+      $response = $adminFunctions->renameMap($_POST);
+    }
 
-    $response = $adminFunctions->renameMap($_POST);
+    if($_POST['form_name'] === 'gj_maps_cat') {
 
-  }
+      foreach($_POST as $postKey=>$postValue) {
 
-  if($_POST['form_name'] === 'gj_maps_cat') {
-
-    foreach($_POST as $postKey=>$postValue) {
-
-      if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
-
-        $deleteItems[] = $postValue;
-
-      }
-
-      if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
-
-        foreach($_FILES as $fileKey=>$fileValue) {
-
-          if($postKey === $fileKey) {
-
-            $icon['name'] = isset($fileValue['name']['icon']) ? $fileValue['name']['icon'] : '';
-            $icon['type'] = isset($fileValue['type']['icon']) ? $fileValue['type']['icon'] : '';
-            $icon['tmp_name'] = isset($fileValue['tmp_name']['icon']) ? $fileValue['tmp_name']['icon'] : '';
-            $icon['error'] = isset($fileValue['error']['icon']) ? $fileValue['error']['icon'] : '';
-            $icon['size'] = isset($fileValue['size']['icon']) ? $fileValue['size']['icon'] : '';
-
-            if(isset($icon['name'])) {
-
-              $upload = wp_handle_upload($icon, array('test_form'=>false));
-
-              if(isset($upload['url'])) {
-
-                $postValue['icon'] = $upload['url'];
-
-              }
-
-            }
-
-          }
-
+        if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
+          $deleteItems[] = $postValue;
         }
 
-        $updateItems[] = $postValue;
+        if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
+          foreach($_FILES as $fileKey=>$fileValue) {
 
+            if($postKey === $fileKey) {
+              $icon['name'] = isset($fileValue['name']['icon']) ? $fileValue['name']['icon'] : '';
+              $icon['type'] = isset($fileValue['type']['icon']) ? $fileValue['type']['icon'] : '';
+              $icon['tmp_name'] = isset($fileValue['tmp_name']['icon']) ? $fileValue['tmp_name']['icon'] : '';
+              $icon['error'] = isset($fileValue['error']['icon']) ? $fileValue['error']['icon'] : '';
+              $icon['size'] = isset($fileValue['size']['icon']) ? $fileValue['size']['icon'] : '';
+
+              if(isset($icon['name'])) {
+                $upload = wp_handle_upload($icon, array('test_form'=>false));
+
+                if(isset($upload['url'])) {
+                  $postValue['icon'] = $upload['url'];
+                }
+              }
+            }
+          }
+          $updateItems[] = $postValue;
+        }
+
+        if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
+          $createItems[] = $postValue;
+        }
       }
 
-      if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
-
-        $createItems[] = $postValue;
-
+      if(!empty($deleteItems)) {
+        $response = $adminFunctions->deleteCat($deleteItems);
       }
 
+      if(!empty($updateItems)) {
+        $response = $adminFunctions->editCat($updateItems);
+      }
+
+      if(!empty($createItems)) {
+        $response = $adminFunctions->createCat($createItems);
+      }
     }
 
-    if(!empty($deleteItems)) {
-
-      $response = $adminFunctions->deleteCat($deleteItems);
-
+    if($_GET['map_id'] === 'new') {
+      $createMap = false;
     }
-
-    if(!empty($updateItems)) {
-
-      $response = $adminFunctions->editCat($updateItems);
-
-    }
-
-    if(!empty($createItems)) {
-
-      $response = $adminFunctions->createCat($createItems);
-
-    }
-
+  } else {
+    die('Permission denied.');
   }
-
-  if($_GET['map_id'] === 'new') {
-
-    $createMap = false;
-
-  }
-
 }
 
 /*
@@ -165,6 +142,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps_categories&map_id='.$ma
 
     <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
+      <?php wp_nonce_field('gj-maps-cat'); ?>
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
       <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map[0]->name) ? $map[0]->name : ''; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
@@ -173,6 +151,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps_categories&map_id='.$ma
 
     <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_cat">
+      <?php wp_nonce_field('gj-maps-cat'); ?>
       <table class="wp-list-table widefat fixed gj-maps">
         <thead class="">
           <tr>

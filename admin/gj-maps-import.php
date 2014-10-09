@@ -4,36 +4,31 @@ $databaseFunctions = new gjMapsDB();
 $adminFunctions = new gjMapsAdmin();
 
 if(isset($_FILES['file']) && isset($_POST)) {
+  if(1 === check_admin_referer('gj-maps-upload')) {
+    if($_POST['map'] === 'new') {
+      $mapID = 'new';
+    } else {
+      $mapID = $_POST['map'];
+    }
 
-  if($_POST['map'] === 'new') {
+    $response = $adminFunctions->importData($_FILES['file'], $mapID);
 
-    $mapID = 'new';
-
+    if($response['status'] === 'success') {
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    } else {
+      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+    }
   } else {
-
-    $mapID = $_POST['map'];
-
-  }
-
-  $response = $adminFunctions->importData($_FILES['file'], $mapID);
-
-  if($response['status'] === 'success') {
-
-    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-
-  } else {
-
-    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
-
+    die('Permission denied.');
   }
 
 }
 
 $maps = $databaseFunctions->get_map(); ?>
 
-
 <div class="wrap">
   <form name="gj_maps_upload" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+    <?php wp_nonce_field('gj-maps-upload'); ?>
     <table class="form-table">
       <tr>
         <th><label for="file">Choose CSV</label></th>

@@ -7,89 +7,62 @@ $adminFunctions = new gjMapsAdmin();
 /*
 * This is our DELETE handling
 */
-
 if(isset($_GET['delete'])) {
-
   $delete_map_id = $_GET['delete'];
-
-  $response = $adminFunctions->deleteMap($delete_map_id);
-
+  $response      = $adminFunctions->deleteMap($delete_map_id);
 }
 
 /*
 * This is our POST handling
 */
-
 if(!empty($_POST)) {
+  if(1 === check_admin_referer('gj-maps-poi')) {
 
-  if($_POST['form_name'] === 'gj_maps_map_name') {
+    if($_POST['form_name'] === 'gj_maps_map_name') {
+      $response = $adminFunctions->renameMap($_POST);
+    }
 
-    $response = $adminFunctions->renameMap($_POST);
+    if($_POST['form_name'] === 'geocode') {
+      $response = $adminFunctions->geocodePOI($_GET['map_id']);
+    }
 
-  }
+    if($_POST['form_name'] === 'gj_maps_poi' ) {
 
-  if($_POST['form_name'] === 'geocode') {
+      foreach($_POST as $post) {
+        if(isset($post['delete']) && $post['delete'] === 'on') {
+          $deleteItems[] = $post;
+        } elseif(isset($post['mode']) && $post['mode'] === 'update') {
+          $updateItems[] = $post;
+        } elseif(isset($post['mode']) && $post['mode'] === 'create') {
+          $createItems[] = $post;
+        }
+      }
 
-    $response = $adminFunctions->geocodePOI($_GET['map_id']);
+      if(!empty($deleteItems)) {
+        $response = $adminFunctions->deletePOI($deleteItems);
+      }
 
-  }
+      if(!empty($updateItems)) {
+        $response = $adminFunctions->editPOI($updateItems);
+      }
 
-  if($_POST['form_name'] === 'gj_maps_poi' ) {
-
-
-    foreach($_POST as $post) {
-
-      
-
-      if(isset($post['delete']) && $post['delete'] === 'on') {
-
-        $deleteItems[] = $post;
-
-      } elseif(isset($post['mode']) && $post['mode'] === 'update') {
-
-        $updateItems[] = $post;
-
-      } elseif(isset($post['mode']) && $post['mode'] === 'create') {
-
-        $createItems[] = $post;
-
+      if(!empty($createItems)) {
+        $response = $adminFunctions->createPOI($createItems);
       }
 
     }
 
-    if(!empty($deleteItems)) {
-
-      $response = $adminFunctions->deletePOI($deleteItems);
-
+    if($_GET['map_id'] === 'new') {
+      $createMap = false;
     }
-
-    if(!empty($updateItems)) {
-
-      $response = $adminFunctions->editPOI($updateItems);
-
-    }
-
-    if(!empty($createItems)) {
-
-      $response = $adminFunctions->createPOI($createItems);
-
-    }
-
+  } else {
+    die('Permission denied');
   }
-
-  if($_GET['map_id'] === 'new') {
-
-    $createMap = false;
-
-  }
-
-
 }
 
 /*
 * This is the maps tabbing system
 */
-
 if(isset($createMap) && $createMap === false) {
 
   $map_id = $_POST['id'];
@@ -174,6 +147,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
 
     <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
+      <?php wp_nonce_field('gj-maps-poi'); ?>
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
       <input type="text" name="name" placeholder="Map Name" value="<?php echo !empty($map_name[0]->name) ? $map_name[0]->name : ''; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
@@ -182,6 +156,7 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
 
     <form name="gj_maps_poi" method="post" action="<?php echo $post_uri; ?>">
       <input type="hidden" name="form_name" value="gj_maps_poi">
+      <?php wp_nonce_field('gj-maps-poi'); ?>
 
       <div id="gj-table-container">
         <table class="wp-list-table widefat fixed gj-maps">
