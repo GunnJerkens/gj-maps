@@ -22,9 +22,7 @@ jQuery(document).ready(function($) {
 
   function setupPOILists() {
 
-    var i, len;
-
-    var markup = '';
+    var i, len, markup = '';
 
     for (i = 0; i < cat.length; i++) {
       if (cat[i].hide_list != '1') {
@@ -65,29 +63,24 @@ jQuery(document).ready(function($) {
     background = '';
     color = '';
 
-    if (label_color === "background") {
-
+    if (settings.label_color === "background") {
       if (cat.icon) {
         symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
         background = 'background-image: url(' + symbolPath + ');';
       } else {
         background = '';
       }
-
       color = 'background-color: ' + cat.color +';';
-
-    } else if (label_color === "text") {
-
+    } else if (settings.label_color === "text") {
       background = '';
       color = 'color: ' + cat.color + ';';
-
     }
 
     markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
       '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
       cat.name + '</span></div>' + '<ul>';
 
-    if (poi_list === 1) {
+    if (settings.poi_list === 1) {
 
       for (i = 0, len = poi.length; i < len; i++) {
         if (poi[i].cat_id == cat.id) {
@@ -224,7 +217,7 @@ jQuery(document).ready(function($) {
 
           position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
 
-          if(!poi_number) {
+          if(!settings.poi_number) {
 
             markerOptions = {
               position: position,
@@ -247,7 +240,7 @@ jQuery(document).ready(function($) {
               position: position,
               draggable: false,
               map: map,
-              icon: poi_icon_url,
+              icon: settings.poi_icon,
               labelContent: poi[i].num,
               labelAnchor: new google.maps.Point(12,0),
               labelClass: "gj-maps-marker-label",
@@ -298,15 +291,18 @@ jQuery(document).ready(function($) {
 
   // Instantiates the map
   function initMap() {
+    var center_lat = settings.center_lat,
+        center_lng = settings.center_lng,
+        zoom = Math.floor(settings.map_zoom);
 
     mapOptions = {
-      zoom: map_zoom,
+      zoom: zoom,
       center: new google.maps.LatLng(0, 0),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      styles: (map_styles === '0' ? map_styles = '' : map_styles)
+      styles: (settings.map_styles === '0' ? settings.map_styles = '' : settings.map_styles)
     };
 
-    if(center_lat && center_lng) {
+    if(settings.center_lat && settings.center_lng) {
       mapOptions.center = new google.maps.LatLng(center_lat, center_lng)
     }
 
@@ -325,7 +321,7 @@ jQuery(document).ready(function($) {
     placeMarkers(!center_lat || !center_lng);
     setupPOILists();
 
-    if(poi_filter_load) {
+    if(settings.filter_load) {
       filterLoad();
     }
 

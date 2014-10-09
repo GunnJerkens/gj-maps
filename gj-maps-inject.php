@@ -20,7 +20,10 @@ class gjMapsInject {
 
     if(!is_admin() && shortcode_exists('gjmaps') && !constant('DISABLE_GJ_MAPS')) {
 
-      $gjMaps->print_scripts();
+      wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3&sensor=false', null, null);
+      if(get_option('gj_maps_poi_num')) wp_enqueue_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps'), false, true);
+      wp_enqueue_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
+      if (get_option('gj_maps_use_styles')) wp_enqueue_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
 
       return true;
 
@@ -58,22 +61,22 @@ class gjMapsInject {
 
 
       extract(shortcode_atts(array(
-        'map' => null,
-        'map_id' => null,
-        'position' => 'top',
-        'latitude' => get_option('gj_maps_center_lat'),
+        'map'       => null,
+        'map_id'    => null,
+        'position'  => 'top',
+        'latitude'  => get_option('gj_maps_center_lat'),
         'longitude' => get_option('gj_maps_center_lng'),
-        'zoom' => get_option('gj_maps_map_zoom'),
-        'api' => null
+        'zoom'      => get_option('gj_maps_map_zoom'),
+        'api'       => null
       ), $atts));
 
       $gjmapsAPI = $this->frontend(array(
-          'map' => $map,
-          'map_id' => $map_id,
-          'latitude' => $latitude,
+          'map'       => $map,
+          'map_id'    => $map_id,
+          'latitude'  => $latitude,
           'longitude' => $longitude,
-          'zoom' => $zoom,
-          'api' => $api
+          'zoom'      => $zoom,
+          'api'       => $api
         )
       );
 
@@ -135,45 +138,25 @@ class gjMapsInject {
       }
     }
 
-    $poi = json_encode($poi);
-    $cat = json_encode($cat);
+    $poi_list    = get_option('gj_maps_poi_list');
+    $poi_num     = get_option('gj_maps_poi_num');
+    $filter_load = get_option('gj_poi_filter_load');
+    $label_color = get_option('gj_maps_label_color');
+    $map_styles  = preg_replace("/\s+/", "", stripslashes(get_option('gj_maps_map_styles')));
 
-    /*
-    *  This is all really shitty and needs to be rewritten using wp_localize_script
-    *  09/15/14 ps
-    */
+    $settings['center_lat']  = $mapSettings['latitude'] ? $mapSettings['latitude'] : '34.0459231';
+    $settings['center_lng']  = $mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648';
+    $settings['map_zoom']    = $mapSettings['zoom'] ? (int) $mapSettings['zoom'] : 14;
+    $settings['poi_list']    = $poi_list ? $poi_list : '0';
+    $settings['poi_num']     = $poi_num ? $poi_num : '0';
+    $settings['poi_icon']    = $poi_num ? '"'.plugin_dir_url(__FILE__) . 'img/trans.png"' : '0';
+    $settings['filter_load'] = $filter_load ? $filter_load : '0';
+    $settings['label_color'] = $label_color ? $label_color : '0';
+    $settings['map_styles']  = $map_styles ? $map_styles : '0';
 
-    echo '<script type="text/javascript">';
-
-    echo 'var poi = ';
-    print_r($poi);
-    echo ';';
-
-    echo 'var cat = ';
-    print_r($cat);
-    echo ';';
-
-    echo 'var center_lat = '.($mapSettings['latitude'] ? $mapSettings['latitude'] : '34.0459231').';';
-    echo 'var center_lng = '.($mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648').';';
-    echo 'var map_zoom = '.($mapSettings['zoom'] ? $mapSettings['zoom'] : '14').';';
-
-    $gj_poi_list        = get_option('gj_maps_poi_list');
-    $gj_poi_num         = get_option('gj_maps_poi_num');
-    $gj_poi_filter_load = get_option('gj_poi_filter_load');
-    $gj_map_styles      = get_option('gj_maps_map_styles');
-    $gj_label_color     = get_option('gj_maps_label_color');
-
-    // Strip slashes and remove whitespace
-    $gj_map_styles = stripslashes($gj_map_styles);
-    $gj_map_styles = preg_replace("/\s+/", "", $gj_map_styles);
-
-    echo 'var poi_list = '.($gj_poi_list ? $gj_poi_list : '0').';';
-    echo 'var poi_number = '.($gj_poi_num ? $gj_poi_num : '0').';';
-    echo 'var poi_filter_load = '.($gj_poi_filter_load ? $gj_poi_filter_load : '0').';';
-    echo 'var poi_icon_url = '.($gj_poi_num ? '"'.plugin_dir_url(__FILE__) . 'img/trans.png"' : '0').';';
-    echo 'var label_color = "'.($gj_label_color ? $gj_label_color : '0').'";';
-    echo 'var map_styles = '.($gj_map_styles ? $gj_map_styles : '0').';';
-    echo '</script>';
+    wp_localize_script('gj-maps-main', 'poi', $poi);
+    wp_localize_script('gj-maps-main', 'cat', $cat);
+    wp_localize_script('gj-maps-main', 'settings', $settings);
 
   }
 
