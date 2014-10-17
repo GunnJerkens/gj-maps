@@ -68,6 +68,10 @@ By default each maps has its own API (JSON) endpoint available for consumption b
 You can define a constant on a page template prior to `get_header()` to disable gj-maps from loading any scripts. This is helpful and suggested if you are
 running another Google Maps application on the page. Our maps default to the latest stable version of maps, currently `3.17`.
 
+## caching
+
+If you are using W3 Total Cache it will strip the defined CORS header. To workaround this you must disable caching on the API pages. That can be fixed by adding `/?gjmaps_api=*` to the setting under `Performance > Page Cache  > Never cache the following pages`
+
 ```
 define('DISABLE_GJ_MAPS', true);
 ```
