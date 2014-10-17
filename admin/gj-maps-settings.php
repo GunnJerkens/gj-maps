@@ -63,6 +63,14 @@ $settings = gjMapsAdmin::getSettings(); ?>
         <td><input type="checkbox" name="poi_filter_load" <?php echo $settings->poi_filter_load ? 'checked' : ''; ?>></td>
       </tr>
       <tr>
+        <th><label for="disable_mouse_scroll">Disable Mouse Scroll</label></th>
+        <td><input type="checkbox" name="disable_mouse_scroll" <?php echo $settings->disable_mouse_scroll ? 'checked' : ''; ?>></td>
+      </tr>
+      <tr>
+        <th><label for="disable_mouse_drag">Disable Mouse Drag</label></th>
+        <td><input type="checkbox" name="disable_mouse_drag" <?php echo $settings->disable_mouse_drag ? 'checked' : ''; ?>></td>
+      </tr>
+      <tr>
         <th><label for="cat_default">View All Default Color</label></th>
         <td><input type="text" name="cat_default" class="color-picker" value="<?php echo $settings->cat_default; ?>"/></td>
       </tr>

@@ -293,13 +293,17 @@ jQuery(document).ready(function($) {
   function initMap() {
     var center_lat = settings.center_lat,
         center_lng = settings.center_lng,
-        zoom = Math.floor(settings.map_zoom);
+        zoom = Math.floor(settings.map_zoom),
+        mouse_scroll = settings.mouse_scroll,
+        mouse_drag = settings.mouse_drag;
 
     mapOptions = {
       zoom: zoom,
       center: new google.maps.LatLng(0, 0),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles))
+      styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles)),
+      draggable: (mouse_drag === '0') ? true : false,
+      scrollwheel: (mouse_scroll === '0') ? true : false
     };
 
     if(settings.center_lat && settings.center_lng) {

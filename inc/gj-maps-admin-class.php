@@ -617,6 +617,12 @@ class gjMapsAdmin {
     $poi_filter_load = isset($_POST['poi_filter_load']);
     update_option('gj_poi_filter_load', $poi_filter_load);
 
+    $disable_mouse_scroll = isset($_POST['disable_mouse_scroll']);
+    update_option('gj_disable_mouse_scroll', $disable_mouse_scroll);
+
+    $disable_mouse_drag = isset($_POST['disable_mouse_drag']);
+    update_option('gj_disable_mouse_drag', $disable_mouse_drag);
+
     $cat_default = $_POST['cat_default'];
     update_option('gj_maps_cat_default', $cat_default);
 
@@ -649,16 +655,18 @@ class gjMapsAdmin {
 
     $settings = new StdClass();
 
-    $settings->use_styles      = get_option('gj_maps_use_styles');
-    $settings->label_color     = get_option('gj_maps_label_color');
-    $settings->poi_list        = get_option('gj_maps_poi_list');
-    $settings->poi_num         = get_option('gj_maps_poi_num');
-    $settings->poi_filter_load = get_option('gj_poi_filter_load');
-    $settings->cat_default     = get_option('gj_maps_cat_default');
-    $settings->center_lat      = get_option('gj_maps_center_lat');
-    $settings->center_lng      = get_option('gj_maps_center_lng');
-    $settings->map_zoom        = get_option('gj_maps_map_zoom');
-    $settings->map_styles      = stripslashes(get_option('gj_maps_map_styles'));
+    $settings->use_styles           = get_option('gj_maps_use_styles');
+    $settings->label_color          = get_option('gj_maps_label_color');
+    $settings->poi_list             = get_option('gj_maps_poi_list');
+    $settings->poi_num              = get_option('gj_maps_poi_num');
+    $settings->poi_filter_load      = get_option('gj_poi_filter_load');
+    $settings->disable_mouse_scroll = get_option('gj_disable_mouse_scroll');
+    $settings->disable_mouse_drag   = get_option('gj_disable_mouse_drag');
+    $settings->cat_default          = get_option('gj_maps_cat_default');
+    $settings->center_lat           = get_option('gj_maps_center_lat');
+    $settings->center_lng           = get_option('gj_maps_center_lng');
+    $settings->map_zoom             = get_option('gj_maps_map_zoom');
+    $settings->map_styles           = stripslashes(get_option('gj_maps_map_styles'));
 
     return $settings;
 
