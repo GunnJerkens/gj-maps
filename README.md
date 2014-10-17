@@ -74,7 +74,7 @@ define('DISABLE_GJ_MAPS', true);
 
 ## caching
 
-If you are using W3 Total Cache it will strip the defined CORS header. To workaround this you must disable caching on the API pages. That can be fixed by adding `/?gjmaps_api=*` to the setting under `Performance > Page Cache  > Never cache the following pages`
+If you are using W3 Total Cache it will strip the defined CORS header. To workaround this you must disable caching on the API pages. That can be fixed by adding `/?gjmaps_api=*` to the setting under `Performance > Page Cache  > Never cache the following pages`.
 
 ## issues
 
