@@ -80,12 +80,11 @@ jQuery(document).ready(function($) {
       '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
       cat.name + '</span></div>' + '<ul>';
 
-    if (settings.poi_list === 1) {
-
+    if (settings.poi_list == 1) {
       for (i = 0, len = poi.length; i < len; i++) {
-        if (poi[i].cat_id == cat.id) {
+        if (poi[i].cat_id === cat.id) {
           markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
-          if (poi_number) {
+          if (settings.poi_number) {
             markup += '<span>' + poi[i].num + ' </span>';
           }
           markup += poi[i].name + '</li>';
