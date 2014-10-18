@@ -50,7 +50,7 @@ module.exports = function (grunt) {
   });
 
   // Default runs concat and compass with live reload, build compiles for production
-  grunt.registerTask('default', ['compass', 'concat', 'watch']);
-  grunt.registerTask('build', ['compass', 'uglify']);
+  grunt.registerTask('dev', ['compass', 'concat', 'watch']);
+  grunt.registerTask('default', ['compass', 'uglify']);
 
 };
