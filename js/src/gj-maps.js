@@ -84,7 +84,7 @@ jQuery(document).ready(function($) {
       for (i = 0, len = poi.length; i < len; i++) {
         if (poi[i].cat_id === cat.id) {
           markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
-          if (settings.poi_number) {
+          if ("1" == settings.poi_num) {
             markup += '<span>' + poi[i].num + ' </span>';
           }
           markup += poi[i].name + '</li>';
@@ -216,7 +216,7 @@ jQuery(document).ready(function($) {
 
           position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
 
-          if(!settings.poi_number) {
+          if("1" != settings.poi_num) {
 
             markerOptions = {
               position: position,
