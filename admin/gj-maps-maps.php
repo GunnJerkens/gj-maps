@@ -141,7 +141,8 @@ $post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps&map_id='.$map_id : $cur
   if($poi !== false) { ?>
 
     <form name="gj_maps_geocode" class="top-form" method="post" action="<?php echo $post_uri; ?>">
-      <input type="hidden" name="form_name" value="geocode"/>
+      <input type="hidden" name="form_name" value="geocode">
+      <?php wp_nonce_field('gj-maps-poi'); ?>
       <button type="submit" class="btn button">Find Geocodes</button>
     </form>
 
