@@ -725,15 +725,16 @@ class gjMapsAdmin {
 
     foreach ($poi[0] as $key=>$value) {
 
-      $labels[$value] = strtolower($value);
+      $labels[$value] = trim(strtolower($value));
 
     }
 
     $labels['lat'] = 'lat';
     $labels['lng'] = 'lng';
 
+
     foreach ($poi as $key=>$value) {
-      
+
       array_push($value, null);
       array_push($value, null);
 
