@@ -150,14 +150,14 @@ jQuery(document).ready(function($) {
       filter = [];
       $("[data-cat-id='all']").addClass("active");
       catElement.siblings(".gjmaps-category").removeClass("active");
-      if (settings.poi_list === 1) { 
+      if (settings.poi_list == 1) {
         $(".gjmaps-category ul").slideDown(); 
       } // show all lists
     } else {
       $("[data-cat-id='all']").removeClass("active");
       catElement.siblings(".gjmaps-category").removeClass("active");
       $(".gjmaps-category[data-cat-id=" + catID + "]").addClass("active");
-      if (settings.poi_list === 1) {
+      if (settings.poi_list == 1) {
         catElement.siblings(".gjmaps-category").find("ul").slideUp();
         $("ul", catElement).slideDown(); // show this list
         $(".gjmaps-category[data-cat-id=" + catID + "]").slideDown();
