@@ -493,16 +493,16 @@ class gjMapsDB {
       $insert = $this->wpdb->insert(
         $table_name, 
         array(
-          'cat_id'=>$value['cat_id'],
-          'map_id'=>$value['map_id'],
-          'name'=>$value['name'],
-          'address'=>$value['address'],
-          'city'=>$value['city'],
-          'state'=>$value['state'],
-          'zip'=>$value['zip'],
-          'country'=>$value['country'],
-          'phone'=>$value['phone'],
-          'url'=>$value['url']
+          'cat_id'  => isset($value['cat_id']) ? $value['cat_id'] : '',
+          'map_id'  => isset($value['map_id']) ? $value['map_id'] : '',
+          'name'    => isset($value['name']) ? $value['name'] : '',
+          'address' => isset($value['address']) ? $value['address'] : '',
+          'city'    => isset($value['city']) ? $value['city'] : '',
+          'state'   => isset($value['state']) ? $value['state'] : '',
+          'zip'     => isset($value['zip']) ? $value['zip'] : '',
+          'country' => isset($value['country']) ? $value['country'] : '',
+          'phone'   => isset($value['phone']) ? $value['phone'] : '',
+          'url'     => isset($value['url']) ? $value['url'] : ''
         )
       );
 
