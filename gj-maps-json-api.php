@@ -47,18 +47,9 @@ class gjMapsAPI {
   protected function send_response($mapID){
     $gjMapsDatabase = new gjMapsDB();
 
-    $gj_poi_list = get_option('gj_poi_list');
-    $gj_map_styles = get_option('gj_map_styles');
-    $center_lat = get_option('gj_center_lat');
-    $center_lng = get_option('gj_center_lng');
-
     $data = array(
       'poi' => $gjMapsDatabase->get_poi($type='OBJECT', $mapID),
-      'cat' => $gjMapsDatabase->get_cat($type='OBJECT', $mapID),
-      'poi_list' => $gj_poi_list,
-      'map_styles' => $gj_map_styles,
-      'center_lat' => $center_lat,
-      'center_lng' => $center_lng
+      'cat' => $gjMapsDatabase->get_cat($type='OBJECT', $mapID)
     );
 
     header('content-type: application/json; charset=utf-8');
