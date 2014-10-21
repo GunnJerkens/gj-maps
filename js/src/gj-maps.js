@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
     }
 
     // Check if categories are loaded
-    gjmapsEvents('gjmapsEvent', {'loaded': true});
+    gjmapsEvents('gjmapsCatLoad', {'loaded': true});
 
     resizeCategories();
 
@@ -183,7 +183,7 @@ jQuery(document).ready(function($) {
     }
 
     // Check which category is clicked
-    gjmapsEvents('gjmapsEvent', {'category': catID});
+    gjmapsEvents('gjmapsCatClick', {'category': catID});
 
     infoWindow.close();
     placeMarkers();
