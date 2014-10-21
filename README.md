@@ -63,6 +63,19 @@ By default each maps has its own API (JSON) endpoint available for consumption b
 
 `http://example.com/?gjmaps_api=4`
 
+## events
+
+| Event          | Fires                          |
+| -----          | -----                          |
+| gjmapsCatLoad  | When categories finish loading |
+| gjmapsCatClick | When a catagory is clicked     |
+
+```
+  $(window).on('gjmapsCatLoad', function() {
+    // do stuff
+  });
+```
+
 ## disable
 
 You can define a constant on a page template prior to `get_header()` to disable gj-maps from loading any scripts. This is helpful and suggested if you are
