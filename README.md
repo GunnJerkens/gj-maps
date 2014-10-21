@@ -71,9 +71,9 @@ By default each maps has its own API (JSON) endpoint available for consumption b
 | gjmapsCatClick | When a catagory is clicked     |
 
 ```
-  $(window).on('gjmapsCatLoad', function() {
-    // do stuff
-  });
+$(window).on('gjmapsCatLoad', function() {
+  // do stuff
+});
 ```
 
 ## disable
