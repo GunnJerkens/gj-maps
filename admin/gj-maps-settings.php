@@ -47,6 +47,7 @@ $settings = gjMapsAdmin::getSettings(); ?>
             <option value="none" <?php echo $settings->label_color === 'none' ? 'selected': ''; ?>>None</option>
             <option value="background" <?php echo $settings->label_color === 'background' ? 'selected' : ''; ?>>Background</option>
             <option value="text" <?php echo $settings->label_color === 'text' ? 'selected' : ''; ?>>Text</option>
+            <option value="icon" <?php echo $settings->label_color === 'icon' ? 'selected' : ''; ?>>Icon</option>
           </select>
         </td>
       </tr>

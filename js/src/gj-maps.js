@@ -62,6 +62,7 @@ jQuery(document).ready(function($) {
 
     background = '';
     color = '';
+    text = true;
 
     if (settings.label_color === "background") {
       if (cat.icon) {
@@ -74,11 +75,20 @@ jQuery(document).ready(function($) {
     } else if (settings.label_color === "text") {
       background = '';
       color = 'color: ' + cat.color + ';';
+    } else if (settings.label_color === "icon") {
+      symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+      background = 'background-image: url(' + symbolPath + ');';
+      text = false;
     }
 
-    markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
-      '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
-      cat.name + '</span></div>' + '<ul>';
+    if(text) {
+      markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
+        '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
+        cat.name + '</span></div><ul>';
+    } else {
+      markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
+        '<div style="' + background + '" class="gjmaps-label" data-type="label"></div><ul>';
+    }
 
     if (settings.poi_list == 1) {
       for (i = 0, len = poi.length; i < len; i++) {
