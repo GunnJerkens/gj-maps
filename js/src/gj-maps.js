@@ -36,6 +36,13 @@ jQuery(document).ready(function($) {
       showCategory($(this));
     });
 
+    if(settings.filter_load == 0) {
+      showCategory($(".gjmaps-category[data-cat-id='all']"));
+    }
+
+    // Check if categories are loaded
+    gjmapsEvents('gjmapsEvent', {'loaded': true});
+
     resizeCategories();
 
   }
@@ -174,6 +181,9 @@ jQuery(document).ready(function($) {
       }
       filter = [catID];
     }
+
+    // Check which category is clicked
+    gjmapsEvents('gjmapsEvent', {'category': catID});
 
     infoWindow.close();
     placeMarkers();
@@ -331,13 +341,13 @@ jQuery(document).ready(function($) {
 
     infoWindow = new google.maps.InfoWindow();
 
-    placeMarkers(!center_lat || !center_lng);
-    setupPOILists();
-
     if(settings.filter_load) {
       filterLoad();
+    } else {
+      placeMarkers(!center_lat || !center_lng);
     }
 
+    setupPOILists();
   }
 
   indexPOIData();
@@ -359,5 +369,10 @@ jQuery(document).ready(function($) {
       showPOIInfo(marker);
     }
   });
+
+  // Custom Events
+  function gjmapsEvents(name, param) {
+    $.event.trigger({ type: name, 'gjmaps': param });
+  }
 
 });
