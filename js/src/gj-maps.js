@@ -158,10 +158,13 @@ jQuery(document).ready(function($) {
 
   function showCategory(el) {
 
-    var catID, filterIndex;
+    var mouse_scroll = settings.mouse_scroll,
+        mouse_drag = settings.mouse_drag,
+        catID, filterIndex;
 
     catElement = el.closest(".gjmaps-category");
     catID = catElement.attr("data-cat-id");
+
 
     if (catID === "all") {
       filter = [];
@@ -186,7 +189,7 @@ jQuery(document).ready(function($) {
     gjmapsEvents('gjmapsCatClick', {'category': catID});
 
     infoWindow.close();
-    placeMarkers();
+    placeMarkers(mouse_scroll || mouse_drag);
 
     if (catID === "all") {
       map.panTo(mapOptions.center);
