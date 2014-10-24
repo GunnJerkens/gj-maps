@@ -312,7 +312,7 @@ jQuery(document).ready(function($) {
         filter.push(cat[i]['id']);
       }
     }
-    placeMarkers(settings.fit_bounds);
+    placeMarkers();
   }
 
   // Check which categories have options enabled
