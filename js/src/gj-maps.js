@@ -118,7 +118,7 @@ jQuery(document).ready(function($) {
 
   function showPOIInfo(poi) {
 
-    var content, linkName, $header, mapTop;
+    var content, linkName, $pageTop, mapTop;
 
     content = '<div class="poi-info" style="overflow:hidden;">' +
       '<h4>'+poi.name+'</h4>';
@@ -147,12 +147,14 @@ jQuery(document).ready(function($) {
 
     infoWindow.setContent(content);
     infoWindow.open(map, poi.marker);
-    $header = $("header");
-    mapTop = $("#map-canvas").offset().top - $header.height() - $header.position().top;
+    $pageTop = $("body");
+    mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
 
     if ($(document.body).scrollTop() > mapTop) {
       $(document.body).animate({scrollTop: mapTop}, 300);
     }
+
+    gjmapsEvents('gjmapsPOIInfo', {'id': poi.id});
 
   }
 
@@ -375,6 +377,7 @@ jQuery(document).ready(function($) {
 
   // Handles click functions on the poi list items
   $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
+
     var id = $(this).data('poi-id'),
         marker = false;
 
@@ -388,6 +391,7 @@ jQuery(document).ready(function($) {
     if(marker != false) {
       showPOIInfo(marker);
     }
+
   });
 
   // Custom Events
