@@ -232,14 +232,16 @@ jQuery(document).ready(function($) {
           poi[i].marker.setMap(null);
         }
       } else if(isMatch) {
-
+        
         if (Number(poi[i].lat) && Number(poi[i].lng)) {
 
-          var poiCat = catIndexed[poi[i].cat_id];
+          var poiCat = catIndexed[poi[i].cat_id],
+              catOptions = ['filter_resist'],
+              hasOptions = categoryOptionCheck(catOptions);
 
           position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
 
-          if("1" != settings.poi_num) {
+          if("1" != settings.poi_num || hasOptions.indexOf(poi[i].cat_id) > -1) {
 
             markerOptions = {
               position: position,
@@ -257,7 +259,7 @@ jQuery(document).ready(function($) {
             poi[i].marker = new google.maps.Marker(markerOptions);
 
           } else {
-
+            
             poi[i].marker = new MarkerWithLabel({
               position: position,
               draggable: false,
@@ -309,6 +311,21 @@ jQuery(document).ready(function($) {
       }
     }
     placeMarkers();
+  }
+
+  // Check which categories have options enabled
+  function categoryOptionCheck(options) {
+    var hasOptions = [];
+
+    for (var i = 0; i < cat.length; i++) {
+      for (var j = 0; j < options.length; j++) {
+        if (cat[i][options[j]] == true) {
+          hasOptions.push(cat[i]['id']);
+        }
+      };
+    };
+
+    return hasOptions;
   }
 
   // Instantiates the map
