@@ -189,7 +189,7 @@ jQuery(document).ready(function($) {
     gjmapsEvents('gjmapsCatClick', {'category': catID});
 
     infoWindow.close();
-    placeMarkers(mouse_scroll || mouse_drag);
+    placeMarkers(settings.fit_bounds);
 
     if (catID === "all") {
       map.panTo(mapOptions.center);
@@ -294,7 +294,7 @@ jQuery(document).ready(function($) {
 
     mapBounds = map.getBounds();
 
-    if (forceFit || (mapBounds && !mapBounds.intersects(markerBounds))) {
+    if (forceFit == '1' || (mapBounds && !mapBounds.intersects(markerBounds))) {
       if (markerBounds.toString() != "((1, 180), (-1, -180))") {
         map.fitBounds(markerBounds);
       }
@@ -310,7 +310,7 @@ jQuery(document).ready(function($) {
         filter.push(cat[i]['id']);
       }
     }
-    placeMarkers();
+    placeMarkers(settings.fit_bounds);
   }
 
   // Check which categories have options enabled
@@ -364,7 +364,7 @@ jQuery(document).ready(function($) {
     if(settings.filter_load) {
       filterLoad();
     } else {
-      placeMarkers(!center_lat || !center_lng);
+      placeMarkers(settings.fit_bounds);
     }
 
     setupPOILists();

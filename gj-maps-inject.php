@@ -138,13 +138,14 @@ class gjMapsInject {
       }
     }
 
-    $poi_list    = get_option('gj_maps_poi_list');
-    $poi_num     = get_option('gj_maps_poi_num');
-    $filter_load = get_option('gj_poi_filter_load');
+    $poi_list     = get_option('gj_maps_poi_list');
+    $poi_num      = get_option('gj_maps_poi_num');
+    $filter_load  = get_option('gj_poi_filter_load');
     $mouse_scroll = get_option('gj_disable_mouse_scroll');
-    $mouse_drag = get_option('gj_disable_mouse_drag');
-    $label_color = get_option('gj_maps_label_color');
-    $map_styles  = preg_replace("/\s+/", "", stripslashes(get_option('gj_maps_map_styles')));
+    $mouse_drag   = get_option('gj_disable_mouse_drag');
+    $fit_bounds   = get_option('gj_enable_fit_bounds');
+    $label_color  = get_option('gj_maps_label_color');
+    $map_styles   = preg_replace("/\s+/", "", stripslashes(get_option('gj_maps_map_styles')));
 
     $settings['center_lat']   = $mapSettings['latitude'] ? $mapSettings['latitude'] : '34.0459231';
     $settings['center_lng']   = $mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648';
@@ -155,6 +156,7 @@ class gjMapsInject {
     $settings['filter_load']  = $filter_load ? $filter_load : '0';
     $settings['mouse_scroll'] = $mouse_scroll ? $mouse_scroll : '0';
     $settings['mouse_drag']   = $mouse_drag ? $mouse_drag : '0';
+    $settings['fit_bounds']   = $fit_bounds ? $fit_bounds : '0';
     $settings['label_color']  = $label_color ? $label_color : '0';
     $settings['map_styles']   = $map_styles ? $map_styles : '0';
 

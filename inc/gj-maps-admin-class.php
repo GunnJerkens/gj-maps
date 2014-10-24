@@ -623,6 +623,9 @@ class gjMapsAdmin {
     $disable_mouse_drag = isset($_POST['disable_mouse_drag']);
     update_option('gj_disable_mouse_drag', $disable_mouse_drag);
 
+    $enable_fit_bounds = isset($_POST['enable_fit_bounds']);
+    update_option('gj_enable_fit_bounds', $enable_fit_bounds);
+
     $cat_default = $_POST['cat_default'];
     update_option('gj_maps_cat_default', $cat_default);
 
@@ -662,6 +665,7 @@ class gjMapsAdmin {
     $settings->poi_filter_load      = get_option('gj_poi_filter_load');
     $settings->disable_mouse_scroll = get_option('gj_disable_mouse_scroll');
     $settings->disable_mouse_drag   = get_option('gj_disable_mouse_drag');
+    $settings->enable_fit_bounds    = get_option('gj_enable_fit_bounds');
     $settings->cat_default          = get_option('gj_maps_cat_default');
     $settings->center_lat           = get_option('gj_maps_center_lat');
     $settings->center_lng           = get_option('gj_maps_center_lng');

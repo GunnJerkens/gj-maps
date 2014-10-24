@@ -72,6 +72,10 @@ $settings = gjMapsAdmin::getSettings(); ?>
         <td><input type="checkbox" name="disable_mouse_drag" <?php echo $settings->disable_mouse_drag ? 'checked' : ''; ?>></td>
       </tr>
       <tr>
+        <th><label for="enable_fit_bounds">Enable Fit Bounds</label></th>
+        <td><input type="checkbox" name="enable_fit_bounds" <?php echo $settings->enable_fit_bounds ? 'checked' : ''; ?>></td>
+      </tr>
+      <tr>
         <th><label for="cat_default">View All Default Color</label></th>
         <td><input type="text" name="cat_default" class="color-picker" value="<?php echo $settings->cat_default; ?>"/></td>
       </tr>
