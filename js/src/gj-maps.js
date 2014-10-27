@@ -340,11 +340,12 @@ jQuery(document).ready(function($) {
 
     mapOptions = {
       zoom: zoom,
+      maxZoom: 5,
       center: new google.maps.LatLng(0, 0),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles)),
       draggable: (mouse_drag === '0') ? true : false,
-      scrollwheel: (mouse_scroll === '0') ? true : false
+      scrollwheel: (mouse_scroll === '0') ? true : false,
     };
 
     if(settings.center_lat && settings.center_lng) {
