@@ -339,8 +339,6 @@ jQuery(document).ready(function($) {
         mouse_scroll = settings.mouse_scroll,
         mouse_drag = settings.mouse_drag;
 
-        console.log(max_zoom);
-
     mapOptions = {
       zoom: zoom,
       maxZoom: max_zoom,
