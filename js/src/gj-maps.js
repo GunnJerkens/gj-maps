@@ -335,11 +335,15 @@ jQuery(document).ready(function($) {
     var center_lat = settings.center_lat,
         center_lng = settings.center_lng,
         zoom = Math.floor(settings.map_zoom),
+        max_zoom = Math.floor(settings.max_zoom),
         mouse_scroll = settings.mouse_scroll,
         mouse_drag = settings.mouse_drag;
 
+        console.log(max_zoom);
+
     mapOptions = {
       zoom: zoom,
+      maxZoom: max_zoom,
       center: new google.maps.LatLng(0, 0),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles)),

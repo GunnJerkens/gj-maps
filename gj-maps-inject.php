@@ -145,11 +145,13 @@ class gjMapsInject {
     $mouse_drag   = get_option('gj_disable_mouse_drag');
     $fit_bounds   = get_option('gj_enable_fit_bounds');
     $label_color  = get_option('gj_maps_label_color');
+    $max_zoom     = get_option('gj_maps_max_zoom');
     $map_styles   = preg_replace("/\s+/", "", stripslashes(get_option('gj_maps_map_styles')));
 
     $settings['center_lat']   = $mapSettings['latitude'] ? $mapSettings['latitude'] : '34.0459231';
     $settings['center_lng']   = $mapSettings['longitude'] ? $mapSettings['longitude'] : '-118.2504648';
     $settings['map_zoom']     = $mapSettings['zoom'] ? (int) $mapSettings['zoom'] : 14;
+    $settings['max_zoom']     = $max_zoom ? (int) $max_zoom : '';
     $settings['poi_list']     = $poi_list ? $poi_list : '0';
     $settings['poi_num']      = $poi_num ? $poi_num : '0';
     $settings['poi_icon']     = $poi_num ? plugin_dir_url(__FILE__) . 'img/trans.png' : '0';

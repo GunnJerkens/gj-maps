@@ -92,6 +92,10 @@ $settings = gjMapsAdmin::getSettings(); ?>
         <td><input type="text" name="map_zoom" value="<?php echo $settings->map_zoom; ?>"></td>
       </tr>
       <tr>
+        <th><label for="max_zoom">Max Zoom</label></th>
+        <td><input type="text" name="max_zoom" value="<?php echo $settings->max_zoom; ?>"></td>
+      </tr>
+      <tr>
         <th><label for="map_styles">Map Styles<br><a href="http://snazzymaps.com/" target="_blank">[View Samples]</a></label></th>
         <td><textarea cols="50" type="textarea" name="map_styles"><?php echo $settings->map_styles; ?></textarea></td>
       </tr>

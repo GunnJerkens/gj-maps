@@ -638,6 +638,9 @@ class gjMapsAdmin {
     $map_zoom = $_POST['map_zoom'];
     update_option('gj_maps_map_zoom', $map_zoom);
 
+    $max_zoom = $_POST['max_zoom'];
+    update_option('gj_maps_max_zoom', $max_zoom);
+
     $map_styles = $_POST['map_styles'];
     update_option('gj_maps_map_styles', $map_styles);
 
@@ -670,6 +673,7 @@ class gjMapsAdmin {
     $settings->center_lat           = get_option('gj_maps_center_lat');
     $settings->center_lng           = get_option('gj_maps_center_lng');
     $settings->map_zoom             = get_option('gj_maps_map_zoom');
+    $settings->max_zoom             = get_option('gj_maps_max_zoom');
     $settings->map_styles           = stripslashes(get_option('gj_maps_map_styles'));
 
     return $settings;
