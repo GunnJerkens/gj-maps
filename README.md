@@ -69,6 +69,7 @@ By default each maps has its own API (JSON) endpoint available for consumption b
 | -----          | -----                          |
 | gjmapsCatLoad  | When categories finish loading |
 | gjmapsCatClick | When a catagory is clicked     |
+| gjmapsPOIInfo  | After InfoWindow is opened     |
 
 ```
 $(window).on('gjmapsCatLoad', function() {
