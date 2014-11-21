@@ -193,7 +193,7 @@ jQuery(document).ready(function($) {
     infoWindow.close();
     placeMarkers(settings.fit_bounds);
 
-    if (catID === "all") {
+    if (catID === "all" && !settings.fit_bounds) {
       map.panTo(mapOptions.center);
       map.setZoom(mapOptions.zoom);
     }
