@@ -119,7 +119,7 @@ jQuery(document).ready(function($) {
   function showPOIInfo(poi) {
 
     var content, linkName, $pageTop, mapTop;
-
+    
     content = '<div class="poi-info" style="overflow:hidden;">' +
       '<h4>'+poi.name+'</h4>';
 
@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
 
     if (poi.url) {
       linkName = poi.url.replace(/^https?:\/\/|\/$/g, '');
-      content += '<a href="'+poi.url+'" target="_blank">'+linkName+'</a>';
+      content += settings.link_text ? '<a href="'+poi.url+'" target="_blank">'+settings.link_text+'</a>' : '<a href="'+poi.url+'" target="_blank">'+linkName+'</a>';
     }
 
     content += '</div>' +
