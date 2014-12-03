@@ -90,7 +90,7 @@ jQuery(document).ready(function($) {
 
     if(text) {
       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
-        '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' + 
+        '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' +
         cat.name + '</span></div><ul>';
     } else {
       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
@@ -119,7 +119,7 @@ jQuery(document).ready(function($) {
   function showPOIInfo(poi) {
 
     var content, linkName, $pageTop, mapTop;
-    
+
     content = '<div class="poi-info" style="overflow:hidden;">' +
       '<h4>'+poi.name+'</h4>';
 
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
       $(document.body).animate({scrollTop: mapTop}, 300);
     }
 
-    gjmapsEvents('gjmapsPOIInfo', {'id': poi.id});
+    gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
 
   }
 
@@ -173,7 +173,7 @@ jQuery(document).ready(function($) {
       $("[data-cat-id='all']").addClass("active");
       catElement.siblings(".gjmaps-category").removeClass("active");
       if (settings.poi_list == 1) {
-        $(".gjmaps-category ul").slideDown(); 
+        $(".gjmaps-category ul").slideDown();
       } // show all lists
     } else {
       $("[data-cat-id='all']").removeClass("active");
@@ -234,7 +234,7 @@ jQuery(document).ready(function($) {
           poi[i].marker.setMap(null);
         }
       } else if(isMatch) {
-        
+
         if (Number(poi[i].lat) && Number(poi[i].lng)) {
 
           var poiCat = catIndexed[poi[i].cat_id],
@@ -261,7 +261,7 @@ jQuery(document).ready(function($) {
             poi[i].marker = new google.maps.Marker(markerOptions);
 
           } else {
-            
+
             poi[i].marker = new MarkerWithLabel({
               position: position,
               draggable: false,
