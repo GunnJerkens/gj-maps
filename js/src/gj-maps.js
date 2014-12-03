@@ -133,7 +133,7 @@ jQuery(document).ready(function($) {
       '<div class="contact">';
 
     if (poi.phone) {
-      content += poi.phone;
+      content += '<a href="tel:' + poi.phone + '">' + poi.phone + '</a>';
       if (poi.url) content += '<br>';
     }
 
