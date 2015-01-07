@@ -5,7 +5,6 @@ jQuery(document).ready(function($) {
   iconAnchor = new google.maps.Point(5, 33);
 
   function indexPOIData() {
-
     var i, len;
 
     poiIndexed = {};
@@ -17,11 +16,9 @@ jQuery(document).ready(function($) {
     for (i = 0, len = cat.length; i < len; i++) {
       catIndexed[cat[i].id] = cat[i];
     }
-
   }
 
   function setupPOILists() {
-
     var i, len, markup = '';
 
     for (i = 0; i < cat.length; i++) {
@@ -33,18 +30,17 @@ jQuery(document).ready(function($) {
     $(".gjmaps-categories").append(markup);
 
     $(".gjmaps-category div[data-type='label']").click(function(event) {
-      showCategory($(this));
+      showCategoryByEl($(this));
     });
 
     if(settings.filter_load == 0) {
-      showCategory($(".gjmaps-category[data-cat-id='all']"));
+      showCategoryByEl($(".gjmaps-category[data-cat-id='all']"));
     }
 
     // Check if categories are loaded
     gjmapsEvents('gjmapsCatLoad', {'loaded': true});
 
     resizeCategories();
-
   }
 
   // Resizes our category <li> for responsive
@@ -64,7 +60,6 @@ jQuery(document).ready(function($) {
   }
 
   function markupCategoryList(cat) {
-
     var markup, i, len, address, symbolPath, color, background, catCount;
 
     background = '';
@@ -117,7 +112,6 @@ jQuery(document).ready(function($) {
   }
 
   function showPOIInfo(poi) {
-
     var content, linkName, $pageTop, mapTop;
 
     content = '<div class="poi-info" style="overflow:hidden;">' +
@@ -155,18 +149,15 @@ jQuery(document).ready(function($) {
     }
 
     gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
-
   }
 
-  function showCategory(el) {
-
+  function showCategoryByEl(el) {
     var mouse_scroll = settings.mouse_scroll,
         mouse_drag = settings.mouse_drag,
         catID, filterIndex;
 
     catElement = el.closest(".gjmaps-category");
     catID = catElement.attr("data-cat-id");
-
 
     if (catID === "all") {
       filter = [];
@@ -197,11 +188,15 @@ jQuery(document).ready(function($) {
       map.panTo(mapOptions.center);
       map.setZoom(mapOptions.zoom);
     }
+  }
 
+  function showCategoryByArr(arr) {
+    filter = arr;
+    infoWindow.close();
+    placeMarkers(settings.fit_bounds);
   }
 
   function placeMarkers(forceFit) {
-
     var i, len, isMatch, position, markerOptions;
 
     markerBounds = new google.maps.LatLngBounds();
@@ -379,7 +374,6 @@ jQuery(document).ready(function($) {
 
   // Handles click functions on the poi list items
   $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
-
     var id = $(this).data('poi-id'),
         marker = false;
 
@@ -393,7 +387,12 @@ jQuery(document).ready(function($) {
     if(marker != false) {
       showPOIInfo(marker);
     }
+  });
 
+  // Handles click functions on the parents
+  $(document).on('click', '.gjmaps-parent', function() {
+    var cats = $(this).data('cat-ids').split(',');
+    showCategoryByArr(cats);
   });
 
   // Custom Events
