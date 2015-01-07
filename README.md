@@ -77,6 +77,12 @@ $(window).on('gjmapsCatLoad', function() {
 });
 ```
 
+Alternatively if you would like to group categories or use self made markup for the map categories you can add the `.gjmaps-parent` class with `data-cat-ids` to trigger the map to change it's display. This click event is added to the document so items appended to the DOM will inherit it. This is more of a hack feature than a final solution.
+
+```
+<div class="gjmaps-parent" data-cat-ids="1,2,3">Click to Show Categories 1,2,3</div>
+```
+
 ## disable
 
 You can define a constant on a page template prior to `get_header()` to disable gj-maps from loading any scripts. This is helpful and suggested if you are
