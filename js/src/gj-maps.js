@@ -112,7 +112,7 @@ jQuery(document).ready(function($) {
   }
 
   function showPOIInfo(poi) {
-    var content, linkName, $pageTop, mapTop;
+    var content, linkName, $pageTop, mapTop, phone;
 
     content = '<div class="poi-info" style="overflow:hidden;">' +
       '<h4>'+poi.name+'</h4>';
@@ -127,7 +127,8 @@ jQuery(document).ready(function($) {
       '<div class="contact">';
 
     if (poi.phone) {
-      content += '<a href="tel:' + poi.phone + '">' + poi.phone + '</a>';
+      phone = poi.phone.replace(/[\.\(\)\-\s]/g, '');
+      content += '<a href="tel:+1' + phone + '">' + poi.phone + '</a>';
       if (poi.url) content += '<br>';
     }
 
