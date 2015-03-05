@@ -280,6 +280,10 @@ jQuery(document).ready(function($) {
 
 
           google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
+            // get the center point of the infowindow
+            center = new google.maps.LatLng(poi[i].lat, poi[i].lng)
+            // pan to this new point
+            map.panTo(center);
             showPOIInfo(poi[i]);
           }})(i));
 
