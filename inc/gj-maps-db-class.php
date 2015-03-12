@@ -79,9 +79,9 @@ class gjMapsDB {
 
   function countRows($type='OBJECT') {
 
-    $table_name = $this->poitable();
+    $table_name = $this->poiTable();
 
-    $count = $this->wpdb->get_results("SELECT map_id, COUNT(*) FROM `gj_gjm_poi` GROUP BY map_id;");
+    $count = $this->wpdb->get_results("SELECT map_id, COUNT(*) FROM $table_name GROUP BY map_id;");
 
     return $count;
 
