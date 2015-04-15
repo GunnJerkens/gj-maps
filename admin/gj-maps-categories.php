@@ -53,6 +53,9 @@ if(!empty($_POST)) {
               }
             }
           }
+          // Set's our checkboxes to false as they do not POST unchecked
+          if(!isset($postValue['hide_list'])) $postValue['hide_list'] = false;
+          if(!isset($postValue['filter_resist'])) $postValue['filter_resist'] = false;
           $updateItems[] = $postValue;
         }
 
