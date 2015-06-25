@@ -694,26 +694,19 @@ class gjMapsAdmin {
   * @since 0.1
   *
   **/
-
   function importData($uploadedFile, $mapID) {
 
     if($mapID === 'new') {
-
       $maxID = $this->databaseFunctions->maxMapID();
       $maxID = ((int) $maxID[0]->max_id);
 
       if($maxID != NULL) {
-
         $mapID = $maxID + 1;
-
       } else {
-
         $mapID = 1;
-
       }
 
       $this->databaseFunctions->saveMap($mapID);
-
     }
 
     // Complete the upload of the CSV
@@ -722,13 +715,9 @@ class gjMapsAdmin {
     $poi = array();
 
     if (($handle = fopen($uploadedFile['tmp_name'], "r")) !== FALSE) {
-
       while (($data = fgetcsv($handle, ",")) !== FALSE) {
-
         array_push($poi, $data);
-
       }
-
       fclose($handle);
     }
 
@@ -736,9 +725,7 @@ class gjMapsAdmin {
     $labels = array();
 
     foreach ($poi[0] as $key=>$value) {
-
       $labels[$value] = trim(strtolower($value));
-
     }
 
     $labels['lat'] = 'lat';
@@ -746,21 +733,15 @@ class gjMapsAdmin {
 
 
     foreach ($poi as $key=>$value) {
-
       array_push($value, null);
       array_push($value, null);
 
       if (count($labels) == count($value)) {
-
         $poi[$key] = array_combine($labels, $value);
-
       } else {
-
         $response = $this->gjMapsMessaging('error', 'Check your CSV column headers.');
         return $response;
-
       }
-
     }
 
     // Unset the headers
@@ -768,58 +749,43 @@ class gjMapsAdmin {
 
     // This parses through the data
     foreach ($poi as $key=>$value) {
-
       // Sets each category to an integer, creates categories if needed
       if(isset($value['category'])) {
 
         $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
 
         if(empty($categoryMatch)) {
-
           $newCategory = array(
             'map_id' => $mapID,
-            'name' => $value['category']
+            'name'   => $value['category']
           );
 
           $id = $this->databaseFunctions->createCat($newCategory);
 
           if($id > 0) {
-
             $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
-
             $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
-
           } else {
-
             // This is an error!
-
           }
-
         } else {
-
           $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
-
         }
 
       } else {
-
         $newCategory = array(
           'map_id' => $mapID,
-          'name' => 'default'
+          'name'   => 'default'
         );
 
         $id = $this->databaseFunctions->createCat($newCategory);
 
         if($id > 0) {
-
           $categoryMatch = $this->databaseFunctions->getCatID('default', $mapID);
-
           $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
-
         }
 
       }
-
 
       // Adds the map id to each of the rows
       $poi[$key]['map_id'] = $mapID;
@@ -828,15 +794,12 @@ class gjMapsAdmin {
       // upload an unknown sized csv and to geocode
       $poi[$key]['lat'] = 0;
       $poi[$key]['lng'] = 0;
-
     }
 
-    $savePOI = $this->databaseFunctions->createPOI($poi);
-
+    $savePOI  = $this->databaseFunctions->createPOI($poi);
     $response = $this->gjMapsMessaging('success', 'CSV data successfully uploaded.');
 
     return $response;
-
   }
 
   /**
@@ -848,41 +811,35 @@ class gjMapsAdmin {
   * @since 0.3
   *
   **/
-
   function deleteData($post) {
-
-    if($post['delete'] === 'default') {
-
-      $response = $this->gjMapsMessaging('error', 'You must select data to delete');
-
-    } else if ($post['delete'] === 'delete_categories') {
-
-      $dbResponse = $this->databaseFunctions->deleteAllCat();
-
-    } else if ($post['delete'] === 'delete_maps') {
-
-      $dbResponse = $this->databaseFunctions->deleteAllMaps();
-
-    } else if ($post['delete'] === 'delete_poi') {
-
-      $dbResponse = $this->databaseFunctions->deleteAllPOI();
-
-    } else if ($post['delete'] === 'delete_all') {
-
-      $dbResponse = $this->databaseFunctions->deleteAllData();
-
-      if($dbResponse['poi']) {
-        $response = $this->gjMapsMessaging('success', 'All POI deleted along with '.$dbResponse['cat'].' categories and '.$dbResponse['maps'].' maps. So fresh.');
+    if(isset($post['delete'])) {
+      switch($post['delete']) {
+        case('default'):
+          $response = $this->gjMapsMessaging('error', 'You must select data to delete');
+          break;
+        case('delete_categories'):
+          $dbResponse = $this->databaseFunctions->deleteAllCat();
+          break;
+        case('delete_maps'):
+          $dbResponse = $this->databaseFunctions->deleteAllMaps();
+          break;
+        case('delete_poi'):
+          $dbResponse = $this->databaseFunctions->deleteAllPOI();
+          break;
+        case('delete_all'):
+          $dbResponse = $this->databaseFunctions->deleteAllData();
+          if($dbResponse['poi']) {
+            $response = $this->gjMapsMessaging('success', 'All POI deleted along with '.$dbResponse['cat'].' categories and '.$dbResponse['maps'].' maps. So fresh.');
+          }
+          break;
+        default:
+          $response = $this->gjMapsMessaging('error', 'Something went horribly wrong.');
+          break;
       }
-
     } else {
-
-      $response = $this->gjMapsMessaging('error', 'Something went horribly wrong.');
-
+      $response = $this->gjMapsMessaging('error', 'You need to specify what to delete.');
     }
-
     return $response;
-
   }
 
 }

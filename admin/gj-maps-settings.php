@@ -101,7 +101,7 @@ $settings = gjMapsAdmin::getSettings(); ?>
       </tr>
       <tr>
         <th><label for="map_styles">Map Styles<br><a href="http://snazzymaps.com/" target="_blank">[View Samples]</a></label></th>
-        <td><textarea cols="50" type="textarea" name="map_styles"><?php echo $settings->map_styles; ?></textarea></td>
+        <td><textarea rows="6" cols="50" type="textarea" name="map_styles"><?php echo $settings->map_styles; ?></textarea></td>
       </tr>
 
     </table>
