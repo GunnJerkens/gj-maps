@@ -346,7 +346,7 @@ class gjMapsDB {
   }
 
   /**
-   * Create Poi
+   * Creates POI
    *
    * @since 0.1
    *
@@ -377,337 +377,206 @@ class gjMapsDB {
   }
 
   /**
-  *
-  * Edit POI
-  *
-  * Expects an array of POI data to edit, returns an integer, 0 or 1
-  *
-  * @since 0.1
-  *
-  **/
-
-  function editPOI($editItems) {
-
-    $table_name = $this->poiTable();
-
+   * Update POI
+   *
+   * @since 0.1
+   *
+   * @param $poi array
+   *
+   * @return int || false
+   */
+  function updatePoi($editItems)
+  {
     foreach($editItems as $poi) {
-
-      $update = $this->wpdb->update(
-        $table_name,
+      $update[] = $this->wpdb->update($this->poiTable,
         array(
-          'map_id' => $poi['map_id'],
-          'cat_id' => $poi['cat_id'],
-          'name' => $poi['name'],
+          'map_id'  => $poi['map_id'],
+          'cat_id'  => $poi['cat_id'],
+          'name'    => $poi['name'],
           'address' => $poi['address'],
-          'city' => $poi['city'],
-          'state' => $poi['state'],
-          'zip' => $poi['zip'],
-          'country'=> $poi['country'],
-          'phone' => $poi['phone'],
-          'url' => $poi['url'],
-          'lat' => $poi['lat'],
-          'lng' => $poi['lng']
+          'city'    => $poi['city'],
+          'state'   => $poi['state'],
+          'zip'     => $poi['zip'],
+          'country' => $poi['country'],
+          'phone'   => $poi['phone'],
+          'url'     => $poi['url'],
+          'lat'     => $poi['lat'],
+          'lng'     => $poi['lng']
         ),
-        array('id'=>$poi['id'])
+        array('id' => $poi['id'])
       );
-
     }
 
-    return $update;
-
+    return (in_array(false, $update, true)) ? false : sizeof($insert);
   }
 
   /**
-  *
-  * Delete POI
-  *
-  * Requires a POI id as an argument, returns an integer, 0 or 1
-  *
-  * @since 0.1
-  *
-  **/
-
-  function deletePOI($id = false) {
-
-    $table_name = $this->poiTable();
-
-    if($id) {
-
-      $query = $this->wpdb->query(
-          $this->wpdb->prepare(
-            "
-            DELETE FROM $table_name 
-            WHERE id = %d
-            ",
-            $id
-        )
-      );
-
+   * Delete POI
+   *
+   * @since 0.1
+   *
+   * @param $id array
+   */
+  function deletePoi($poi)
+  {
+    foreach($poi as $id) {
+      $sql = $this->wpdb->prepare("DELETE FROM $this->poiTable WHERE id = %d", $id);
+      $delete[] = $this->wpdb->query($sql);
     }
 
-    return $query;
-
+    return (in_array(false, $delete, true)) ? false : sizeof($delete);
   }
 
   /**
-  *
-  * Delete POI
-  *
-  * Requires a map id as an argument, returns an integer, 0 or 1
-  *
-  * @since 0.3
-  *
-  **/
+   * Delete all Poi based on a map_id
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return bool
+   */
+  function deletePoiByMap($map_id)
+  {
+    $sql = $this->wpdb->prepare("DELETE FROM $this->poiTable WHERE map_id = %d", $map_id);
+    return $this->wpdb->query($sql);
+  }
 
-  function deleteMapPOI($map_id) {
+  /**
+   * Truncates all poi from the the table
+   *
+   * @since 0.3
+   *
+   * @return bool
+   */
+  function truncatePoi()
+  {
+    return $this->wpdb->query("TRUNCATE TABLE $this->poiTable");
+  }
 
-    $table_name = $this->poiTable();
-
-    $query = $this->wpdb->query(
-      $this->wpdb->prepare(
-        "
-        DELETE FROM $table_name
-        WHERE map_id = %d
-        ",
-        $map_id
-      )
+  /**
+   * Get a category
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   * @param $cat string
+   * @param $type string
+   *
+   * @return 
+   */
+  function getCategory($map_id, $category_name, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->catTable
+       WHERE name = %s
+       AND map_id = %d",
+       $map_id, $category_name
     );
 
-    return $query;
-
+    return $this->wpdb->get_results($sql, $type);
   }
 
   /**
-  *
-  * Delete POI
-  *
-  * Requires a map id as an argument, returns an integer, 0 or 1
-  *
-  * @since 0.3
-  *
-  **/
+   * Get all categories for a map
+   *
+   * @since 0.1
+   *
+   * @param $map_id int
+   * @param $type string
+   *
+   * @return object
+   */
 
-  function deleteAllPOI() {
-
-    $table_name = $this->poiTable();
-
-    $query = $this->wpdb->query(
-      "TRUNCATE TABLE $table_name"
+  function getCategories($map_id, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->catTable
+       WHERE map_id = %d",
+       $map_id
     );
 
-    return $query;
-
+    return stripslashes_deep($this->wpdb->get_results($sql, $type));
   }
 
   /**
-  *
-  * Get category id
-  *
-  * Requires a category name and map id, option argument is the return type
-  *
-  * @since 0.3
-  *
-  **/
+   * Create a category
+   *
+   * @since 0.1
+   *
+   * @param $category array
+   *
+   * @return bool
+   */
+  function createCategory($category)
+  {
+    $category['color'] = isset($category['color']) ? $category['color'] : '';
+    $category['icon']  = isset($category['icon']) ? $category['icon'] : '';
 
-  function getCatID($name, $mapID, $type='OBJECT') {
-
-    $table_name = $this->catTable();
-    $catName = "name = '$name'";
-    $mapID = "map_id = '$mapID'";
-
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $catName
-      AND $mapID
-      ",
-      $type
-    );
-
-    return $query;
-
+    return $this->wpdb->insert($this->catTable, $category);
   }
 
   /**
-  *
-  * Get category
-  *
-  * Optional return $type and $where that should be map_id
-  *
-  * @since 0.1
-  *
-  **/
-
-  function get_cat($type='OBJECT', $where = NULL) {
-
-    $table_name = $this->catTable();
-
-    if($where !== NULL && $where !== 'new') {
-
-      $where = "map_id = $where";
-
-      $query = $this->wpdb->get_results(
-        "
-        SELECT *
-        FROM $table_name
-        WHERE $where
-        ",
-        $type
-      );
-
-    } else {
-
-      $query = false;
-
+   * Updates categories
+   *
+   * @since 0.1
+   *
+   * @param array
+   *
+   * @return int || false
+   */
+  function updateCategories($categories)
+  {
+    foreach($categories as $cat) {
+      $cat['icon'] = isset($cat['icon']) && $cat['icon'] === null ? '' : $cat['icon'];
+      $update[] = $this->wpdb->update($this->catTable, $cat, array('id' => $cat['id'], 'map_id' => $cat['map_id']))
     }
 
-    return stripslashes_deep($query);
-  
+    return (in_array(false, $update, true)) ? false : sizeof($update);
   }
 
   /**
-  *
-  * Create category
-  *
-  * Pass in an array of category date, returns an integer 0/1
-  *
-  * @since 0.1
-  *
-  **/
-
-  function createCat($cat) {
-
-    $table_name = $this->catTable();
-
-    $color = isset($cat['color']) ? $cat['color'] : '';
-    $icon = isset($cat['icon']) ? $cat['icon'] : '';
-
-    $insert = $this->wpdb->insert(
-      $table_name, 
-      array(
-        'map_id' => $cat['map_id'],
-        'name' => $cat['name'],
-        'color' => $color,
-        'icon' => $icon
-      )
-    );
-
-    return $insert;
-
+   * Delete a category
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return bool
+   */
+  function deleteCategory($cat_id)
+  {
+    $sql = $this->wpdb->prepare("DELETE FROM $this->catTable WHERE id = %d", $cat_id);
+    return $this->wpdb->query($sql);
   }
 
   /**
-  *
-  * Edit category
-  *
-  * Pass in an array of category date, returns an integer 0/1
-  *
-  * @since 0.1
-  *
-  **/
-
-  function editCat($cat) {
-
-    if(array_key_exists('icon',$cat) && $cat['icon'] == null) {
-
-      unset($cat['icon']);
-
-    }
-
-    $table_name = $this->catTable();
-
-    $update = $this->wpdb->update( 
-      $table_name, 
-      $cat, 
-      array(
-        'id' => $cat['id'],
-        'map_id' => $cat['map_id']
-      ) 
-    );
-
-    return $update;
-
+   * Delete all map categories
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return bool
+   */
+  function deleteMapCategories($map_id)
+  {
+    $sql = $this->wpdb->prepare("DELETE FROM $this->catTable WHERE map_id = %d", $map_id);
+    return $this->wpdb->query($sql);
   }
 
   /**
-  *
-  * Delete category
-  *
-  * Pass in the category id, returns an integer 0/1
-  *
-  * @since 0.3
-  *
-  **/
-
-  function deleteCat($id) {
-
-    $table_name = $this->catTable();
-
-    $query = $this->wpdb->query(
-      $this->wpdb->prepare(
-        "
-        DELETE FROM $table_name 
-        WHERE id = %d
-        ",
-        $id
-      )
-    );
-
-    return $query;
-
-  }
-
-  /**
-  *
-  * Delete all map categories
-  *
-  * Pass in the map id returns an integer 0/1
-  *
-  * @since 0.3
-  *
-  **/
-
-  function deleteMapCat($map_id) {
-
-    $table_name = $this->catTable();
-
-    $query = $this->wpdb->query(
-      $this->wpdb->prepare(
-        "
-        DELETE FROM $table_name
-        WHERE map_id = %d
-        ",
-        $map_id
-      )
-    );
-
-    return $query;
-
-  }
-
-  /**
-  *
-  * Delete all category
-  *
-  * Accepts no arguments, returns an integer 0/1
-  *
-  * @since 0.3
-  *
-  **/
-
-  function deleteAllCat() {
-
-    $table_name = $this->catTable();
-
-    $query = $this->wpdb->query(
-      "
-      DELETE FROM $table_name
-      "
-    );
-
-    return $query;
-
+   * Truncate all categories
+   *
+   * @since 0.3
+   *
+   * @return bool
+   */
+  function truncateCategories()
+  {
+    return $this->wpdb->query("DELETE FROM $this->catTable");
   }
 
 }
