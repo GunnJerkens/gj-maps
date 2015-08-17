@@ -2,496 +2,362 @@
 
 class gjMapsDB {
 
+  /**
+   * WordPress database object
+   *
+   * @var $wpdb object
+   */
   private $wpdb;
 
-  function __construct() {
+  /**
+   * Table prefix
+   *
+   * @var $prefix string
+   */
+  protected $prefix;
 
+  /**
+   * Maps table
+   *
+   * @var $mapsTable string
+   */
+  protected $mapsTable;
+
+  /**
+   * Poi table
+   *
+   * @var $poiTable string
+   */
+  protected $poiTable;
+
+  /**
+   * Categories table
+   *
+   * @var $catTable
+   */
+  protected $catTable;
+
+  /**
+   * Constructor
+   *
+   * @return void
+   */
+  function __construct()
+  {
     global $wpdb;
 
-    $this->wpdb = $wpdb;
+    $this->wpdb   = $wpdb;
+    $this->prefix = $wpdb->prefix;
 
+    $this->setMapsTable();
+    $this->setPoiTable();
+    $this->setCatTable();
   }
 
   /**
-  *
-  * Set maps table
-  *
-  * Just a helper function to set our default maps table
-  *
-  * @since 0.3
-  *
-  */
-
-  function mapsTable() {
-
-    $table = $this->wpdb->prefix.'gjm_maps';
-
-    return $table;
-
+   * Sets the maps table to a class var
+   *
+   * @since 0.3
+   *
+   * @return void
+   */
+  function setMapsTable()
+  {
+    $this->mapsTable = $this->prefix."gjm_maps";
   }
 
   /**
-  *
-  * Set poi table
-  *
-  * Just a helper function to set our default poi table
-  *
-  * @since 0.3
-  *
-  */
-
-  function poiTable() {
-
-    $table = $this->wpdb->prefix.'gjm_poi';
-
-    return $table;
-
+   * Sets the poi table to a class var
+   *
+   * @since 0.3
+   *
+   * @return void
+   */
+  function setPoiTable()
+  {
+    $this->poiTable = $this->prefix."gjm_poi";
   }
 
   /**
-  *
-  * Set cat table
-  *
-  * Just a helper function to set our default cat table
-  *
-  * @since 0.3
-  *
-  */
-
-  function catTable() {
-
-    $table = $this->wpdb->prefix.'gjm_cat';
-
-    return $table;
-
+   * Sets the category table to a class var
+   *
+   * @since 0.3
+   *
+   * @return void
+   */
+  function setCatTable()
+  {
+    $this->catTable = $this->prefix."gjm_cat";
   }
 
   /**
-  *
-  * Count poi 
-  *
-  * Just a helper function to count the number of poi, accepts a return type argument
-  * and defaults to 'OBJECT'
-  *
-  * @since 0.3
-  *
-  */
-
-  function countRows($type='OBJECT') {
-
-    $table_name = $this->poiTable();
-
-    $count = $this->wpdb->get_results("SELECT map_id, COUNT(*) FROM $table_name GROUP BY map_id;");
+   * Returns a count of the number of POI, does not distinctly care about what map they are assigned
+   *
+   * @since 0.3
+   *
+   * @param $type string
+   *
+   * @return integer
+   */
+  function countRows($type='OBJECT')
+  {
+    $count = $this->wpdb->get_results(
+      "SELECT map_id, COUNT(*) 
+       FROM $this->poiTable 
+       GROUP BY map_id;
+      ");
 
     return $count;
-
   }
 
   /**
-  *
-  * Delete all data
-  *
-  * Built to delete all data, does not accept any argments, returns a $response array
-  *
-  * @since 0.3
-  *
-  */
-
-  function deleteAllData() {
-
-    $response['poi'] = $this->deleteAllPOI();
-    $response['cat'] = $this->deleteAllCat();
+   * Delete all data
+   *
+   * Built to delete all data, does not accept any argments, returns a $response array
+   *
+   * @since 0.3
+   *
+   * @return array
+   */
+  function deleteAllData()
+  {
+    $response['poi']  = $this->deleteAllPOI();
+    $response['cat']  = $this->deleteAllCat();
     $response['maps'] = $this->deleteAllMaps();
 
     return $response;
-
   }
 
+  /**
+   * Retrieves all the maps as an object
+   *
+   * @since 0.3
+   *
+   * @param $type string
+   *
+   * @return object
+   */
+  function getMaps($type='OBJECT')
+  {
+    return $this->wpdb->get_results("SELECT * FROM $this->mapsTable WHERE 1=1", $type);
+  }
 
   /**
-  * 
-  * DEPRECATED -- Get Map(s)
-  *
-  * Takes a type and where statement, defaults to Object && 1=1
-  * 
-  * @since 0.1
-  *
-  **/
+   * Returns the maps max poi id
+   * 
+   * @since 0.3
+   *
+   * @param $type string
+   *
+   * @return object
+   */
+  function maxMapId($type = 'OBJECT')
+  {
+    return $this->wpdb->get_results("SELECT MAX(id) AS 'max_id' FROM $this->mapsTable", $type);
+  }
 
-  function get_map($type='OBJECT', $where='1=1') {
-    global $wpdb;
+  /**
+   * Returns the maps min poi id
+   *
+   * @since 0.3
+   *
+   * @param $type string
+   *
+   * @return object
+   */
+  function minMapId($type = 'OBJECT')
+  {
+    return $this->wpdb->get_results("SELECT MIN(id) AS 'low_id' FROM $this->mapsTable", $type);
+  }
 
-    $table_name = $this->mapsTable();
-
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $where
-      ",
-      $type
+  /**
+   * Returns a map id based off a maps name
+   *
+   * @since 0.3
+   *
+   * @param $name string
+   * @param $type string
+   *
+   * @return int || false
+   */
+  function getMapId($name, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->mapsTable
+       WHERE name = %s",
+       $name
     );
 
-    return $query;
+    $query = $this->wpdb->get_results($sql, $type);
 
+    if (isset($query[0]) && isset($query[0]->id)) {
+      return $query[0]->id;
+    }
+
+    return false;
   }
 
   /**
-  * 
-  * Get Maps
-  *
-  * Takes an options array (type, map_id), will return all maps if no map id
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function getMaps($options) {
-
-    $table_name = $this->mapsTable();
-
-    $type = isset($options['type']) ? $options['type'] : 'OBJECT';
-    $where = isset($options['map_id']) ? "WHERE id = '".$options['map_id']."'" : '';
-
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      $where
-      ",
-      $type
+   * Returns a map name based off a maps id
+   *
+   * @since 0.3
+   *
+   * @param $id int
+   * @param $type string
+   *
+   * @return string || false
+   */
+  function getMapName($id, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->mapsTable
+       WHERE id = %d",
+       $id
     );
 
-    return $query;
+    $query = $this->wpdb->get_results($sql, $type);
 
+    if (isset($query[0]) && isset($query[0]->name)) {
+      return $query[0]->name;
+    }
+
+    return false;
   }
 
   /**
-  * 
-  * Max map id
-  *
-  * Accepts a type to return, defaults to 'OBJECT'
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function maxMapID($type = 'OBJECT') {
-
-    $table_name = $this->mapsTable();
-
-    $maxMapID = $this->wpdb->get_results(
-      "
-      SELECT MAX(id) AS 'max_id'
-      FROM $table_name
-      ",
-      $type
-    );
-
-    return $maxMapID;
-
-  }
-
-  /**
-  * 
-  * Min map id
-  *
-  * Accepts a type to return, defaults to 'OBJECT'
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function minMapID($type = 'OBJECT') {
-
-    $table_name = $this->mapsTable();
-
-    $minMapID = $this->wpdb->get_results(
-      "
-      SELECT MIN(id) AS 'low_id'
-      FROM $table_name
-      ",
-      $type
-    );
-
-    return $minMapID;
-
-  }
-
-  /**
-  * 
-  * Get map id
-  *
-  * Requires a name argument, optionally accepts a type argument to return with a default of 'OBJECT'
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function getMapID($name, $type='OBJECT') {
-
-    $table_name = $this->mapsTable();
-    $where = "name = '$name'";
-
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $where
-      ",
-      $type
-    );
-
-    $mapID = $query[0]->id;
-
-    return $mapID;
-
-  }
-
-  /**
-  * 
-  * Get map name
-  *
-  * Requires a id argument, optionally accepts a type argument to return with a default of 'OBJECT'
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function getMapName($id, $type='OBJECT') {
-
-    $table_name = $this->mapsTable();
-    $where = "id = '$id'";
-
-    $query = $this->wpdb->get_results(
-      "
-      SELECT *
-      FROM $table_name
-      WHERE $where
-      ",
-      $type
-    );
-
-    return $query;
-
-  }
-
-  /**
-  * 
-  * Save map
-  *
-  * Requires an id argument for the newly created map, returns an integer, 0 or 1
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function saveMap($id) {
-
-    $table_name = $this->mapsTable();
-
-    $insert = $this->wpdb->insert(
-      $table_name,
+   * Saves a map to the database
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return object
+   */
+  function saveMap($map_id)
+  {
+    return $this->wpdb->insert($this->mapsTable,
       array(
-        'id'=>$id,
-        'name'=>'Map ' . $id,
+        'id'   => $map_id,
+        'name' => 'Map ' . $map_id
       )
     );
-
-    return $insert;
-
   }
 
   /**
-  * 
-  * Edit map
-  *
-  * Requires the $post as an argument, returns an integer, 0 or 1
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function editMapSettings($post) {
-
-    $table_name = $this->mapsTable();
-
-    $insert = $this->wpdb->update(
-      $table_name, 
-      array(
-        'name'=>$post['name']
-      ),
-      array('id'=>$post['id'])
-    );
-
-    return $insert;
-
-  }
-
-  /**
-  * 
-  * Delete map
-  *
-  * Requires the map_id as an argument, returns an integer, 0 or 1
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function deleteMap($map_id) {
-
-    $table_name = $this->mapsTable();
-
-    $query = $this->wpdb->query(
-      $this->wpdb->prepare(
-        "
-        DELETE FROM $table_name
-        WHERE id = %d
-        ",
-        $map_id
-      )
-    );
-
-    return $query;
-
-  }
-
-  /**
-  * 
-  * Delete ALL maps
-  *
-  * Requires and accepts no arguments
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function deleteAllMaps() {
-
-    $table_name = $this->mapsTable();
-
-    $query = $this->wpdb->query(
-      "
-      DELETE FROM $table_name
-      "
-    );
-
-    return $query;
-
-  }
-
-  /**
-  * 
-  * DEPRECATED -- Retrieve POI
-  *
-  * Takes the TYPE, WHERE and a single AND statement, returns an OBJECT by default
-  * 
-  * @since 0.1
-  *
-  **/
-
-  function get_poi($type='OBJECT', $where = NULL, $and = NULL) {
-
-    $table_name = $this->poiTable();
-
-    if($where !== NULL && $where !== 'new') {
-
-      $where = "map_id = $where";
-
-      if($and !== NULL) {
-        $and = "AND $and";
-      } else {
-        $and = '';
-      }
-
-      $query = $this->wpdb->get_results(
-        "
-        SELECT *
-        FROM $table_name
-        WHERE $where
-        $and
-        ",
-        $type
-      );
-
-    } else {
-
-      $query = false;
-
+   * Updates a maps name 
+   *
+   * @since 0.3
+   *
+   * @param $data array
+   *
+   * @return int || false
+   */
+  function updateMap($data)
+  {
+    if(isset($data['name']) && $data['id']) {
+      return $this->wpdb->update($this->mapsTable, array('name' => $data['name']), array('id' => $data['id']));
     }
+
+    return false;
+  }
+
+  /**
+   * Deletes a map
+   *
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return 
+   */
+
+  function deleteMap($map_id)
+  {
+    $sql = $this->wpdb->prepare(
+      "DELETE FROM $this->mapsTable
+       WHERE id = %d",
+       $map_id
+    );
+
+    return $this->wpdb->prepare($sql);
+  }
+
+  /**
+   * Delete ALL maps
+   * 
+   * @since 0.3
+   *
+   * @return int || false
+   */
+  function deleteAllMaps()
+  {
+    return $this->wpdb->query("DELETE FROM $this->mapsTable");
+  }
+
+  /**
+   * Retrieve POI for a specific map id, allows offset/length overrides
+   * 
+   * @since 0.3
+   *
+   * @param $map_id int
+   * @param $offset int
+   * @param $length int
+   * @param $type string
+   *
+   * @return object
+   */
+  function getPoi($map_id, $offset = 0, $length = 999, $type = 'OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->poiTable
+       WHERE map_id = %d
+       LIMIT %d, %d",
+       $map_id, $offset, $length
+    );
+
+    $query = $this->wpdb->get_results($sql, $type);
 
     return stripslashes_deep($query);
-
   }
 
   /**
-  * 
-  * Retrieve POI
-  *
-  * Requires an options array(type, map_id[required], offset, length, lat) & returns an object of results
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function getPOI($options) {
-
-    $table_name = $this->poiTable();
-
-    $type = isset($options['type']) ? $options['type'] : 'OBJECT';
-    $where = isset($options['map_id']) && $options['map_id'] !== NULL && $options['map_id'] !== 'new' ? "map_id = '".$options['map_id']."'" : false;
-
-    if(isset($options['lat'])) {
-
-      $where .= " AND lat = ".$options['lat'];
-
-    }
-
-    if(isset($options['offset']) && isset($options['length'])) {
-
-      $where .= " LIMIT ".$options['offset'].", ".$options['length'];
-
-    }
-
-    if($where) {
-
-      $query = $this->wpdb->get_results(
-        "
-        SELECT *
-        FROM $table_name
-        WHERE $where
-        ",
-        $type
-        );
-
-    } else {
-
-      $query = 'Map ID option malformed.';
-
-    }
-
-    return stripslashes_deep($query);
-
+   * Retrieves POI that have a 0 latitude OR longitude
+   *
+   * @since 1.0.0
+   *
+   * @param $map_id int
+   * @param $type string
+   *
+   * @return object
+   */
+  function getPoiWithZeroLatLng($map_id, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+      "SELECT *
+       FROM $this->poiTable
+       WHERE map_id = %d
+       AND lat=0 OR lng=0",
+       $map_id
+    );
+    return $this->wpdb->get_results($sql, $type);
   }
 
   /**
-  *
-  * Create POI
-  *
-  * Expects an array of POI data, returns an integer, 0 or 1
-  *
-  * @since 0.1
-  *
-  **/
-
-  function createPOI($poi) {
-
-    $table_name = $this->poiTable();
-
+   * Create Poi
+   *
+   * @since 0.1
+   *
+   * @param array
+   *
+   * @return int || false
+   */
+  function createPOI($poi)
+  {
     foreach ($poi as $key=>$value) {
-
-      $insert = $this->wpdb->insert(
-        $table_name, 
+      $insert[] = $this->wpdb->insert($this->poiTable,
         array(
           'cat_id'  => isset($value['cat_id']) ? $value['cat_id'] : '',
           'map_id'  => isset($value['map_id']) ? $value['map_id'] : '',
@@ -505,11 +371,9 @@ class gjMapsDB {
           'url'     => isset($value['url']) ? $value['url'] : ''
         )
       );
-
     }
 
-    return $insert;
-
+    return (in_array(false, $insert, true)) ? false : sizeof($insert);
   }
 
   /**

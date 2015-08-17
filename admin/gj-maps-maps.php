@@ -73,7 +73,7 @@ if(isset($createMap) && $createMap === false) {
 
 }
 
-$map = $databaseFunctions->get_map();
+$map = $databaseFunctions->getMaps();
 $map_name = $databaseFunctions->getMaps(array('map_id' => $map_id));
 echo $adminFunctions->mapsTab('poi', $map, $map_id);
 
