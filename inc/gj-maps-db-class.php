@@ -1,6 +1,7 @@
 <?php
 
-class gjMapsDB {
+class gjMapsDB
+{
 
   /**
    * WordPress database object
@@ -111,9 +112,7 @@ class gjMapsDB {
   }
 
   /**
-   * Delete all data
-   *
-   * Built to delete all data, does not accept any argments, returns a $response array
+   * Delete all data, this is just a wrapper for 3 class methods
    *
    * @since 0.3
    *
@@ -121,9 +120,9 @@ class gjMapsDB {
    */
   function deleteAllData()
   {
-    $response['poi']  = $this->deleteAllPOI();
-    $response['cat']  = $this->deleteAllCat();
-    $response['maps'] = $this->deleteAllMaps();
+    $response['poi']  = $this->truncatePoi();
+    $response['cat']  = $this->truncateCategories();
+    $response['maps'] = $this->truncateMaps();
 
     return $response;
   }
@@ -143,17 +142,38 @@ class gjMapsDB {
   }
 
   /**
+   * Retrives a single map by id
+   *
+   * @since 1.0.0
+   *
+   * @param $map_id int
+   *
+   * @return object
+   */
+  function getMap($map_id, $type='OBJECT')
+  {
+    $sql = $this->wpdb->prepare(
+    "SELECT *
+     FROM $this->mapsTable
+     WHERE id = %d",
+     $map_id
+    );
+    return $this->wpdb->get_results($sql, $type);
+  }
+
+  /**
    * Returns the maps max poi id
    * 
    * @since 0.3
    *
    * @param $type string
    *
-   * @return object
+   * @return int || false
    */
   function maxMapId($type = 'OBJECT')
   {
-    return $this->wpdb->get_results("SELECT MAX(id) AS 'max_id' FROM $this->mapsTable", $type);
+    $max = $this->wpdb->get_results("SELECT MAX(id) AS 'max_id' FROM $this->mapsTable", $type);
+    return isset($max[0]) && isset($max[0]->max_id) ? (int) $max[0]->max_id : false;
   }
 
   /**
@@ -163,11 +183,12 @@ class gjMapsDB {
    *
    * @param $type string
    *
-   * @return object
+   * @return int || false
    */
   function minMapId($type = 'OBJECT')
   {
-    return $this->wpdb->get_results("SELECT MIN(id) AS 'low_id' FROM $this->mapsTable", $type);
+    $min = $this->wpdb->get_results("SELECT MIN(id) AS 'low_id' FROM $this->mapsTable", $type);
+    return isset($min[0]) && isset($min[0]->low_id) ? (int) $min[0]->low_id : false;
   }
 
   /**
@@ -227,7 +248,7 @@ class gjMapsDB {
   }
 
   /**
-   * Saves a map to the database
+   * Create a map
    *
    * @since 0.3
    *
@@ -235,14 +256,9 @@ class gjMapsDB {
    *
    * @return object
    */
-  function saveMap($map_id)
+  function createMap()
   {
-    return $this->wpdb->insert($this->mapsTable,
-      array(
-        'id'   => $map_id,
-        'name' => 'Map ' . $map_id
-      )
-    );
+    return $this->wpdb->insert($this->mapsTable, array('name' => "New Map"));
   }
 
   /**
@@ -281,7 +297,7 @@ class gjMapsDB {
        $map_id
     );
 
-    return $this->wpdb->prepare($sql);
+    return $this->wpdb->query($sql);
   }
 
   /**
@@ -291,7 +307,7 @@ class gjMapsDB {
    *
    * @return int || false
    */
-  function deleteAllMaps()
+  function truncateMaps()
   {
     return $this->wpdb->query("DELETE FROM $this->mapsTable");
   }
@@ -354,7 +370,7 @@ class gjMapsDB {
    *
    * @return int || false
    */
-  function createPOI($poi)
+  function createPoi($poi)
   {
     foreach ($poi as $key=>$value) {
       $insert[] = $this->wpdb->insert($this->poiTable,
@@ -407,7 +423,7 @@ class gjMapsDB {
       );
     }
 
-    return (in_array(false, $update, true)) ? false : sizeof($insert);
+    return (in_array(false, $update, true)) ? false : sizeof($update);
   }
 
   /**
@@ -531,7 +547,7 @@ class gjMapsDB {
   {
     foreach($categories as $cat) {
       $cat['icon'] = isset($cat['icon']) && $cat['icon'] === null ? '' : $cat['icon'];
-      $update[] = $this->wpdb->update($this->catTable, $cat, array('id' => $cat['id'], 'map_id' => $cat['map_id']))
+      $update[] = $this->wpdb->update($this->catTable, $cat, array('id' => $cat['id'], 'map_id' => $cat['map_id']));
     }
 
     return (in_array(false, $update, true)) ? false : sizeof($update);
@@ -561,7 +577,7 @@ class gjMapsDB {
    *
    * @return bool
    */
-  function deleteMapCategories($map_id)
+  function deleteCategoriesByMap($map_id)
   {
     $sql = $this->wpdb->prepare("DELETE FROM $this->catTable WHERE map_id = %d", $map_id);
     return $this->wpdb->query($sql);

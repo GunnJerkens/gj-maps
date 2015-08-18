@@ -1,34 +1,38 @@
 <?php
 
-class gjMapsAdmin {
+class gjMapsAdmin
+{
 
-  private $databaseFunctions;
+  /**
+   * Holds our database class
+   *
+   * @var $db object
+   */
+  private $db;
 
-  function __construct() {
-
-    $this->databaseFunctions = new gjMapsDB();
-
+  /**
+   * Constructor
+   *
+   * @return void
+   */
+  function __construct()
+  {
+    $this->db = new gjMapsDB();
   }
 
   /**
-  * 
-  * Default messaging for the admin class.
-  *
-  * Requires status and message as strings, returns an array.
-  * 
-  * @since 0.3
-  *
-  **/
-
-  function gjMapsMessaging($status, $message) {
-
-    $response = array (
-      'status' => $status,
-      'message' => $message
-    );
-
-    return $response;
-
+   * Messaging method to the view
+   * 
+   * @since 0.3
+   *
+   * @param $status bool
+   * @param $message string
+   *
+   * @return array
+   */
+  function response($status, $message)
+  {
+    return array('error' => $status, 'message' => $message);
   }
 
   /**
@@ -43,7 +47,7 @@ class gjMapsAdmin {
 
   function gjMapsPaginateTable($map_id, $showItems) {
 
-    $count = $this->databaseFunctions->countRows();
+    $count = $this->db->countRows();
     $totalItems = 0;
 
     foreach($count as $map) {
@@ -119,135 +123,88 @@ class gjMapsAdmin {
   }
 
   /**
-  *
-  * Creates the tabs on maps and categories pages.
-  * 
-  * Requries page, map and map_id, returns a string.
-  *
-  * @since 0.3
-  *
-  **/
-
-  function mapsTab($page, $map, $map_id) {
-
-    $page === 'cat' ? $page = 'gj_maps_categories' : $page = 'gj_maps';
-
+   * Creates the tabs on maps and categories pages.
+   * 
+   * @since 0.3
+   *
+   * @param $page string
+   * @param $maps array
+   * @param $map_id int
+   *
+   * @return string 
+   */
+  function mapsTab($page, $maps, $map)
+  {
+    $page = $page === 'cat' ? 'gj_maps_categories' : 'gj_maps';
     $tabs = '<h2 class="nav-tab-wrapper">';
 
-    foreach ($map as $key => $value) {
-
-      $tabs .= '<a href="?page='.$page.'&map_id='.$value->id.'" class="nav-tab '.($map_id === $value->id ? 'nav-tab-active' : '').'">'.$value->name.'</a>';
-
-      if($value->id === $map_id) {
+    foreach ($maps as $key=>$value) {
+      $tabs .= '<a href="?page='.$page.'&map_id='.$value->id.'" class="nav-tab'.($map->id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
+      if($value->id == $map->id) {
         $map_name = $value->name;
       }
-
-    }
-
-    if(!isset($map_name) && isset($map[0])) {
-      $map_name = $map[0];
-      $map_name = $map_name->name;
     }
 
     $tabs .= '<a href="?page='.$page.'&map_id=new" class="nav-tab">+</a>';
-
     $tabs .= '</h2>';
 
     return $tabs;
-
   }
 
   /**
-  *
-  * Return the map_id on maps and cats.
-  * 
-  * Requires the $_GET.
-  *
-  * @since 0.3
-  *
-  **/
-
-  function tabsMapID($get) {
-
-    if(isset($get['map_id']) && $get['map_id'] === 'new') {
-
-      $maxMapID = $this->databaseFunctions->maxMapID();
-      $maxMapID = ((int) $maxMapID[0]->max_id) + 1;
-
-      $this->databaseFunctions->saveMap($maxMapID);
-      $map_id = $maxMapID;
-
-    } else if (isset($get['map_id'])) {
-
-      $map_id = $get['map_id'];
-
-    } else {
-
-      $map_id = $this->databaseFunctions->minMapID();
-      $map_id = $map_id[0]->low_id;
-
-    }
-
-    return $map_id;
-
+   * Create a map
+   *
+   * @since 0.3
+   *
+   * @return $map_id
+   */
+  function createMap()
+  {
+    $this->db->createMap();
+    return $this->db->maxMapId();
   }
 
   /**
-  *
-  * Delete Map
-  * 
-  * Requires the map_id, returns the response array
-  *
-  * @since 0.3
-  *
-  **/
-
-  function deleteMap($map_id) {
-
-    $responsePOI = $this->databaseFunctions->deleteMapPOI($map_id);
-    $responseCat = $this->databaseFunctions->deleteMapCat($map_id);
-    $responseMap = $this->databaseFunctions->deleteMap($map_id);
+   * Delete an entire map
+   * 
+   * @since 0.3
+   *
+   * @param $map_id int
+   *
+   * @return array
+   */
+  function deleteMap($map_id)
+  {
+    $responsePOI = $this->db->deletePoiByMap($map_id);
+    $responseCat = $this->db->deleteCategoriesByMap($map_id);
+    $responseMap = $this->db->deleteMap($map_id);
 
     if($responsePOI === false || $responseCat === false || $responseMap === false) {
-
-      $response = $this->gjMapsMessaging('error', 'Something went wrong during the delete process.');
-
+      $response = $this->response(true, 'Something went wrong during the delete process.');
     } else {
-
-      $response = $this->gjMapsMessaging('success', 'Map '.$map_id.' was successfully deleted.');
-
+      $response = $this->response(false, 'Map '.$map_id.' was successfully deleted.');
     }
 
     return $response;
-
   }
 
   /**
-  *
-  * Rename the map.
-  * 
-  * Requires the $_POST.
-  *
-  * @since 0.3
-  *
-  **/
-
-  function renameMap($post) {
-
-    $response = $this->databaseFunctions->editMapSettings($post);
-
-    if($response > 0) {
-
-      $response = $this->gjMapsMessaging('success', 'Map name changed successfully');
-
+   * Renames the map
+   *
+   * @since 0.3
+   *
+   * @param array
+   *
+   * @return array
+   */
+  function renameMap($post)
+  {
+    if($this->db->updateMap($post)) {
+      $response = $this->response(false, 'Map name changed successfully');
     } else {
-
-      $response = $this->gjMapsMessaging('error', 'Map name failed to update');
-
+      $response = $this->response(true, 'Map name failed to update');
     }
-
     return $response;
-
   }
 
   /**
@@ -264,7 +221,7 @@ class gjMapsAdmin {
 
   function geocodePOI($map_id) {
 
-    $query = $this->databaseFunctions->get_poi('ARRAY_A', $map_id, 'lat = 0');
+    $query = $this->db->get_poi('ARRAY_A', $map_id, 'lat = 0');
 
     foreach($query as $poi) {
 
@@ -310,13 +267,13 @@ class gjMapsAdmin {
 
     if(!empty($updatePOI)) {
 
-      $this->databaseFunctions->editPOI($updatePOI);
+      $this->db->editPOI($updatePOI);
 
-      $response = $this->gjMapsMessaging('success', 'Updated coordinates successfully');
+      $response = $this->response(false, 'Updated coordinates successfully');
 
     } else {
 
-      $response = $this->gjMapsMessaging('success', 'There were not points to update.');
+      $response = $this->response(true, 'There were not points to update.');
 
     }
 
@@ -325,131 +282,84 @@ class gjMapsAdmin {
   }
 
   /**
-  *
-  * Create the POI
-  * 
-  * Requires the $poi, an array of poi data
-  *
-  * @since 0.1
-  *
-  **/
+   *
+   * Create the poi
+   * Requires the $poi, an array of poi data
+   *
+   * @since 0.1
+   *
+   */
+  function createPOI($poi)
+  {
+    foreach($poi as $single) {
+      $defaultCat = false;
 
-  function createPOI($poi) {
-
-    foreach($poi as $singlePOI) {
-
-      $defaultCatExists = false;
-
-      if(!isset($singlePOI['cat_id']) && $defaultCatExists === false) {
-
+      if(!isset($single['cat_id']) && $defaultCat === false) {
         $cat = array (
-          'map_id' => $singlePOI['map_id'],
-          'name' => 'Default',
-          'color' => '#000000',
-          'icon' => NULL
+          'map_id' => $single['map_id'],
+          'name'   => 'Default',
+          'color'  => '#000000',
+          'icon'   => NULL
         );
 
-        $dbResponse = $this->databaseFunctions->createCat($cat);
-
-        if($dbResponse === 1) {
-
-          $dbResponse = $this->databaseFunctions->getCatID('Default', $singlePOI['map_id']);
-          $singlePOI['cat_id'] = $dbResponse[0]->id;
-
-          $defaultCatExists = true;
-
-        }
-
+        $this->db->createCategory($cat);
+      } elseif (!isset($single['cat_id'])) {
+        $single['cat_id'] = $category[0]->id;
       }
 
-      $createItems[] = $singlePOI;
-
+      $createItems[] = $single;
     }
 
-    $response = $this->databaseFunctions->createPOI($createItems);
-
-    if($response === 1) {
-
-      $response = $this->gjMapsMessaging('success', 'Successfully created new points of interest.');
-
+    if($this->db->createPoi($createItems)) {
+      $response = $this->response(false, 'Successfully created new points of interest.');
     } else {
-
-      $response = $this->gjMapsMessaging('error', 'Failed to create points of interest.');
-
+      $response = $this->response(true, 'Failed to create points of interest.');
     }
 
     return $response;
-
   }
 
   /**
-  *
-  * Edit the POI
-  * 
-  * Requires the $_POST, the array of POI data
-  *
-  * @since 0.1
-  *
-  **/
-
-  function editPOI($post) {
-
-    $editPOI = $this->databaseFunctions->editPOI($post);
-
-    if($editPOI) {
-
-      $this->gjMapsMessaging('success', 'Points of interest updated successfully.');
-
+   * Update the poi
+   *
+   * @since 0.1
+   *
+   * @param array
+   *
+   * @return array
+   */
+  function editPOI($post)
+  {
+    if($this->db->updatePoi($post)) {
+      $response = $this->response(false, 'Points of interest updated successfully.');
     } else {
-
-      $this->gjMapsMessaging('error', 'Something went wrong during the update process.');
-
+      $response = $this->response(true, 'Something went wrong during the update process.');
     }
-  
+    return $response;
   }
 
   /**
-  *
-  * Delete the POI
-  * 
-  * Requires an array of POI 'id' to delete
-  *
-  * @since 0.3
-  *
-  **/
-
-  function deletePOI($deleteItems) {
-
-    $hasError = false;
-
+   * Delete the POI
+   *
+   * @since 0.3
+   *
+   * @param array
+   *
+   * @return array
+   */
+  function deletePOI($deleteItems)
+  {
     foreach($deleteItems as $item) {
-
-      $responses[] = $this->databaseFunctions->deletePOI($item['id']);
-
+      $poi[] = $item['id'];
     }
 
-    foreach($responses as $response) {
-
-      if($response !== 1) {
-
-        $hasError = true;
-
-      }
-
-    }
-
-    if(!$hasError) {
-
-      $response = $this->gjMapsMessaging('success', 'Items deleted successfully.');
-
+    if($this->db->deletePoi($poi) > 0) {
+      $response = $this->response(false, 'Items deleted successfully.');
     } else {
-
-      $response = $this->gjMapsMessaging('error', 'Some items failed to delete');
-
+      $response = $this->response(true, 'Some items failed to delete');
     }
 
     return $response;
-
   }
 
   /**
@@ -470,7 +380,7 @@ class gjMapsAdmin {
 
       unset($item['mode']);
 
-      $response[] = $this->databaseFunctions->createCat($item);
+      $response[] = $this->db->createCat($item);
 
     }
 
@@ -486,11 +396,11 @@ class gjMapsAdmin {
 
     if(!$hasError) {
 
-      $response = $this->gjMapsMessaging('success', 'Categories created successfully.');
+      $response = $this->response(false, 'Categories created successfully.');
 
     } else {
 
-      $response = $this->gjMapsMessaging('error', 'Categories failed to be created.');
+      $response = $this->response(true, 'Categories failed to be created.');
 
     }
 
@@ -516,7 +426,7 @@ class gjMapsAdmin {
 
       unset($item['mode']);
 
-      $responses[] = $this->databaseFunctions->editCat($item);
+      $responses[] = $this->db->editCat($item);
 
     }
 
@@ -532,11 +442,11 @@ class gjMapsAdmin {
 
     if(!$hasError) {
 
-      $response = $this->gjMapsMessaging('success', 'Categories updated successfully.');
+      $response = $this->response(false, 'Categories updated successfully.');
 
     } else {
 
-      $response = $this->gjMapsMessaging('error', 'Categories failed to update.');
+      $response = $this->response(true, 'Categories failed to update.');
 
     }
 
@@ -562,7 +472,7 @@ class gjMapsAdmin {
 
       unset($item['delete']);
 
-      $responses[] = $this->databaseFunctions->deleteCat($item['id']);
+      $responses[] = $this->db->deleteCat($item['id']);
 
     }
 
@@ -578,11 +488,11 @@ class gjMapsAdmin {
 
     if(!$hasError) {
 
-      $response = $this->gjMapsMessaging('success', 'Items deleted successfully.');
+      $response = $this->response('success', 'Items deleted successfully.');
 
     } else {
 
-      $response = $this->gjMapsMessaging('error', 'Some items failed to delete');
+      $response = $this->response('error', 'Some items failed to delete');
 
     }
 
@@ -591,17 +501,16 @@ class gjMapsAdmin {
   }
 
   /**
-  *
-  * Update settings
-  * 
-  * Expects the post object, returns a response array
-  *
-  * @since 0.1
-  *
-  **/
-
-  function updateSettings($post) {
-
+   * Update settings
+   *
+   * @since 0.1
+   *
+   * @param array
+   *
+   * @return array
+   */
+  function updateSettings($settings)
+  {
     $styles = isset($_POST['use_styles']);
     update_option('gj_maps_use_styles', $styles);
 
@@ -647,43 +556,36 @@ class gjMapsAdmin {
     $map_styles = $_POST['map_styles'];
     update_option('gj_maps_map_styles', $map_styles);
 
-    $response = $this->gjMapsMessaging('success', 'Settings updated successfully.');
-
-    return $response;
-
+    return $this->response(false, 'Settings updated successfully.');
   }
 
   /**
    * Returns the global maps settings
-   * 
-   * @return object
    *
    * @since 0.1
+   *
+   * @return object
    */
-  public static function getSettings() {
-
-    $settings = new StdClass();
-
-    $settings->use_styles           = get_option('gj_maps_use_styles');
-    $settings->label_color          = get_option('gj_maps_label_color');
-    $settings->poi_list             = get_option('gj_maps_poi_list');
-    $settings->poi_num              = get_option('gj_maps_poi_num');
-    $settings->poi_filter_load      = get_option('gj_poi_filter_load');
-    $settings->disable_mouse_scroll = get_option('gj_disable_mouse_scroll');
-    $settings->disable_mouse_drag   = get_option('gj_disable_mouse_drag');
-    $settings->enable_fit_bounds    = get_option('gj_enable_fit_bounds');
-    $settings->cat_default          = get_option('gj_maps_cat_default');
-    $settings->center_lat           = get_option('gj_maps_center_lat');
-    $settings->center_lng           = get_option('gj_maps_center_lng');
-    $settings->map_zoom             = get_option('gj_maps_map_zoom');
-    $settings->max_zoom             = get_option('gj_maps_max_zoom');
-    $settings->link_text            = get_option('gj_maps_link_text');
-    $settings->map_styles           = stripslashes(get_option('gj_maps_map_styles'));
-
-    return $settings;
-
+  public static function getSettings()
+  {
+    return (object) array(
+      "use_styles"           => get_option('gj_maps_use_styles'),
+      "label_color"          => get_option('gj_maps_label_color'),
+      "poi_list"             => get_option('gj_maps_poi_list'),
+      "poi_num"              => get_option('gj_maps_poi_num'),
+      "poi_filter_load"      => get_option('gj_poi_filter_load'),
+      "disable_mouse_scroll" => get_option('gj_disable_mouse_scroll'),
+      "disable_mouse_drag"   => get_option('gj_disable_mouse_drag'),
+      "enable_fit_bounds"    => get_option('gj_enable_fit_bounds'),
+      "cat_default"          => get_option('gj_maps_cat_default'),
+      "center_lat"           => get_option('gj_maps_center_lat'),
+      "center_lng"           => get_option('gj_maps_center_lng'),
+      "map_zoom"             => get_option('gj_maps_map_zoom'),
+      "max_zoom"             => get_option('gj_maps_max_zoom'),
+      "link_text"            => get_option('gj_maps_link_text'),
+      "map_styles"           => stripslashes(get_option('gj_maps_map_styles')),
+    );
   }
-
 
   /**
   *
@@ -697,7 +599,7 @@ class gjMapsAdmin {
   function importData($uploadedFile, $mapID) {
 
     if($mapID === 'new') {
-      $maxID = $this->databaseFunctions->maxMapID();
+      $maxID = $this->db->maxMapID();
       $maxID = ((int) $maxID[0]->max_id);
 
       if($maxID != NULL) {
@@ -706,7 +608,7 @@ class gjMapsAdmin {
         $mapID = 1;
       }
 
-      $this->databaseFunctions->saveMap($mapID);
+      $this->db->saveMap($mapID);
     }
 
     // Complete the upload of the CSV
@@ -739,7 +641,7 @@ class gjMapsAdmin {
       if (count($labels) == count($value)) {
         $poi[$key] = array_combine($labels, $value);
       } else {
-        $response = $this->gjMapsMessaging('error', 'Check your CSV column headers.');
+        $response = $this->response('error', 'Check your CSV column headers.');
         return $response;
       }
     }
@@ -752,7 +654,7 @@ class gjMapsAdmin {
       // Sets each category to an integer, creates categories if needed
       if(isset($value['category'])) {
 
-        $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
+        $categoryMatch = $this->db->getCatID($value['category'], $mapID);
 
         if(empty($categoryMatch)) {
           $newCategory = array(
@@ -760,10 +662,10 @@ class gjMapsAdmin {
             'name'   => $value['category']
           );
 
-          $id = $this->databaseFunctions->createCat($newCategory);
+          $id = $this->db->createCat($newCategory);
 
           if($id > 0) {
-            $categoryMatch = $this->databaseFunctions->getCatID($value['category'], $mapID);
+            $categoryMatch = $this->db->getCatID($value['category'], $mapID);
             $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
           } else {
             // This is an error!
@@ -778,10 +680,10 @@ class gjMapsAdmin {
           'name'   => 'default'
         );
 
-        $id = $this->databaseFunctions->createCat($newCategory);
+        $id = $this->db->createCat($newCategory);
 
         if($id > 0) {
-          $categoryMatch = $this->databaseFunctions->getCatID('default', $mapID);
+          $categoryMatch = $this->db->getCatID('default', $mapID);
           $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
         }
 
@@ -796,48 +698,49 @@ class gjMapsAdmin {
       $poi[$key]['lng'] = 0;
     }
 
-    $savePOI  = $this->databaseFunctions->createPOI($poi);
-    $response = $this->gjMapsMessaging('success', 'CSV data successfully uploaded.');
+    $savePOI  = $this->db->createPOI($poi);
+    $response = $this->response(false, 'CSV data successfully uploaded.');
 
     return $response;
   }
 
   /**
-  *
-  * Bulk delete data
-  * 
-  * Requires the post, returns the response array
-  *
-  * @since 0.3
-  *
-  **/
-  function deleteData($post) {
+   * Bulk delete data from options
+   *
+   * @since 0.3
+   *
+   * @param array
+   *
+   * @return array
+   */
+  function deleteData($post)
+  {
     if(isset($post['delete'])) {
       switch($post['delete']) {
         case('default'):
-          $response = $this->gjMapsMessaging('error', 'You must select data to delete');
+          $response = $this->response(true, 'You must select data to delete');
           break;
         case('delete_categories'):
-          $dbResponse = $this->databaseFunctions->deleteAllCat();
+          $dbResponse = $this->db->truncateCategories();
           break;
         case('delete_maps'):
-          $dbResponse = $this->databaseFunctions->deleteAllMaps();
+          $dbResponse = $this->db->truncateMaps();
           break;
         case('delete_poi'):
-          $dbResponse = $this->databaseFunctions->deleteAllPOI();
+          $dbResponse = $this->db->truncatePoi();
           break;
         case('delete_all'):
-          $dbResponse = $this->databaseFunctions->deleteAllData();
+          $dbResponse = $this->db->deleteAllData();
           if($dbResponse['poi']) {
-            $response = $this->gjMapsMessaging('success', 'All POI deleted along with '.$dbResponse['cat'].' categories and '.$dbResponse['maps'].' maps. So fresh.');
+            $response = $this->response(false, 'All POI deleted along with '.$dbResponse['cat'].' categories and '.$dbResponse['maps'].' maps. So fresh.');
           }
           break;
         default:
-          $response = $this->gjMapsMessaging('error', 'Something went horribly wrong.');
+          $response = $this->response(true, 'Something went horribly wrong.');
           break;
       }
     } else {
-      $response = $this->gjMapsMessaging('error', 'You need to specify what to delete.');
+      $response = $this->response(true, 'You need to specify what to delete.');
     }
     return $response;
   }
