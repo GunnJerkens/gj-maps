@@ -208,77 +208,58 @@ class gjMapsAdmin
   }
 
   /**
-  *
-  * Geocode the POI
-  *
-  * Uses usleep to geocode at a rate of 8/s, under the Google API limit of 10/s
-  * 
-  * Requires the map_id, returns a standard $response
-  *
-  * @since 0.1
-  *
-  **/
+   * Geocode the POI
+   *
+   * @since 0.1
+   *
+   * @param $map_id int
+   *
+   * @return array
+   */
+  function geocodePOI($map_id)
+  {
+    $poi = $this->db->getPoiWithZeroLatLng($map_id, 'ARRAY_A');
 
-  function geocodePOI($map_id) {
+    if(sizeof($poi) > 0) {
+      foreach($poi as $point) {
 
-    $query = $this->db->get_poi('ARRAY_A', $map_id, 'lat = 0');
-
-    foreach($query as $poi) {
-
-      if($poi['address'] && $poi['zip']) {
-
-        $address = urlencode($poi["address"].', '.$poi['zip']);
-
-      } else {
-
-        $address = urlencode($poi["address"].', '.$poi['city'].', '.$poi['state'].' '.$poi['zip']);
-
-      }
-
-      $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
-      $url .= '&address='.$address;
-
-      $googleResponseEncoded = wp_remote_get($url);
-
-      if(!is_wp_error($googleResponseEncoded)) {
-
-        $googleResponse = json_decode($googleResponseEncoded['body']);
-
-        if($googleResponse === 'ZERO_RESULTS') {
-
-          $poi['lat'] = '0';
-          $poi['lng'] = '0';
-
+        if($point['address'] && $point['zip']) {
+          $address = urlencode($point["address"].', '.$point['zip']);
         } else {
-
-          $location = $googleResponse->results[0]->geometry->location;
-          $poi['lat'] = $location->lat;
-          $poi['lng'] = $location->lng;
-
+          $address = urlencode($point["address"].', '.$point['city'].', '.$point['state'].' '.$point['zip']);
         }
 
-        $updatePOI[] = $poi;
+        $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+        $url .= '&address='.$address;
 
+        $googleResponseEncoded = wp_remote_get($url);
+
+        if(!is_wp_error($googleResponseEncoded)) {
+          $googleResponse = json_decode($googleResponseEncoded['body']);
+
+          if($googleResponse === 'ZERO_RESULTS') {
+            $point['lat'] = '0';
+            $point['lng'] = '0';
+          } else {
+            $location = $googleResponse->results[0]->geometry->location;
+            $point['lat'] = $location->lat;
+            $point['lng'] = $location->lng;
+          }
+          $updatePOI[] = $point;
+        }
+
+        usleep(125000);
       }
-
-      usleep(125000);
-
     }
 
     if(!empty($updatePOI)) {
-
-      $this->db->editPOI($updatePOI);
-
+      $this->db->updatePoi($updatePOI);
       $response = $this->response(false, 'Updated coordinates successfully');
-
     } else {
-
       $response = $this->response(true, 'There were not points to update.');
-
     }
 
     return $response;
-
   }
 
   /**

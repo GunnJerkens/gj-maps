@@ -33,7 +33,7 @@ if(!empty($_POST)) {
     }
 
     if($_POST['form_name'] === 'geocode') {
-      $response = $cont->geocodePOI($_GET['map_id']);
+      $response = $cont->geocodePOI($map_id);
     }
 
     if($_POST['form_name'] === 'gj_maps_poi' ) {
@@ -103,14 +103,15 @@ $url = $cont->gjMapsBuildURL($map_id); ?>
 <div class="wrap">
   <form name="gj_maps_geocode" class="top-form" method="post">
     <input type="hidden" name="form_name" value="geocode">
+    <input type="hidden" name="map_id" value="<?php echo $map_id; ?>">
     <?php wp_nonce_field('gj-maps-poi'); ?>
     <button type="submit" class="btn button">Find Geocodes</button>
   </form>
 
   <form name="gj_maps_map_name" class="top-form" method="post">
     <input type="hidden" name="form_name" value="gj_maps_map_name">
+    <input type="hidden" name="map_id" value="<?php echo $map_id; ?>">
     <?php wp_nonce_field('gj-maps-poi'); ?>
-    <input type="hidden" name="id" value="<?php echo $map_id; ?>">
     <input type="text" name="name" placeholder="Map Name" value="<?php echo !empty($map->name) ? $map->name : ''; ?>"/>
     <button type="submit" class="btn button">Change Map Name</button>
   </form>
@@ -118,7 +119,7 @@ $url = $cont->gjMapsBuildURL($map_id); ?>
 
   <form name="gj_maps_poi" method="post">
     <input type="hidden" name="form_name" value="gj_maps_poi">
-    <input type="hidden" name="map_id" value="<?php $map_id; ?>">
+    <input type="hidden" name="map_id" value="<?php echo $map_id; ?>">
     <?php wp_nonce_field('gj-maps-poi'); ?>
 
     <div id="gj-table-container">
