@@ -254,6 +254,10 @@ jQuery(document).ready(function($) {
               };
             }
 
+            if(hasOptions.indexOf(poi[i].cat_id) > -1) {
+              $.extend(markerOptions, { zIndex: 8675309 });
+            }
+
             poi[i].marker = new google.maps.Marker(markerOptions);
 
           } else {
