@@ -579,6 +579,11 @@ class gjMapsAdmin
   **/
   function importData($uploadedFile, $mapID) {
 
+    $labels = array();
+    $poi    = array();
+    $value  = array();
+    $unset  = array();
+
     // Create a new map if one does not exist
     if($mapID === 'new') {
       $this->db->createMap();
@@ -588,8 +593,6 @@ class gjMapsAdmin
     // Complete the upload of the CSV
     ini_set('auto_detect_line_endings',TRUE);
 
-    $poi = array();
-
     if (($handle = fopen($uploadedFile['tmp_name'], "r")) !== FALSE) {
       while (($data = fgetcsv($handle, ",")) !== FALSE) {
         array_push($poi, $data);
@@ -598,29 +601,31 @@ class gjMapsAdmin
     }
 
     // Handle our labels, make sure the CSV matches our reqs
-    $labels = array();
-
     foreach ($poi[0] as $key=>$value) {
       $str = trim(strtolower($value));
 
       if(!empty($str)) {
         $labels[$str] = $str;
+      } else {
+        $unset[] = $key;
       }
     }
 
     $labels['lat'] = 'lat';
     $labels['lng'] = 'lng';
 
-
     foreach ($poi as $key=>$value) {
+      foreach($unset as $key) {
+        unset($value[$key]);
+      }
+
       array_push($value, null);
       array_push($value, null);
 
       if (count($labels) == count($value)) {
         $poi[$key] = array_combine($labels, $value);
       } else {
-        $response = $this->response('error', 'Check your CSV column headers.');
-        return $response;
+        return $this->response(true, 'Check your CSV column headers.');
       }
     }
 
@@ -631,8 +636,7 @@ class gjMapsAdmin
     foreach ($poi as $key=>$value) {
       // Sets each category to an integer, creates categories if needed
       if(isset($value['category'])) {
-
-        $categoryMatch = $this->db->getCatID($value['category'], $mapID);
+        $categoryMatch = $this->db->getCategory($mapID, $value['category']);
 
         if(empty($categoryMatch)) {
           $newCategory = array(
@@ -640,31 +644,33 @@ class gjMapsAdmin
             'name'   => $value['category']
           );
 
-          $id = $this->db->createCat($newCategory);
+          $id = $this->db->createCategory($newCategory);
 
           if($id > 0) {
-            $categoryMatch = $this->db->getCatID($value['category'], $mapID);
+            $categoryMatch = $this->db->getCategory($mapID, $value['category']);
             $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
           } else {
-            // This is an error!
+            return $this->response(true, 'Category failed to be created.');
           }
         } else {
           $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
         }
-
       } else {
         $newCategory = array(
           'map_id' => $mapID,
           'name'   => 'default'
         );
 
-        $id = $this->db->createCat($newCategory);
+        $id = $this->db->createCategory($newCategory);
 
         if($id > 0) {
-          $categoryMatch = $this->db->getCatID('default', $mapID);
-          $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
+          $categoryMatch = $this->db->getCategory($mapID, 'default');
+          if(isset($categoryMatch[0])) {
+            $poi[$key]['cat_id'] = (int) $categoryMatch[0]->id;
+          } else {
+            return $this->response(true, 'Something went wrong retrieving the category.');
+          }
         }
-
       }
 
       // Adds the map id to each of the rows
@@ -676,10 +682,9 @@ class gjMapsAdmin
       $poi[$key]['lng'] = 0;
     }
 
-    $savePOI  = $this->db->createPOI($poi);
-    $response = $this->response(false, 'CSV data successfully uploaded.');
+    $savePOI  = $this->db->createPoi($poi);
 
-    return $response;
+    return $this->response(false, 'CSV data successfully uploaded.');
   }
 
   /**

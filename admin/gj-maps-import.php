@@ -22,10 +22,15 @@ if(isset($_FILES['file']) && isset($_POST)) {
 
   $response = $mapsAdmin->importData($_FILES['file'], $mapID);
 
-  if($response['status'] === 'success') {
-    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-  } else {
-    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+  /*
+  * This is our response messaging
+  */
+  if(isset($response) && isset($response['error'])) {
+    if($response['error']) {
+      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+    } else {
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    }
   }
 }
 

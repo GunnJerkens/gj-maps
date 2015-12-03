@@ -488,7 +488,7 @@ class gjMapsDB
        FROM $this->catTable
        WHERE name = %s
        AND map_id = %d",
-       $map_id, $category_name
+       $category_name, $map_id
     );
 
     return $this->wpdb->get_results($sql, $type);
