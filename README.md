@@ -5,7 +5,7 @@ WordPress plugin for POI maps using Google Maps API
 
 ## setup
 
-Install as a WordPress plugin or git submodule.
+Install as a WordPress plugin or git submodule. Currently it is suggested that you use the [latest release](https://github.com/GunnJerkens/gj-maps/releases) as master may be unstable as the database class is rewritten for version 1.0.0.
 
 ## styles
 Here is a block of [SASS](http://sass-lang.com) that describes the resulting
