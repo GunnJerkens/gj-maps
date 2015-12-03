@@ -74,18 +74,18 @@ if(!empty($_POST)) {
 
 $maps = $db->getMaps();
 $map  = $db->getMap($map_id);
-$map  = $map[0];
+$poi  = false;
+$cat  = false;
 
-/**
- * These calls are for retrieving the POI data for the table.
- */
-$pag = $ad->gjMapsPaginateTable($map_id, 30);
-$poi = $db->getPoi($map_id, $pag['sql_offset'], $pag['sql_length']);
-$cat = $db->getCategories($map_id);
+if(isset($map[0])) {
+  $map = $map[0];
+  $pag = $ad->gjMapsPaginateTable($map_id, 30);
+  $poi = $db->getPoi($map_id, $pag['sql_offset'], $pag['sql_length']);
+  $cat = $db->getCategories($map_id);
 
-wp_localize_script('gj_maps_admin_js', 'cat', $cat);
-wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
-
+  wp_localize_script('gj_maps_admin_js', 'cat', $cat);
+  wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
+}
 
 /*
 * This is our response messaging
@@ -150,7 +150,7 @@ $url = $ad->gjMapsBuildURL($map_id); ?>
         </thead>
         <tbody><?php
 
-          if(sizeof($poi) > 0) {
+          if($poi && sizeof($poi) > 0) {
             foreach ($poi as $point) { ?>
 
               <tr id="map-<?php echo $point->id; ?>" class="alternate poi" data-id="<?php echo $point->id; ?>" data-map="<?php echo $map_id; ?>">

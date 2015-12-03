@@ -6,8 +6,8 @@
  * @TODO: Move controller logic into a controller
  */
 
-$mapsDatabase = new gjMapsDB();
-$mapsAdmin    = new gjMapsAdmin();
+$db = new gjMapsDB();
+$ad = new gjMapsAdmin();
 
 if(isset($_FILES['file']) && isset($_POST)) {
   if(1 !== check_admin_referer('gj-maps-upload')) {
@@ -20,7 +20,7 @@ if(isset($_FILES['file']) && isset($_POST)) {
     $mapID = $_POST['map'];
   }
 
-  $response = $mapsAdmin->importData($_FILES['file'], $mapID);
+  $response = $ad->importData($_FILES['file'], $mapID);
 
   /*
   * This is our response messaging
@@ -34,7 +34,7 @@ if(isset($_FILES['file']) && isset($_POST)) {
   }
 }
 
-$maps = $mapsDatabase->getMaps(); ?>
+$maps = $db->getMaps(); ?>
 
 <div class="wrap">
   <form name="gj_maps_upload" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">

@@ -1,24 +1,29 @@
 <?php
 
+$ad = new gjMapsAdmin();
+
 if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'gj_maps_delete') {
-  if(1 === check_admin_referer('gj-maps-delete')) {
-    $adminFunctions = new gjMapsAdmin();
-
-    $response = $adminFunctions->deleteData($_POST);
-
-    if($response['status'] === 'success') {
-      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-    } else if ($response['status'] === 'error') {
-      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
-    }
-  } else {
+  if(1 !== check_admin_referer('gj-maps-delete')) {
     die('Permission denied.');
+  }
+
+  $response = $ad->deleteData($_POST);
+
+  /*
+  * This is our response messaging
+  */
+  if(isset($response) && isset($response['error'])) {
+    if($response['error']) {
+      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+    } else {
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    }
   }
 } ?>
 
 <div class="wrap">
   <h4>Are you sure you want to delete all data?</h4>
-  <form name="gj_maps_delete" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
+  <form name="gj_maps_delete" method="post">
     <input type="hidden" name="gj_hidden" value="gj_maps_delete">
     <?php wp_nonce_field('gj-maps-delete'); ?>
     <table class="form-table">

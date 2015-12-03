@@ -1,30 +1,25 @@
 <?php
 
-$adminFunctions = new gjMapsAdmin();
+$ad = new gjMapsAdmin();
 
 if(isset($_POST['gj_hidden']) && $_POST['gj_hidden'] == 'settings_update') {
-
-  if(1 === check_admin_referer('gj-maps-settings')) {
-
-    $post = $_POST;
-    $response = $adminFunctions->updateSettings($post);
-
-    if($response['status'] === 'success') {
-
-      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-
-    } else {
-
-      echo '<div id="message" class="error"><p>Settings failed to update.</p></div>';
-
-    }
-
-  } else {
-
+  if(1 !== check_admin_referer('gj-maps-settings')) {
     die('Permission denied');
-
   }
 
+  $post = $_POST;
+  $response = $ad->updateSettings($post);
+
+  /*
+  * This is our response messaging
+  */
+  if(isset($response) && isset($response['error'])) {
+    if($response['error']) {
+      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+    } else {
+      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+    }
+  }
 }
 
 $settings = gjMapsAdmin::getSettings(); ?>

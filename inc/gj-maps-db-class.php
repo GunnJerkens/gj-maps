@@ -272,8 +272,12 @@ class gjMapsDB
    */
   function updateMap($data)
   {
-    if(isset($data['name']) && $data['id']) {
-      return $this->wpdb->update($this->mapsTable, array('name' => $data['name']), array('id' => $data['id']));
+    if(isset($data['name']) && isset($data['map_id'])) {
+      if(empty(trim($data['map_id']))) {
+        $this->createMap();
+        $data['map_id'] = $this->maxMapId();
+      }
+      return $this->wpdb->update($this->mapsTable, array('name' => $data['name']), array('id' => $data['map_id']));
     }
 
     return false;

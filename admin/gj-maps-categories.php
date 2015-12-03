@@ -98,13 +98,13 @@ if(!empty($_POST)) {
 
 $maps = $db->getMaps();
 $map  = $db->getMap($map_id);
-$map  = $map[0];
+$cat  = false;
 
-/**
- * These calls are for retrieving the CAT data for the table.
- */
-$cat = $db->getCategories($map_id);
-wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
+if(isset($map[0])) {
+  $map = $map[0];
+  $cat = $db->getCategories($map_id);
+  wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
+}
 
 /*
 * This is our response messaging
@@ -119,38 +119,35 @@ if(isset($response) && isset($response['error'])) {
 
 echo $ad->mapsTab('cat', $maps, $map); ?>
 
-<div class="wrap"><?php
+<div class="wrap">
+  <form name="gj_maps_map_name" class="top-form" method="post">
+    <input type="hidden" name="form_name" value="gj_maps_map_name">
+    <?php wp_nonce_field('gj-maps-cat'); ?>
+    <input type="hidden" name="map_id" value="<?php echo $map_id; ?>">
+    <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map->name) ? $map->name : ''; ?>"/>
+    <button type="submit" class="btn button">Change Map Name</button>
+  </form>
+  <a href="?page=gj_maps_categories&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
 
-  if($cat !== false) { ?>
+  <form name="gj_maps_cat" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_name" value="gj_maps_cat">
+    <?php wp_nonce_field('gj-maps-cat'); ?>
+    <table class="wp-list-table widefat fixed gj-maps">
+      <thead class="">
+        <tr>
+          <th scope="col" id="cb" class="column-cb check-column">
+            <input id="cb-select-all-1" type="checkbox">
+          </th>
+          <th><span>Name</span></th>
+          <th style="width: 250px;"><span>Color</span></th>
+          <th><span>Icon</span></th>
+          <th><span>Hide Listing</span></th>
+          <th><span>Resist Filter</span></th>
+        </tr>
+      </thead>
+      <tbody><?php
 
-    <form name="gj_maps_map_name" class="top-form" method="post">
-      <input type="hidden" name="form_name" value="gj_maps_map_name">
-      <?php wp_nonce_field('gj-maps-cat'); ?>
-      <input type="hidden" name="id" value="<?php echo $map_id; ?>">
-      <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map->name) ? $map->name : ''; ?>"/>
-      <button type="submit" class="btn button">Change Map Name</button>
-    </form>
-    <a href="?page=gj_maps_categories&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
-
-    <form name="gj_maps_cat" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="form_name" value="gj_maps_cat">
-      <?php wp_nonce_field('gj-maps-cat'); ?>
-      <table class="wp-list-table widefat fixed gj-maps">
-        <thead class="">
-          <tr>
-            <th scope="col" id="cb" class="column-cb check-column">
-              <input id="cb-select-all-1" type="checkbox">
-            </th>
-            <th><span>Name</span></th>
-            <th style="width: 250px;"><span>Color</span></th>
-            <th><span>Icon</span></th>
-            <th><span>Hide Listing</span></th>
-            <th><span>Resist Filter</span></th>
-          </tr>
-        </thead>
-        <tbody><?php
-
-
+      if($cat && sizeof($cat > 0)) {
         foreach ($cat as $category) { ?>
 
           <tr id="map-<?php echo $category->id; ?>" class="alternate cat" data-id="<?php echo $category->id; ?>" data-map="<?php echo $map_id; ?>">
@@ -167,22 +164,16 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
           </tr><?php
 
-        } ?>
+        }
+      } ?>
 
-        </tbody>
-      </table>
+      </tbody>
+    </table>
 
-      <div class="gj-buttons">
-        <div class="btn button table-button add-cat-row">Add Category</div>
-        <button class="btn button table-button" type="submit">Update Categories</button>
-      </div>
+    <div class="gj-buttons">
+      <div class="btn button table-button add-cat-row">Add Category</div>
+      <button class="btn button table-button" type="submit">Update Categories</button>
+    </div>
 
-    </form><?php
-
-  } else {
-
-    echo '<h2>Hit the + to create your first map.</h2>';
-
-  } ?>
-
+  </form>
 </div>
