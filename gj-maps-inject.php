@@ -115,8 +115,8 @@ class gjMapsInject {
 
       }
 
-      $poi = $this->databaseFunctions->get_poi($type='OBJECT', $mapSettings['map_id']);
-      $cat = $this->databaseFunctions->get_cat($type='OBJECT', $mapSettings['map_id']);
+      $poi = $this->databaseFunctions->getPoi($mapSettings['map_id']);
+      $cat = $this->databaseFunctions->getCategories($mapSettings['map_id']);
 
     }
 
