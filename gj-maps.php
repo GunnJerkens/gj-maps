@@ -67,7 +67,7 @@ class gjMaps {
     $gj_cat  = $wpdb->prefix . "gjm_cat";
     $gj_poi  = $wpdb->prefix . "gjm_poi";
 
-    //MAPS table
+    // MAPS table
     $sql_maps = "CREATE TABLE $gj_maps (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         name VARCHAR(55) NOT NULL,
@@ -79,7 +79,7 @@ class gjMaps {
       CHARACTER SET utf8
       COLLATE utf8_unicode_ci;";
 
-    //CAT table
+    // CAT table
     $sql_cat = "CREATE TABLE $gj_cat (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         map_id mediumint(9) NOT NULL,
@@ -94,7 +94,7 @@ class gjMaps {
       CHARACTER SET utf8
       COLLATE utf8_unicode_ci;";
 
-    //POI table
+    // POI table
     $sql_poi = "CREATE TABLE $gj_poi (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         map_id mediumint(9) NOT NULL,

@@ -1,30 +1,35 @@
 <?php
 
-$databaseFunctions = new gjMapsDB();
-$adminFunctions = new gjMapsAdmin();
+/**
+ * Contains the markup for the import and the basic controller logic
+ *
+ *
+ */
+
+$mapsDatabase = new gjMapsDB();
+$mapsAdmin    = new gjMapsAdmin();
 
 if(isset($_FILES['file']) && isset($_POST)) {
-  if(1 === check_admin_referer('gj-maps-upload')) {
-    if($_POST['map'] === 'new') {
-      $mapID = 'new';
-    } else {
-      $mapID = $_POST['map'];
-    }
-
-    $response = $adminFunctions->importData($_FILES['file'], $mapID);
-
-    if($response['status'] === 'success') {
-      echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-    } else {
-      echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
-    }
-  } else {
+  if(1 !== check_admin_referer('gj-maps-upload')) {
     die('Permission denied.');
   }
 
+  if($_POST['map'] === 'new') {
+    $mapID = 'new';
+  } else {
+    $mapID = $_POST['map'];
+  }
+
+  $response = $mapsAdmin->importData($_FILES['file'], $mapID);
+
+  if($response['status'] === 'success') {
+    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
+  } else {
+    echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
+  }
 }
 
-$maps = $databaseFunctions->get_map(); ?>
+$maps = $mapsDatabase->getMaps(); ?>
 
 <div class="wrap">
   <form name="gj_maps_upload" method="post" enctype="multipart/form-data" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">

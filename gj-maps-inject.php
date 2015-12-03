@@ -5,17 +5,14 @@ class gjMapsInject {
   private $databaseFunctions;
 
   function __construct() {
-
     $this->databaseFunctions = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
 
     define('DISABLE_GJ_MAPS', FALSE);
-
   }
 
   function doScripts() {
-    global $post;
     $gjMaps = new gjMaps();
 
     if(!is_admin() && shortcode_exists('gjmaps') && !constant('DISABLE_GJ_MAPS')) {
@@ -26,12 +23,9 @@ class gjMapsInject {
       if (get_option('gj_maps_use_styles')) wp_enqueue_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
 
       return true;
-
-    } else {
-
-      return false;
-
     }
+
+    return false;
   }
 
   function shortcode($atts) {
