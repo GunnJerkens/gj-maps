@@ -44,9 +44,8 @@ class gjMapsAdmin
   * @since 0.3
   *
   **/
-
-  function gjMapsPaginateTable($map_id, $showItems) {
-
+  function gjMapsPaginateTable($map_id, $showItems)
+  {
     $count = $this->db->countRows();
     $totalItems = 0;
 
@@ -67,9 +66,7 @@ class gjMapsAdmin
     $pages = 1;
 
     if($totalItems != 0) {
-
       $pages = ceil($totalItems / $showItems);
-
     }
 
     $currentPage = 1;
@@ -78,9 +75,7 @@ class gjMapsAdmin
     parse_str($url['query'], $urlArray);
 
     if(isset($urlArray['paged'])) {
-
       $currentPage = $urlArray['paged'];
-
     }
 
     $sqlOffset = ($currentPage * $showItems) - ($showItems);
@@ -95,7 +90,6 @@ class gjMapsAdmin
     );
 
     return $pagination;
-
   }
 
   /**
@@ -107,19 +101,15 @@ class gjMapsAdmin
   * @since 0.3
   *
   **/
-
-  function gjMapsBuildURL($map_id = NULL) {
-
+  function gjMapsBuildURL($map_id = NULL)
+  {
     $base = '?page=gj_maps';
 
     if($map_id != NULL || $map_id !== 'new') {
-
       $base .= '&map_id='.$map_id; 
-
     }
 
     return $base;
-
   }
 
   /**
@@ -352,41 +342,28 @@ class gjMapsAdmin
   * @since 0.1
   *
   **/
-
-  function createCat($createItems) {
-
+  function createCat($createItems)
+  {
     $hasError = false;
 
     foreach($createItems as $item) {
-
       unset($item['mode']);
-
-      $response[] = $this->db->createCat($item);
-
+      $response[] = $this->db->createCategory($item);
     }
 
     foreach($response as $response) {
-
       if($response !== 1) {
-
         $hasError = true;
-
       }
-
     }
 
     if(!$hasError) {
-
       $response = $this->response(false, 'Categories created successfully.');
-
     } else {
-
       $response = $this->response(true, 'Categories failed to be created.');
-
     }
 
     return $response;
-
   }
 
   /**
@@ -398,41 +375,28 @@ class gjMapsAdmin
   * @since 0.1
   *
   **/
-
-  function editCat($updateItems) {
-
+  function editCat($updateItems)
+  {
     $hasError = false;
 
     foreach($updateItems as $item) {
-
       unset($item['mode']);
-
-      $responses[] = $this->db->editCat($item);
-
+      $responses[] = $this->db->updateCategories($item);
     }
 
     foreach($responses as $response) {
-
       if($response !== 1) {
-
         $hasError = true;
-
       }
-
     }
 
     if(!$hasError) {
-
       $response = $this->response(false, 'Categories updated successfully.');
-
     } else {
-
       $response = $this->response(true, 'Categories failed to update.');
-
     }
 
     return $response;
-  
   }
 
   /**
@@ -444,41 +408,28 @@ class gjMapsAdmin
   * @since 0.1
   *
   **/
-
-  function deleteCat($deleteItems) {
-
+  function deleteCat($deleteItems)
+  {
     $hasError = false;
 
     foreach($deleteItems as $item) {
-
       unset($item['delete']);
-
-      $responses[] = $this->db->deleteCat($item['id']);
-
+      $responses[] = $this->db->deleteCategory($item['id']);
     }
 
     foreach($responses as $response) {
-
       if($response !== 1) {
-
         $hasError = true;
-
       }
-
     }
 
     if(!$hasError) {
-
       $response = $this->response('success', 'Items deleted successfully.');
-
     } else {
-
       $response = $this->response('error', 'Some items failed to delete');
-
     }
 
     return $response;
-
   }
 
   /**
@@ -577,7 +528,8 @@ class gjMapsAdmin
   * @since 0.1
   *
   **/
-  function importData($uploadedFile, $mapID) {
+  function importData($uploadedFile, $mapID)
+  {
 
     $labels = array();
     $poi    = array();
