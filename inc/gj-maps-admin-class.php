@@ -579,17 +579,10 @@ class gjMapsAdmin
   **/
   function importData($uploadedFile, $mapID) {
 
+    // Create a new map if one does not exist
     if($mapID === 'new') {
-      $maxID = $this->db->maxMapID();
-      $maxID = ((int) $maxID[0]->max_id);
-
-      if($maxID != NULL) {
-        $mapID = $maxID + 1;
-      } else {
-        $mapID = 1;
-      }
-
-      $this->db->saveMap($mapID);
+      $this->db->createMap();
+      $mapID = $this->db->maxMapID();
     }
 
     // Complete the upload of the CSV
@@ -608,7 +601,11 @@ class gjMapsAdmin
     $labels = array();
 
     foreach ($poi[0] as $key=>$value) {
-      $labels[$value] = trim(strtolower($value));
+      $str = trim(strtolower($value));
+
+      if(!empty($str)) {
+        $labels[$str] = $str;
+      }
     }
 
     $labels['lat'] = 'lat';
