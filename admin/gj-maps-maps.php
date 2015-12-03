@@ -1,21 +1,28 @@
 <?php
 
-$db   = new gjMapsDB();
-$cont = new gjMapsAdmin();
+/**
+ * Contains the markup for the maps and the basic controller logic
+ *
+ * @TODO: Move controller logic into a controller
+ */
+
+
+$db = new gjMapsDB();
+$ad = new gjMapsAdmin();
 
 /**
  * Delete a map
  */
 if(isset($_GET['delete'])) {
   $map_id   = (int) $_GET['delete'];
-  $response = $cont->deleteMap($map_id);
+  $response = $ad->deleteMap($map_id);
 }
 
 /**
  * Create a map else set our map ID
  */
 if(isset($_GET['map_id']) && $_GET['map_id'] === "new") {
-  $map_id = $cont->createMap();
+  $map_id = $ad->createMap();
 } elseif (!isset($_GET['map_id'])) {
   $map_id = $db->minMapId();
 } else {
@@ -26,43 +33,42 @@ if(isset($_GET['map_id']) && $_GET['map_id'] === "new") {
  * Handle POST items
  */
 if(!empty($_POST)) {
-  if(1 === check_admin_referer('gj-maps-poi')) {
-
-    if($_POST['form_name'] === 'gj_maps_map_name') {
-      $response = $cont->renameMap($_POST);
-    }
-
-    if($_POST['form_name'] === 'geocode') {
-      $response = $cont->geocodePOI($map_id);
-    }
-
-    if($_POST['form_name'] === 'gj_maps_poi' ) {
-
-      foreach($_POST as $post) {
-        if(isset($post['delete']) && $post['delete'] === 'on') {
-          $deleteItems[] = $post;
-        } elseif(isset($post['mode']) && $post['mode'] === 'update') {
-          $updateItems[] = $post;
-        } elseif(isset($post['mode']) && $post['mode'] === 'create') {
-          $createItems[] = $post;
-        }
-      }
-
-      if(!empty($deleteItems)) {
-        $response = $cont->deletePOI($deleteItems);
-      }
-
-      if(!empty($updateItems)) {
-        $response = $cont->editPOI($updateItems);
-      }
-
-      if(!empty($createItems)) {
-        $response = $cont->createPOI($createItems);
-      }
-
-    }
-  } else {
+  if(1 !== check_admin_referer('gj-maps-poi')) {
     die('Permission denied');
+  }
+
+  if($_POST['form_name'] === 'gj_maps_map_name') {
+    $response = $ad->renameMap($_POST);
+  }
+
+  if($_POST['form_name'] === 'geocode') {
+    $response = $ad->geocodePOI($map_id);
+  }
+
+  if($_POST['form_name'] === 'gj_maps_poi' ) {
+
+    foreach($_POST as $post) {
+      if(isset($post['delete']) && $post['delete'] === 'on') {
+        $deleteItems[] = $post;
+      } elseif(isset($post['mode']) && $post['mode'] === 'update') {
+        $updateItems[] = $post;
+      } elseif(isset($post['mode']) && $post['mode'] === 'create') {
+        $createItems[] = $post;
+      }
+    }
+
+    if(!empty($deleteItems)) {
+      $response = $ad->deletePOI($deleteItems);
+    }
+
+    if(!empty($updateItems)) {
+      $response = $ad->editPOI($updateItems);
+    }
+
+    if(!empty($createItems)) {
+      $response = $ad->createPOI($createItems);
+    }
+
   }
 }
 
@@ -73,7 +79,7 @@ $map  = $map[0];
 /**
  * These calls are for retrieving the POI data for the table.
  */
-$pag = $cont->gjMapsPaginateTable($map_id, 30);
+$pag = $ad->gjMapsPaginateTable($map_id, 30);
 $poi = $db->getPoi($map_id, $pag['sql_offset'], $pag['sql_length']);
 $cat = $db->getCategories($map_id);
 
@@ -92,12 +98,12 @@ if(isset($response) && isset($response['error'])) {
   }
 }
 
-echo $cont->mapsTab('poi', $maps, $map);
+echo $ad->mapsTab('poi', $maps, $map);
 
 /*
 * Sets up the pagination && urls
 */
-$url = $cont->gjMapsBuildURL($map_id); ?>
+$url = $ad->gjMapsBuildURL($map_id); ?>
 
 
 <div class="wrap">

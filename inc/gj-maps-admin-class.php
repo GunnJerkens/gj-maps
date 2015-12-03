@@ -139,7 +139,7 @@ class gjMapsAdmin
     $tabs = '<h2 class="nav-tab-wrapper">';
 
     foreach ($maps as $key=>$value) {
-      $tabs .= '<a href="?page='.$page.'&map_id='.$value->id.'" class="nav-tab'.($map->id == $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
+      $tabs .= '<a href="?page='.$page.'&map_id='.$value->id.'" class="nav-tab'.((int) $map->id === (int) $value->id ? ' nav-tab-active' : '').'">'.$value->name.'</a>';
       if($value->id == $map->id) {
         $map_name = $value->name;
       }

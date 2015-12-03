@@ -1,158 +1,138 @@
 <?php
 
-$databaseFunctions = new gjMapsDB();
-$adminFunctions = new gjMapsAdmin();
+/**
+ * Contains the markup for the categories and the basic controller logic
+ *
+ * @TODO: Move controller logic into a controller
+ */
 
-/*
-* This is our DELETE handling
-*/
+$db = new gjMapsDB();
+$ad = new gjMapsAdmin();
 
+/**
+ * Delete a map
+ */
 if(isset($_GET['delete'])) {
-
   $delete_map_id = $_GET['delete'];
-
-  $response = $adminFunctions->deleteMap($delete_map_id);
-
+  $response = $ad->deleteMap($delete_map_id);
 }
 
-/*
-* This is our POST handling
-*/
+/**
+ * Create a map else set our map ID
+ */
+if(isset($_GET['map_id']) && $_GET['map_id'] === "new") {
+  $map_id = $ad->createMap();
+} elseif (!isset($_GET['map_id'])) {
+  $map_id = $db->minMapId();
+} else {
+  $map_id = (int) $_GET['map_id'];
+}
 
+/**
+ * Handle POST items
+ */
 if(!empty($_POST)) {
-  if(1 === check_admin_referer('gj-maps-cat')) {
+  if(1 !== check_admin_referer('gj-maps-cat')) {
+    die('Permission denied.');
+  }
 
-    if($_POST['form_name'] === 'gj_maps_map_name') {
-      $response = $adminFunctions->renameMap($_POST);
-    }
+  if($_POST['form_name'] === 'gj_maps_map_name') {
+    $response = $ad->renameMap($_POST);
+  }
 
-    if($_POST['form_name'] === 'gj_maps_cat') {
+  if($_POST['form_name'] === 'gj_maps_cat') {
 
-      foreach($_POST as $postKey=>$postValue) {
+    foreach($_POST as $postKey=>$postValue) {
 
-        if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
-          $deleteItems[] = $postValue;
-        }
+      if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
+        $deleteItems[] = $postValue;
+      }
 
-        if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
-          foreach($_FILES as $fileKey=>$fileValue) {
+      if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
+        foreach($_FILES as $fileKey=>$fileValue) {
 
-            if($postKey === $fileKey) {
-              $icon['name'] = isset($fileValue['name']['icon']) ? $fileValue['name']['icon'] : '';
-              $icon['type'] = isset($fileValue['type']['icon']) ? $fileValue['type']['icon'] : '';
-              $icon['tmp_name'] = isset($fileValue['tmp_name']['icon']) ? $fileValue['tmp_name']['icon'] : '';
-              $icon['error'] = isset($fileValue['error']['icon']) ? $fileValue['error']['icon'] : '';
-              $icon['size'] = isset($fileValue['size']['icon']) ? $fileValue['size']['icon'] : '';
+          if($postKey === $fileKey) {
+            $icon['name'] = isset($fileValue['name']['icon']) ? $fileValue['name']['icon'] : '';
+            $icon['type'] = isset($fileValue['type']['icon']) ? $fileValue['type']['icon'] : '';
+            $icon['tmp_name'] = isset($fileValue['tmp_name']['icon']) ? $fileValue['tmp_name']['icon'] : '';
+            $icon['error'] = isset($fileValue['error']['icon']) ? $fileValue['error']['icon'] : '';
+            $icon['size'] = isset($fileValue['size']['icon']) ? $fileValue['size']['icon'] : '';
 
-              if(isset($icon['name'])) {
-                $upload = wp_handle_upload($icon, array('test_form'=>false));
+            if(isset($icon['name'])) {
+              $upload = wp_handle_upload($icon, array('test_form'=>false));
 
-                if(isset($upload['url'])) {
-                  $postValue['icon'] = $upload['url'];
-                }
+              if(isset($upload['url'])) {
+                $postValue['icon'] = $upload['url'];
               }
             }
           }
-          // Set's our checkboxes to false as they do not POST unchecked
-          if(!isset($postValue['hide_list'])) $postValue['hide_list'] = false;
-          if(!isset($postValue['filter_resist'])) $postValue['filter_resist'] = false;
-          $updateItems[] = $postValue;
         }
-
-        if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
-          $createItems[] = $postValue;
-        }
+        // Set's our checkboxes to false as they do not POST unchecked
+        if(!isset($postValue['hide_list'])) $postValue['hide_list'] = false;
+        if(!isset($postValue['filter_resist'])) $postValue['filter_resist'] = false;
+        $updateItems[] = $postValue;
       }
 
-      if(!empty($deleteItems)) {
-        $response = $adminFunctions->deleteCat($deleteItems);
-      }
-
-      if(!empty($updateItems)) {
-        $response = $adminFunctions->editCat($updateItems);
-      }
-
-      if(!empty($createItems)) {
-        $response = $adminFunctions->createCat($createItems);
+      if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
+        $createItems[] = $postValue;
       }
     }
 
-    if($_GET['map_id'] === 'new') {
-      $createMap = false;
+    if(!empty($deleteItems)) {
+      $response = $ad->deleteCat($deleteItems);
     }
-  } else {
-    die('Permission denied.');
+
+    if(!empty($updateItems)) {
+      $response = $ad->editCat($updateItems);
+    }
+
+    if(!empty($createItems)) {
+      $response = $ad->createCat($createItems);
+    }
+  }
+
+  if($_GET['map_id'] === 'new') {
+    $createMap = false;
   }
 }
 
-/*
-* This is the maps tabbing system
-*/
+$maps = $db->getMaps();
+$map  = $db->getMap($map_id);
+$map  = $map[0];
 
-$map = $databaseFunctions->get_map();
-
-if(isset($createMap) && $createMap === false) {
-
-  $map_id = $_POST['id'];
-
-} else {
-
-  $map_id = $adminFunctions->tabsMapID($_GET);
-
-}
-
-echo $adminFunctions->mapsTab('cat', $map, $map_id);
-
-
-/*
-* Retrieve the cat data for the table
-*/
-
-$cat = $databaseFunctions->get_cat($type='OBJECT', $map_id);
+/**
+ * These calls are for retrieving the CAT data for the table.
+ */
+$cat = $db->getCategories($map_id);
 wp_localize_script('gj_maps_admin_js', 'map', array('id' => $map_id));
-
 
 /*
 * This is our response messaging
 */
-
-if(isset($response)) {
-
-  if($response['status'] === 'success') {
-
-    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
-
-  } else if ($response['status'] === 'error') {
-
+if(isset($response) && isset($response['error'])) {
+  if($response['error']) {
     echo '<div id="message" class="error"><p>'.$response['message'].'</p></div>';
-
+  } else {
+    echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
   }
-
 }
 
-/*
-* Sets our POST action
-*/
-
-$current_uri = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
-$parsed_uri = parse_url($current_uri);
-$post_uri = $map_id ? $parsed_uri['path'].'?page=gj_maps_categories&map_id='.$map_id : $current_uri; ?>
-
+echo $ad->mapsTab('cat', $maps, $map); ?>
 
 <div class="wrap"><?php
 
   if($cat !== false) { ?>
 
-    <form name="gj_maps_map_name" class="top-form" method="post" action="<?php echo $post_uri; ?>">
+    <form name="gj_maps_map_name" class="top-form" method="post">
       <input type="hidden" name="form_name" value="gj_maps_map_name">
       <?php wp_nonce_field('gj-maps-cat'); ?>
       <input type="hidden" name="id" value="<?php echo $map_id; ?>">
-      <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map[0]->name) ? $map[0]->name : ''; ?>"/>
+      <input type="text" name="name" placeholder="Map Name" value="<?php echo isset($map->name) ? $map->name : ''; ?>"/>
       <button type="submit" class="btn button">Change Map Name</button>
     </form>
     <a href="?page=gj_maps_categories&delete=<?php echo $map_id; ?>" id="delete">Delete Map</a>
 
-    <form name="gj_maps_cat" method="post" enctype="multipart/form-data" action="<?php echo $post_uri; ?>">
+    <form name="gj_maps_cat" method="post" enctype="multipart/form-data">
       <input type="hidden" name="form_name" value="gj_maps_cat">
       <?php wp_nonce_field('gj-maps-cat'); ?>
       <table class="wp-list-table widefat fixed gj-maps">

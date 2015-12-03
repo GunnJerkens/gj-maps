@@ -3,7 +3,7 @@
 /**
  * Contains the markup for the import and the basic controller logic
  *
- *
+ * @TODO: Move controller logic into a controller
  */
 
 $mapsDatabase = new gjMapsDB();
