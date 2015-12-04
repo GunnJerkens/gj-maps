@@ -91,7 +91,7 @@ if(!empty($_POST)) {
     }
   }
 
-  if($_GET['map_id'] === 'new') {
+  if(isset($_GET['map_id']) && $_GET['map_id'] === 'new') {
     $createMap = false;
   }
 }

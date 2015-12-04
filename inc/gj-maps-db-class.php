@@ -547,14 +547,13 @@ class gjMapsDB
    *
    * @return int || false
    */
-  function updateCategories($categories)
+  function updateCategories($category)
   {
-    foreach($categories as $cat) {
-      $cat['icon'] = isset($cat['icon']) && $cat['icon'] === null ? '' : $cat['icon'];
-      $update[] = $this->wpdb->update($this->catTable, $cat, array('id' => $cat['id'], 'map_id' => $cat['map_id']));
+    if(!isset($category['icon']) || $category['icon'] === null) {
+      $category['icon'] = "";
     }
 
-    return (in_array(false, $update, true)) ? false : sizeof($update);
+    return $this->wpdb->update($this->catTable, $category, array('id' => $category['id'], 'map_id' => $category['map_id']));
   }
 
   /**
