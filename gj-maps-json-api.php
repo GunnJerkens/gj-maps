@@ -45,11 +45,11 @@ class gjMapsAPI {
   * This sends a JSON response to the browser
   */
   protected function send_response($mapID){
-    $gjMapsDatabase = new gjMapsDB();
+    $db = new gjMapsDB();
 
     $data = array(
-      'poi' => $gjMapsDatabase->get_poi($type='OBJECT', $mapID),
-      'cat' => $gjMapsDatabase->get_cat($type='OBJECT', $mapID)
+      'poi' => $db->getPoi($mapID),
+      'cat' => $db->getCategories($mapID),
     );
 
     header('content-type: application/json; charset=utf-8');
