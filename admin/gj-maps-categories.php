@@ -20,9 +20,9 @@ if(isset($_GET['delete'])) {
 /**
  * Create a map else set our map ID
  */
-if(isset($_GET['map_id']) && $_GET['map_id'] === "new") {
+if(isset($_GET['map_id']) && $_GET['map_id'] === "new" && empty($_POST)) {
   $map_id = $ad->createMap();
-} elseif (!isset($_GET['map_id'])) {
+} elseif (!isset($_GET['map_id']) || (isset($_GET['map_id']) && $_GET['map_id'] === "new")) {
   $map_id = $db->minMapId();
 } else {
   $map_id = (int) $_GET['map_id'];
