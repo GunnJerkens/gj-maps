@@ -549,10 +549,6 @@ class gjMapsDB
    */
   function updateCategories($category)
   {
-    if(!isset($category['icon']) || $category['icon'] === null) {
-      $category['icon'] = "";
-    }
-
     return $this->wpdb->update($this->catTable, $category, array('id' => $category['id'], 'map_id' => $category['map_id']));
   }
 

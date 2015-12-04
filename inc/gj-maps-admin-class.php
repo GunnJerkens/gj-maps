@@ -424,9 +424,9 @@ class gjMapsAdmin
     }
 
     if(!$hasError) {
-      $response = $this->response('success', 'Items deleted successfully.');
+      $response = $this->response(false, 'Items deleted successfully.');
     } else {
-      $response = $this->response('error', 'Some items failed to delete');
+      $response = $this->response(true, 'Some items failed to delete');
     }
 
     return $response;
