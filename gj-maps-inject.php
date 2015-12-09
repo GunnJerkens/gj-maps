@@ -150,7 +150,7 @@ class gjMapsInject {
     $settings['link_text']    = $link_text ? $link_text : '';
     $settings['poi_list']     = $poi_list ? $poi_list : '0';
     $settings['poi_num']      = $poi_num ? $poi_num : '0';
-    $settings['poi_icon']     = $poi_num ? plugin_dir_url(__FILE__) . 'img/trans.png' : '0';
+    $settings['poi_icon']     = plugin_dir_url(__FILE__) . 'img/trans.png';
     $settings['filter_load']  = $filter_load ? $filter_load : '0';
     $settings['mouse_scroll'] = $mouse_scroll ? $mouse_scroll : '0';
     $settings['mouse_drag']   = $mouse_drag ? $mouse_drag : '0';

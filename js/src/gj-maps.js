@@ -249,7 +249,7 @@ jQuery(document).ready(function($) {
 
             if (poiCat) {
               markerOptions.icon = {
-                url: poiCat.icon,
+                url: poiCat.icon !== "" ? poiCat.icon : settings.poi_icon,
                 anchor: iconAnchor,
               };
             }
