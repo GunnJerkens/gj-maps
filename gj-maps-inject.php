@@ -61,7 +61,7 @@ class gjMapsInject {
         'latitude'  => get_option('gj_maps_center_lat'),
         'longitude' => get_option('gj_maps_center_lng'),
         'zoom'      => get_option('gj_maps_map_zoom'),
-        'api'       => null
+        'api'       => false
       ), $atts));
 
       $gjmapsAPI = $this->frontend(array(
@@ -74,26 +74,31 @@ class gjMapsInject {
         )
       );
 
-      if ($position === 'bottom' OR $position === 'bot') {
+      var_dump($gjmapsAPI);
 
-        return $gjmapsAPI.$bottom;
-
-      } else {
-
-        return $gjmapsAPI.$top;
-
+      if($gjmapsAPI) {
+        return ($position === 'bottom' OR $position === 'bot') ? $gjmapsAPI.$bottom : $gjmapsAPI.$top;
       }
-
     }
-
   }
 
+  /**
+   * This method dumps out the content to the frontend as CDATA
+   *
+   * @param $mapSettings array
+   *
+   * @return bool
+   */
   function frontend($mapSettings) {
 
-    if($mapSettings['api'] != null) {
+    if(isset($mapSettings['api']) && $mapSettings['api'] !== false) {
 
-      $json = @file_get_contents($mapSettings['api']);
+      $json = file_get_contents($mapSettings['api']);
       $data = json_decode($json);
+
+      if(!$data || !isset($data->poi) || !isset($data->cat)) {
+        return false;
+      }
 
       $poi = $data->poi;
       $cat = $data->cat;
@@ -101,23 +106,15 @@ class gjMapsInject {
     } else {
 
       if($mapSettings['map_id'] === null && $mapSettings['map'] !== null) {
-
         $mapSettings['map_id'] = $this->databaseFunctions->getMapID($mapSettings['map']);
+      }
 
-      } elseif($mapSettings['map'] === null && $mapSettings['map_id'] !== null) {
-
-        $mapSettings['map'] = $this->databaseFunctions->getMapName($mapSettings['map_id']);
-
-      } else {
-
-        $mapSettings['map'] = 'Map 1';
-        $mapSettings['map_id'] = '1';
-
+      if(!isset($mapSettings['map_id'])) {
+        return false;
       }
 
       $poi = $this->databaseFunctions->getPoi($mapSettings['map_id']);
       $cat = $this->databaseFunctions->getCategories($mapSettings['map_id']);
-
     }
 
     if(get_option('gj_maps_poi_num')) {
@@ -162,6 +159,8 @@ class gjMapsInject {
     wp_localize_script('gj-maps-main', 'cat', $cat);
     wp_localize_script('gj-maps-main', 'settings', $settings);
 
+
+    return true;
   }
 
 }
