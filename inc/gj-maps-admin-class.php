@@ -227,17 +227,18 @@ class gjMapsAdmin
         if(!is_wp_error($googleResponseEncoded)) {
           $googleResponse = json_decode($googleResponseEncoded['body']);
 
-          if($googleResponse === 'ZERO_RESULTS') {
+          if(isset($googleResponse->results[0]->geometry->location->lat) && isset($googleResponse->results[0]->geometry->location->lng)) {
+            $point['lat'] = $googleResponse->results[0]->geometry->location->lat;
+            $point['lng'] = $googleResponse->results[0]->geometry->location->lng;
+          } else {
             $point['lat'] = '0';
             $point['lng'] = '0';
-          } else {
-            $location = $googleResponse->results[0]->geometry->location;
-            $point['lat'] = $location->lat;
-            $point['lng'] = $location->lng;
           }
+
           $updatePOI[] = $point;
         }
 
+        // Do not remove, this avoids rate limiting on the Google API
         usleep(125000);
       }
     }
