@@ -379,16 +379,16 @@ class gjMapsDB
     foreach ($poi as $key=>$value) {
       $insert[] = $this->wpdb->insert($this->poiTable,
         array(
-          'cat_id'  => isset($value['cat_id']) ? $value['cat_id'] : '',
-          'map_id'  => isset($value['map_id']) ? $value['map_id'] : '',
-          'name'    => isset($value['name']) ? $value['name'] : '',
+          'cat_id'  => isset($value['cat_id'])  ? $value['cat_id']  : '',
+          'map_id'  => isset($value['map_id'])  ? $value['map_id']  : '',
+          'name'    => isset($value['name'])    ? $value['name']    : '',
           'address' => isset($value['address']) ? $value['address'] : '',
-          'city'    => isset($value['city']) ? $value['city'] : '',
-          'state'   => isset($value['state']) ? $value['state'] : '',
-          'zip'     => isset($value['zip']) ? $value['zip'] : '',
+          'city'    => isset($value['city'])    ? $value['city']    : '',
+          'state'   => isset($value['state'])   ? $value['state']   : '',
+          'zip'     => isset($value['zip'])     ? $value['zip']     : '',
           'country' => isset($value['country']) ? $value['country'] : '',
-          'phone'   => isset($value['phone']) ? $value['phone'] : '',
-          'url'     => isset($value['url']) ? $value['url'] : ''
+          'phone'   => isset($value['phone'])   ? $value['phone']   : '',
+          'url'     => isset($value['url'])     ? $value['url']     : '',
         )
       );
     }
