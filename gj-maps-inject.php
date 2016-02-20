@@ -93,7 +93,7 @@ class gjMapsInject {
       );
 
       if($gjmapsAPI) {
-        return ($position === 'bottom' OR $position === 'bot') ? $gjmapsAPI.$bot : $gjmapsAPI.$top;
+        return ($position === 'bottom' OR $position === 'bot') ? $bot : $top;
       }
     }
   }
@@ -174,7 +174,6 @@ class gjMapsInject {
     wp_localize_script('gj-maps-main', 'poi', $poi);
     wp_localize_script('gj-maps-main', 'cat', $cat);
     wp_localize_script('gj-maps-main', 'settings', $settings);
-
 
     return true;
   }
