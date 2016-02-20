@@ -93,7 +93,7 @@ class gjMapsInject {
       );
 
       if($gjmapsAPI) {
-        return ($position === 'bottom' OR $position === 'bot') ? $gjmapsAPI.$bottom : $gjmapsAPI.$top;
+        return ($position === 'bottom' OR $position === 'bot') ? $gjmapsAPI.$bot : $gjmapsAPI.$top;
       }
     }
   }
