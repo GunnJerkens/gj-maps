@@ -2,21 +2,33 @@
 
 class gjMapsInject {
 
-  private $databaseFunctions;
+  /**
+   * Database class
+   *
+   * @var object
+   */
+  private $db;
 
+  /**
+   * Instantiate the class
+   *
+   * @return void
+   */
   function __construct() {
-    $this->databaseFunctions = new gjMapsDB();
+    $this->db = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
 
     define('DISABLE_GJ_MAPS', FALSE);
   }
 
+  /**
+   * Handles loading the script to the needed templates
+   *
+   * @return bool
+   */
   function doScripts() {
-    $gjMaps = new gjMaps();
-
     if(!is_admin() && shortcode_exists('gjmaps') && !constant('DISABLE_GJ_MAPS')) {
-
       wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3', null, null);
       if(get_option('gj_maps_poi_num')) wp_enqueue_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps'), false, true);
       wp_enqueue_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
@@ -28,8 +40,14 @@ class gjMapsInject {
     return false;
   }
 
+  /**
+   * Process shortcodes from the_content or do_shortcode()
+   *
+   * @param $atts array
+   *
+   * @return string
+   */
   function shortcode($atts) {
-
     $hasScripts = $this->doScripts();
 
     if($hasScripts) {
@@ -39,19 +57,19 @@ class gjMapsInject {
       $cat_default = get_option('gj_cat_default');
       if ($cat_default === "") { $cat_default = "#ffffff"; }
 
-      $gjWrapper = '<div class="gjmaps-wrapper">';
+      $gjWrapperOpen = '<div class="gjmaps-wrapper">';
       $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
       $gjCategories = '
         <ul class="gjmaps-categories">
           <li class="gjmaps-category active" data-cat-id="all">
-            <div class="gjmaps-label" style="background-color: '.$cat_default.';" data-type="label"><span>View All</span></label>
+            <div class="gjmaps-label" style="background-color: ' .$cat_default. ';" data-type="label"><span>View All</span></label>
           </li>
         </ul>
-        ';
+      ';
       $gjWrapperClose = '</div>';
 
-      $top = $right = $left = $gjWrapper.$gjCategories.$gjCanvas.$gjWrapperClose;
-      $bottom = $gjWrapper.$gjCanvas.$gjCategories.$gjWrapperClose;
+      $top = $gjWrapperOpen.$gjCategories.$gjCanvas.$gjWrapperClose;
+      $bot = $gjWrapperOpen.$gjCanvas.$gjCategories.$gjWrapperClose;
 
 
       extract(shortcode_atts(array(
@@ -73,8 +91,6 @@ class gjMapsInject {
           'api'       => $api
         )
       );
-
-      var_dump($gjmapsAPI);
 
       if($gjmapsAPI) {
         return ($position === 'bottom' OR $position === 'bot') ? $gjmapsAPI.$bottom : $gjmapsAPI.$top;
@@ -106,15 +122,15 @@ class gjMapsInject {
     } else {
 
       if($mapSettings['map_id'] === null && $mapSettings['map'] !== null) {
-        $mapSettings['map_id'] = $this->databaseFunctions->getMapID($mapSettings['map']);
+        $mapSettings['map_id'] = $this->db->getMapID($mapSettings['map']);
       }
 
       if(!isset($mapSettings['map_id'])) {
         return false;
       }
 
-      $poi = $this->databaseFunctions->getPoi($mapSettings['map_id']);
-      $cat = $this->databaseFunctions->getCategories($mapSettings['map_id']);
+      $poi = $this->db->getPoi($mapSettings['map_id']);
+      $cat = $this->db->getCategories($mapSettings['map_id']);
     }
 
     if(get_option('gj_maps_poi_num')) {
