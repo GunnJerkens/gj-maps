@@ -568,8 +568,8 @@ class gjMapsAdmin
     $labels['lng'] = 'lng';
 
     foreach ($poi as $key=>$value) {
-      foreach($unset as $key) {
-        unset($value[$key]);
+      foreach($unset as $destroy) {
+        unset($value[$destroy]);
       }
 
       array_push($value, null);
