@@ -46,21 +46,14 @@ class gjMapsAdmin
   **/
   function gjMapsPaginateTable($map_id, $showItems)
   {
-    $count = $this->db->countRows();
+    $allPoints  = $this->db->countRows();
     $totalItems = 0;
 
-    foreach($count as $map) {
-
-      $totalItems = 0;
-
-      if($map->map_id === $map_id) {
-
-        $map = (array) $map;
-        $totalItems = (int) $map{'COUNT(*)'};
+    foreach($allPoints as $map) {
+      if((int) $map->map_id === $map_id) {
+        $totalItems = (int) $map->{'COUNT(*)'};
         break;
-
       }
-
     }
 
     $pages = 1;
@@ -81,12 +74,12 @@ class gjMapsAdmin
     $sqlOffset = ($currentPage * $showItems) - ($showItems);
 
     $pagination = array(
-      'show_items' => $showItems,
-      'total_items' => $totalItems,
-      'pages' => $pages,
+      'show_items'   => $showItems,
+      'total_items'  => $totalItems,
+      'pages'        => $pages,
       'current_page' => $currentPage,
-      'sql_offset' => $sqlOffset,
-      'sql_length' => $showItems
+      'sql_offset'   => $sqlOffset,
+      'sql_length'   => $showItems
     );
 
     return $pagination;
