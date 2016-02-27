@@ -200,7 +200,7 @@ $url = $ad->gjMapsBuildURL($map_id); ?>
 
   </form><?php
 
-  if(isset($pag) && $pag['total_items'] > 1) { ?>
+  if(isset($pag) && $pag['pages'] > 1) { ?>
     <div class="tablenav bottom">
       <div class="tablenav-pages">
         <span class="displaying-num"><?php echo $pag['total_items'].' items'; ?></span>
