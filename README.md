@@ -89,7 +89,7 @@ You can define a constant on a page template prior to `get_header()` to disable 
 running another Google Maps application on the page. Our maps default to the latest stable version of maps, currently `3.17`.
 
 ```
-define('DISABLE_GJ_MAPS', true);
+define('DISABLE_GJ_MAPS', [any value]);
 ```
 
 ## caching

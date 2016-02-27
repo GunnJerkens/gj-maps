@@ -18,8 +18,6 @@ class gjMapsInject {
     $this->db = new gjMapsDB();
 
     add_shortcode('gjmaps', array(&$this, 'shortcode'));
-
-    define('DISABLE_GJ_MAPS', FALSE);
   }
 
   /**
@@ -28,7 +26,7 @@ class gjMapsInject {
    * @return bool
    */
   function doScripts() {
-    if(!is_admin() && shortcode_exists('gjmaps') && !constant('DISABLE_GJ_MAPS')) {
+    if(!is_admin() && shortcode_exists('gjmaps') && !defined('DISABLE_GJ_MAPS')) {
       wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3', null, null);
       if(get_option('gj_maps_poi_num')) wp_enqueue_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps'), false, true);
       wp_enqueue_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps'), false, true);
