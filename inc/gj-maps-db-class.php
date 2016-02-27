@@ -103,8 +103,8 @@ class gjMapsDB
   function countRows($type='OBJECT')
   {
     $count = $this->wpdb->get_results(
-      "SELECT map_id, COUNT(*) 
-       FROM $this->poiTable 
+      "SELECT map_id, COUNT(*)
+       FROM $this->poiTable
        GROUP BY map_id;
       ");
 
@@ -163,7 +163,7 @@ class gjMapsDB
 
   /**
    * Returns the maps max poi id
-   * 
+   *
    * @since 0.3
    *
    * @param $type string
@@ -262,7 +262,7 @@ class gjMapsDB
   }
 
   /**
-   * Updates a maps name 
+   * Updates a maps name
    *
    * @since 0.3
    *
@@ -290,7 +290,7 @@ class gjMapsDB
    *
    * @param $map_id int
    *
-   * @return 
+   * @return
    */
 
   function deleteMap($map_id)
@@ -306,7 +306,7 @@ class gjMapsDB
 
   /**
    * Delete ALL maps
-   * 
+   *
    * @since 0.3
    *
    * @return int || false
@@ -318,7 +318,7 @@ class gjMapsDB
 
   /**
    * Retrieve POI for a specific map id, allows offset/length overrides
-   * 
+   *
    * @since 0.3
    *
    * @param $map_id int
@@ -389,6 +389,8 @@ class gjMapsDB
           'country' => isset($value['country']) ? $value['country'] : '',
           'phone'   => isset($value['phone'])   ? $value['phone']   : '',
           'url'     => isset($value['url'])     ? $value['url']     : '',
+          'lat'     => isset($value['lat'])     ? $value['lat']     : '',
+          'lng'     => isset($value['lng'])     ? $value['lng']     : ''
         )
       );
     }
@@ -483,7 +485,7 @@ class gjMapsDB
    * @param $cat string
    * @param $type string
    *
-   * @return 
+   * @return
    */
   function getCategory($map_id, $category_name, $type='OBJECT')
   {
