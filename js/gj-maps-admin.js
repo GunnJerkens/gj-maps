@@ -33,7 +33,9 @@ jQuery(document).ready(function($) {
 
       }
 
-      console.log(map)
+      if(!cat.length) {
+        catOptions = '<option value="0" selected>Default</option>';
+      }
 
       tableRow = [
         '<tr id="maps-' + ID + '" class="alternate maps" data-id="' + ID + '">',
@@ -44,7 +46,7 @@ jQuery(document).ready(function($) {
             '<input type="checkbox" name="' + ID + '[delete]">',
           '</th>',
           '<td><input type="text" class="full-width" name="' + ID +'[name]" value=""></td>',
-          '<td><select name="'+ ID + '[cat_id]">' + catOptions + '</select></td>',
+          '<td><select name="'+ ID + '[cat_id]" >' + catOptions + '</select></td>',
           '<td><input type="text" class="full-width" name="' + ID + '[address]" value=""></td>',
           '<td><input type="text" class="full-width" name="' + ID + '[city]" value=""></td>',
           '<td><input type="text" class="full-width" name="' + ID + '[state]" value=""></td>',
@@ -115,4 +117,3 @@ jQuery(document).ready(function($) {
   });
 
 });
-

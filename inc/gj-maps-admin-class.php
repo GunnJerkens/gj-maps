@@ -22,7 +22,7 @@ class gjMapsAdmin
 
   /**
    * Messaging method to the view
-   * 
+   *
    * @since 0.3
    *
    * @param $status bool
@@ -99,7 +99,7 @@ class gjMapsAdmin
     $base = '?page=gj_maps';
 
     if($map_id != NULL || $map_id !== 'new') {
-      $base .= '&map_id='.$map_id; 
+      $base .= '&map_id='.$map_id;
     }
 
     return $base;
@@ -107,14 +107,14 @@ class gjMapsAdmin
 
   /**
    * Creates the tabs on maps and categories pages.
-   * 
+   *
    * @since 0.3
    *
    * @param $page string
    * @param $maps array
    * @param $map_id int
    *
-   * @return string 
+   * @return string
    */
   function mapsTab($page, $maps, $map)
   {
@@ -149,7 +149,7 @@ class gjMapsAdmin
 
   /**
    * Delete an entire map
-   * 
+   *
    * @since 0.3
    *
    * @param $map_id int
@@ -256,21 +256,24 @@ class gjMapsAdmin
    */
   function createPOI($poi)
   {
+    $defaultCat = false;
     foreach($poi as $single) {
-      $defaultCat = false;
 
-      if(!isset($single['cat_id']) && $defaultCat === false) {
+      if($single['cat_id'] === '0' && $defaultCat === false) {
         $cat = array (
           'map_id' => $single['map_id'],
           'name'   => 'Default',
           'color'  => '#000000',
           'icon'   => NULL
         );
-
         $this->db->createCategory($cat);
-      } elseif (!isset($single['cat_id'])) {
-        $single['cat_id'] = $category[0]->id;
+        $defaultCat = strval($this->db->getInsertId());
+        $single['cat_id'] = $defaultCat;
+      } elseif ($single['cat_id'] === '0') {
+        $single['cat_id'] = $defaultCat;
       }
+
+
 
       $createItems[] = $single;
     }
@@ -330,7 +333,7 @@ class gjMapsAdmin
   /**
   *
   * Create categories
-  * 
+  *
   * Expects an array of items to create
   *
   * @since 0.1
@@ -363,7 +366,7 @@ class gjMapsAdmin
   /**
   *
   * Edit categories
-  * 
+  *
   * Expects an array of items to update
   *
   * @since 0.1
@@ -396,7 +399,7 @@ class gjMapsAdmin
   /**
   *
   * Delete categories
-  * 
+  *
   * Expects an array of categories to delete, returns a response array
   *
   * @since 0.1
@@ -516,7 +519,7 @@ class gjMapsAdmin
   /**
   *
   * Import CSV
-  * 
+  *
   * Expects the uploaded file and a mapID
   *
   * @since 0.1
@@ -622,7 +625,7 @@ class gjMapsAdmin
       // Adds the map id to each of the rows
       $poi[$key]['map_id'] = $mapID;
 
-      // Set our lat/lng to 0, it's too taxing to 
+      // Set our lat/lng to 0, it's too taxing to
       // upload an unknown sized csv and to geocode
       $poi[$key]['lat'] = 0;
       $poi[$key]['lng'] = 0;

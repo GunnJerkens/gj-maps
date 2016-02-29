@@ -596,4 +596,16 @@ class gjMapsDB
     return $this->wpdb->query("DELETE FROM $this->catTable");
   }
 
+  /**
+   * Get last inserted Id
+   *
+   * @since 0.4
+   *
+   * @return int
+   */
+  function getInsertId()
+  {
+    return $this->wpdb->insert_id;
+  }
+
 }
