@@ -345,6 +345,7 @@ class gjMapsAdmin
 
     foreach($createItems as $item) {
       unset($item['mode']);
+      unset($item['id']);
       $response[] = $this->db->createCategory($item);
     }
 
