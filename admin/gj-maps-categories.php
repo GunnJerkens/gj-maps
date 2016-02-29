@@ -48,7 +48,7 @@ if(!empty($_POST)) {
         $deleteItems[] = $postValue;
       }
 
-      if(isset($postValue['mode']) && $postValue['mode'] === 'update') {
+      if(isset($postValue['mode']) && ($postValue['mode'] === 'update' || $postValue['mode'] === 'create')) {
         foreach($_FILES as $fileKey=>$fileValue) {
 
           if($postKey === $fileKey) {
@@ -70,11 +70,12 @@ if(!empty($_POST)) {
         // Set's our checkboxes to false as they do not POST unchecked
         if(!isset($postValue['hide_list'])) $postValue['hide_list'] = false;
         if(!isset($postValue['filter_resist'])) $postValue['filter_resist'] = false;
-        $updateItems[] = $postValue;
-      }
 
-      if(isset($postValue['mode']) && $postValue['mode'] === 'create') {
-        $createItems[] = $postValue;
+        if($postValue['mode'] === 'update') {
+          $updateItems[] = $postValue;
+        }else  if($postValue['mode'] === 'create') {
+          $createItems[] = $postValue;
+        }
       }
     }
 
