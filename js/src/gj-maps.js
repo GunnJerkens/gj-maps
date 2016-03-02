@@ -40,9 +40,9 @@ jQuery(document).ready(function($) {
     this.map = new google.maps.Map(document.getElementById('map-canvas'), this.mapOptions);
 
     google.maps.event.addDomListener(window, "resize", function() {
-      var center = GJMaps.map.getCenter();
-      google.maps.event.trigger(GJMaps.map, "resize");
-      GJMaps.map.setCenter(center);
+      var center = gjMaps.map.getCenter();
+      google.maps.event.trigger(gjMaps.map, "resize");
+      gjMaps.map.setCenter(center);
     });
 
     if(settings.filter_load) {
