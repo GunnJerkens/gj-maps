@@ -1,1 +1,397 @@
-jQuery(document).ready(function(a){function b(){var a,b;for(t={},a=0,b=poi.length;b>a;a++)t[poi[a].id]=poi[a];for(u={},a=0,b=cat.length;b>a;a++)u[cat[a].id]=cat[a]}function c(){var b,c="";for(b=0;b<cat.length;b++)"1"!=cat[b].hide_list&&(c+=e(cat[b]));a(".gjmaps-categories").append(c),a(".gjmaps-category div[data-type='label']").click(function(b){g(a(this))}),0==settings.filter_load&&g(a(".gjmaps-category[data-cat-id='all']")),n("gjmapsCatLoad",{loaded:!0}),d()}function d(){var b=a(".gjmaps-category");a(window).innerWidth()>768?b.length>2?percent=(100-2*b.length)/b.length+"%":percent="50%":percent="100%",b.css("width",percent)}function e(a){var b,c,d,e,f,g;if(g="",f="",text=!0,"background"===settings.label_color?(a.icon?(e=a.icon.replace(/\/marker-/,"/symbol-"),g="background-image: url("+e+");"):g="",f="background-color: "+a.color+";"):"text"===settings.label_color?(g="",f="color: "+a.color+";"):"icon"===settings.label_color&&(e=a.icon.replace(/\/marker-/,"/symbol-"),g="background-image: url("+e+");",text=!1),b=text?'<li class="gjmaps-category" data-cat-id="'+a.id+'"><div style="'+g+f+'" class="gjmaps-label" data-type="label"><span>'+a.name+"</span></div><ul>":'<li class="gjmaps-category" data-cat-id="'+a.id+'"><div style="'+g+'" class="gjmaps-label" data-type="label"></div><ul>',1==settings.poi_list)for(c=0,d=poi.length;d>c;c++)poi[c].cat_id===a.id&&(b+='<li class="poi" data-poi-id="'+poi[c].id+'">',"1"==settings.poi_num&&(b+="<span>"+poi[c].num+" </span>"),b+=poi[c].name+"</li>");return b+="</ul></li>"}function f(b){var c,d,e,f,g;c='<div class="poi-info" style="overflow:hidden;"><h4>'+b.name+"</h4>",b.description&&(c+='<div class="description">'+b.description+"</div>"),c+='<div class="address">'+b.address+"<br>"+b.city+", "+b.state+" "+b.zip+'</div><div class="contact">',b.phone&&(g=b.phone.replace(/[\.\(\)\-\s]/g,""),c+='<a href="tel:+1'+g+'">'+b.phone+"</a>",b.url&&(c+="<br>")),b.url&&(d=b.url.replace(/^https?:\/\/|\/$/g,""),c+=settings.link_text?'<a href="'+b.url+'" target="_blank">'+settings.link_text+"</a>":'<a href="'+b.url+'" target="_blank">'+d+"</a>"),c+="</div></div>",w.setContent(c),w.open(o,b.marker),e=a("body"),f=a("#map-canvas").offset().top-e.position().top,a(document.body).scrollTop()>f&&a(document.body).animate({scrollTop:f},300),n("gjmapsPOIInfo",{id:b.id,cat_id:b.cat_id})}function g(b){var c;settings.mouse_scroll,settings.mouse_drag;catElement=b.closest(".gjmaps-category"),c=catElement.attr("data-cat-id"),"all"===c?(p=[],a("[data-cat-id='all']").addClass("active"),catElement.siblings(".gjmaps-category").removeClass("active"),1==settings.poi_list&&a(".gjmaps-category ul").slideDown()):(a("[data-cat-id='all']").removeClass("active"),catElement.siblings(".gjmaps-category").removeClass("active"),a(".gjmaps-category[data-cat-id="+c+"]").addClass("active"),1==settings.poi_list&&(catElement.siblings(".gjmaps-category").find("ul").slideUp(),a("ul",catElement).slideDown(),a(".gjmaps-category[data-cat-id="+c+"]").slideDown()),p=[c]),n("gjmapsCatClick",{category:c}),w.close(),j(settings.fit_bounds),"all"!==c||settings.fit_bounds||(o.panTo(q.center),o.setZoom(q.zoom))}function h(a){p=a,w.close(),j(settings.fit_bounds)}function j(b){var c,d,e,g,h;for(s=new google.maps.LatLngBounds,c=0,d=poi.length;d>c;c++)if(e=!p||"object"==typeof p&&(!p.length||-1!==p.indexOf(poi[c].cat_id)||"1"==u[poi[c].cat_id].filter_resist)||("string"==typeof p||"number"==typeof p)&&poi[c].id==p,"undefined"!=typeof poi[c].marker)e?(poi[c].marker.setMap(o),s.extend(poi[c].marker.getPosition())):poi[c].marker.setMap(null);else if(e&&Number(poi[c].lat)&&Number(poi[c].lng)){var i=u[poi[c].cat_id],j=["filter_resist"],k=l(j);g=new google.maps.LatLng(poi[c].lat,poi[c].lng),"1"!=settings.poi_num||k.indexOf(poi[c].cat_id)>-1?(h={position:g,map:o,title:poi[c].name},i&&(h.icon={url:""!==i.icon?i.icon:settings.poi_icon,anchor:v}),k.indexOf(poi[c].cat_id)>-1&&a.extend(h,{zIndex:8675309}),poi[c].marker=new google.maps.Marker(h)):poi[c].marker=new MarkerWithLabel({position:g,draggable:!1,map:o,icon:settings.poi_icon,labelContent:poi[c].num,labelAnchor:new google.maps.Point(12,0),labelClass:"gj-maps-marker-label",labelStyle:{width:"25px",height:"25px",paddingTop:"4px",color:"white",background:i.color,"border-radius":"50%"}}),google.maps.event.addListener(poi[c].marker,"click",function(a){return function(){center=new google.maps.LatLng(poi[a].lat,poi[a].lng),o.panTo(center),f(poi[a])}}(c)),s.extend(g)}r=o.getBounds(),("1"==b||r&&!r.intersects(s))&&"((1, 180), (-1, -180))"!=s.toString()&&o.fitBounds(s)}function k(){p=[];for(var a=0;a<cat.length;a++)null!=cat[a].filter_resist&&p.push(cat[a].id);j()}function l(a){for(var b=[],c=0;c<cat.length;c++)for(var d=0;d<a.length;d++)1==cat[c][a[d]]&&b.push(cat[c].id);return b}function m(){var a=settings.center_lat,b=settings.center_lng,d=Math.floor(settings.map_zoom),e=Math.floor(settings.max_zoom),f=settings.mouse_scroll,g=settings.mouse_drag;q={zoom:d,maxZoom:e,center:new google.maps.LatLng(0,0),mapTypeId:google.maps.MapTypeId.ROADMAP,styles:"0"===settings.map_styles?"":jQuery.parseJSON(settings.map_styles),draggable:"0"===g,scrollwheel:"0"===f},settings.center_lat&&settings.center_lng&&(q.center=new google.maps.LatLng(a,b)),o=new google.maps.Map(document.getElementById("map-canvas"),q),google.maps.event.addDomListener(window,"resize",function(){var a=o.getCenter();google.maps.event.trigger(o,"resize"),o.setCenter(a)}),p=[],w=new google.maps.InfoWindow,settings.filter_load?k():j(settings.fit_bounds),c()}function n(b,c){a.event.trigger({type:b,gjmaps:c})}var o,p,q,r,s,t,u,v,w;v=new google.maps.Point(5,33),b(),google.maps.event.addDomListener(window,"load",m),a("div.gjmaps-wrapper").on("click","li.poi",function(){var b=a(this).data("poi-id"),c=!1;for(i=0;poi.length>i;i++)if(poi[i].id==b){c=poi[i];break}0!=c&&f(c)}),a(document).on("click",".gjmaps-parent",function(){var b=a(this).data("cat-ids").split(",");h(b)})});
+/**
+ * GJ Maps JS
+ *
+ * @description: Frontend google maps rendering
+ */
+
+jQuery(document).ready(function($) {
+
+  function GJMaps() {
+    // poi, settings, google, and cat are globals
+     this.map;
+     this.mapOptions = {
+          zoom: Math.floor(settings.map_zoom),
+          maxZoom: Math.floor(settings.max_zoom),
+          center: new google.maps.LatLng(0, 0),
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles)),
+          draggable: (settings.mouse_drag === '0') ? true : false,
+          scrollwheel: (settings.mouse_scroll === '0') ? true : false
+        };
+      this.catIndexed = {};
+      this.infoWindow = new google.maps.InfoWindow();
+      this.filter = [];
+  }
+
+  var gjMaps = new GJMaps();
+
+  google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
+
+  GJMaps.prototype.initMap = function() {
+
+    this.indexCatData();
+
+    this.initClickEvents();
+
+    if(settings.center_lat && settings.center_lng) {
+      this.mapOptions.center = new google.maps.LatLng(settings.center_lat, settings.center_lng)
+    }
+
+    this.map = new google.maps.Map(document.getElementById('map-canvas'), this.mapOptions);
+
+    google.maps.event.addDomListener(window, "resize", function() {
+      var center = GJMaps.map.getCenter();
+      google.maps.event.trigger(GJMaps.map, "resize");
+      GJMaps.map.setCenter(center);
+    });
+
+    if(settings.filter_load) {
+      this.filterLoad();
+    } else {
+      this.placeMarkers(settings.fit_bounds);
+    }
+
+    this.setupPOILists();
+  }
+
+   GJMaps.prototype.placeMarkers = function(forceFit) {
+     var markerBounds = new google.maps.LatLngBounds();
+
+     for (var i = 0, len = poi.length; i < len; i++) {
+       var isMatch = (
+         !this.filter ||
+         (
+           typeof this.filter == "object" &&
+           (
+             !this.filter.length ||
+             this.filter.indexOf(poi[i].cat_id) !== -1 ||
+             this.catIndexed[poi[i].cat_id].filter_resist == '1'
+           )
+         ) ||
+         (
+           (
+             typeof this.filter == "string" ||
+             typeof this.filter == "number"
+           ) &&
+           poi[i].id == this.filter
+         )
+       );
+
+       if (typeof poi[i].marker !== "undefined") {
+         if (isMatch) {
+           poi[i].marker.setMap(this.map);
+           markerBounds.extend(poi[i].marker.getPosition());
+         } else {
+           poi[i].marker.setMap(null);
+         }
+       } else if(isMatch) {
+
+         if (Number(poi[i].lat) && Number(poi[i].lng)) {
+
+           var poiCat = this.catIndexed[poi[i].cat_id],
+               catOptions = ['filter_resist'],
+               hasOptions = this.categoryOptionCheck(catOptions),
+               position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
+
+           if("1" != settings.poi_num || hasOptions.indexOf(poi[i].cat_id) > -1) {
+
+             var markerOptions = {
+               position: position,
+               map: this.map,
+               title: poi[i].name
+             };
+
+             if (poiCat) {
+               markerOptions.icon = {
+                 url: poiCat.icon !== "" ? poiCat.icon : settings.poi_icon,
+                 anchor: new google.maps.Point(5, 33),
+               };
+             }
+
+             if(hasOptions.indexOf(poi[i].cat_id) > -1) {
+               $.extend(markerOptions, { zIndex: 8675309 });
+             }
+
+             poi[i].marker = new google.maps.Marker(markerOptions);
+
+           } else {
+
+             poi[i].marker = new MarkerWithLabel({
+               position: position,
+               draggable: false,
+               map: this.map,
+               icon: settings.poi_icon,
+               labelContent: poi[i].num,
+               labelAnchor: new google.maps.Point(12,0),
+               labelClass: "gj-maps-marker-label",
+               labelStyle: {
+                 "width": "25px",
+                 "height": "25px",
+                 "paddingTop": "4px",
+                 "color": "white",
+                 "background": poiCat.color,
+                 "border-radius": "50%"
+               }
+             });
+           }
+
+           google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
+             // get the center point of the infowindow
+             var center = new google.maps.LatLng(poi[i].lat, poi[i].lng)
+             // pan to this new point
+             gjMaps.map.panTo(center);
+             gjMaps.showPOIInfo(poi[i]);
+           }})(i));
+
+           markerBounds.extend(position);
+         }
+       }
+     }
+
+     var mapBounds = this.map.getBounds();
+
+     if (forceFit == '1' || (mapBounds && !mapBounds.intersects(markerBounds))) {
+       if (markerBounds.toString() != "((1, 180), (-1, -180))") {
+         this.map.fitBounds(markerBounds);
+       }
+     }
+   }
+
+  GJMaps.prototype.indexCatData = function() {
+     for (var i = 0, len = cat.length; i < len; i++) {
+       this.catIndexed[cat[i].id] = cat[i];
+     }
+   }
+
+   GJMaps.prototype.setupPOILists = function() {
+     var markup = '';
+
+     for (var i = 0; i < cat.length; i++) {
+       if (cat[i].hide_list != '1') {
+         markup += this.markupCategoryList(cat[i]);
+       }
+     }
+
+     $(".gjmaps-categories").append(markup);
+
+     $(".gjmaps-category div[data-type='label']").click(function() {
+       gjMaps.showCategoryByEl($(this));
+     });
+
+     if(settings.filter_load == 0) {
+       this.showCategoryByEl($(".gjmaps-category[data-cat-id='all']"));
+     }
+
+     // Check if categories are loaded
+     this.gjmapsEvents('gjmapsCatLoad', {'loaded': true});
+
+     this.resizeCategories();
+   }
+
+   // Resizes our category <li> for responsive
+   GJMaps.prototype.resizeCategories = function() {
+     var $cat = $('.gjmaps-category'), percent;
+
+     if($(window).innerWidth() > 768) {
+       if($cat.length > 2) {
+         percent = ((100-($cat.length*2))/$cat.length) + '%';
+       } else {
+         percent = '50%';
+       }
+     } else {
+       percent = '100%';
+     }
+     $cat.css('width',percent);
+   }
+
+   GJMaps.prototype.markupCategoryList = function(cat) {
+     var markup, address, symbolPath, color, background, catCount;
+
+     background = '';
+     color = '';
+     text = true;
+
+     if (settings.label_color === "background") {
+       if (cat.icon) {
+         symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+         background = 'background-image: url(' + symbolPath + ');';
+       } else {
+         background = '';
+       }
+       color = 'background-color: ' + cat.color +';';
+     } else if (settings.label_color === "text") {
+       background = '';
+       color = 'color: ' + cat.color + ';';
+     } else if (settings.label_color === "icon") {
+       symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+       background = 'background-image: url(' + symbolPath + ');';
+       text = false;
+     }
+
+     if(text) {
+       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
+         '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' +
+         cat.name + '</span></div><ul>';
+     } else {
+       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
+         '<div style="' + background + '" class="gjmaps-label" data-type="label"></div><ul>';
+     }
+
+     if (settings.poi_list == 1) {
+       for (var i = 0, len = poi.length; i < len; i++) {
+         if (poi[i].cat_id === cat.id) {
+           markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
+           if ("1" == settings.poi_num) {
+             markup += '<span>' + poi[i].num + ' </span>';
+           }
+           markup += poi[i].name + '</li>';
+         }
+       }
+     }
+
+     markup += '</ul>' +
+       '</li>';
+
+     return markup;
+   }
+
+  GJMaps.prototype.showPOIInfo = function(poi) {
+     var content, linkName, $pageTop, mapTop, phone;
+
+     content = '<div class="poi-info" style="overflow:hidden;">' +
+       '<h4>'+poi.name+'</h4>';
+
+     if (poi.description) {
+       content += '<div class="description">' + poi.description + '</div>';
+     }
+
+     content += '<div class="address">'+poi.address + '<br>' +
+       poi.city + ', ' + poi.state + ' ' + poi.zip +
+       '</div>' +
+       '<div class="contact">';
+
+     if (poi.phone) {
+       phone = poi.phone.replace(/[\.\(\)\-\s]/g, '');
+       content += '<a href="tel:+1' + phone + '">' + poi.phone + '</a>';
+       if (poi.url) content += '<br>';
+     }
+
+     if (poi.url) {
+       linkName = poi.url.replace(/^https?:\/\/|\/$/g, '');
+       content += settings.link_text ? '<a href="'+poi.url+'" target="_blank">'+settings.link_text+'</a>' : '<a href="'+poi.url+'" target="_blank">'+linkName+'</a>';
+     }
+
+     content += '</div>' +
+       '</div>';
+
+     this.infoWindow.setContent(content);
+     this.infoWindow.open(this.map, poi.marker);
+     $pageTop = $("body");
+     mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
+
+     if ($(document.body).scrollTop() > mapTop) {
+       $(document.body).animate({scrollTop: mapTop}, 300);
+     }
+
+     this.gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
+   }
+
+  GJMaps.prototype.showCategoryByEl = function(el) {
+     var catElement = el.closest(".gjmaps-category"),
+        catID = catElement.attr("data-cat-id"),
+        filterIndex;
+
+     if (catID === "all") {
+       this.filter = [];
+       $("[data-cat-id='all']").addClass("active");
+       catElement.siblings(".gjmaps-category").removeClass("active");
+       if (settings.poi_list == 1) {
+         $(".gjmaps-category ul").slideDown();
+       } // show all lists
+     } else {
+       $("[data-cat-id='all']").removeClass("active");
+       catElement.siblings(".gjmaps-category").removeClass("active");
+       $(".gjmaps-category[data-cat-id=" + catID + "]").addClass("active");
+       if (settings.poi_list == 1) {
+         catElement.siblings(".gjmaps-category").find("ul").slideUp();
+         $("ul", catElement).slideDown(); // show this list
+         $(".gjmaps-category[data-cat-id=" + catID + "]").slideDown();
+       }
+       this.filter = [catID];
+     }
+
+     // Check which category is clicked
+     this.gjmapsEvents('gjmapsCatClick', {'category': catID});
+
+     this.infoWindow.close();
+
+     this.placeMarkers(settings.fit_bounds);
+
+     if (catID === "all" && !settings.fit_bounds) {
+       this.map.panTo(this.mapOptions.center);
+       this.map.setZoom(this.mapOptions.zoom);
+     }
+   }
+
+   GJMaps.prototype.showCategoryByArr = function(arr) {
+     this.filter = arr;
+     this.infoWindow.close();
+     this.placeMarkers(settings.fit_bounds);
+   }
+
+   // Filters the map on load to only show filter resists categories
+  GJMaps.prototype.filterLoad = function() {
+     this.filter = [];
+     for(var i = 0; i < cat.length; i++) {
+       if(cat[i]['filter_resist'] != null) {
+         this.filter.push(cat[i]['id']);
+       }
+     }
+     this.placeMarkers();
+   }
+
+   // Check which categories have options enabled
+  GJMaps.prototype.categoryOptionCheck = function(options) {
+     var hasOptions = [];
+
+     for (var i = 0; i < cat.length; i++) {
+       for (var j = 0; j < options.length; j++) {
+         if (cat[i][options[j]] == true) {
+           hasOptions.push(cat[i]['id']);
+         }
+       };
+     };
+
+     return hasOptions;
+   }
+
+   // Custom Events
+   GJMaps.prototype.gjmapsEvents = function(name, param) {
+     $.event.trigger({ type: name, 'gjmaps': param });
+   }
+
+   GJMaps.prototype.initClickEvents = function() {
+     // Handles click functions on the poi list items
+     $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
+       var id = $(this).data('poi-id'), marker = false;
+
+       for(var i = 0; poi.length > i; i++) {
+         if(poi[i].id == id) {
+           marker = poi[i];
+           break;
+         }
+       }
+
+       if(marker != false) {
+         gjMaps.showPOIInfo(marker);
+       }
+     });
+
+     // Handles click functions on the parents
+     $(document).on('click', '.gjmaps-parent', function() {
+       var cats = $(this).data('cat-ids').split(',');
+       gjMaps.showCategoryByArr(cats);
+     });
+   }
+
+});
