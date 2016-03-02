@@ -1,13 +1,29 @@
 /**
- * GJ Maps JS
+ * GJ-Maps JS
  *
- * @description: Frontend google maps rendering
+ * @description: Frontend google maps rendering Wordpress plugin
  */
 
 jQuery(document).ready(function($) {
 
+  var gjMaps = new GJMaps();
+
+  google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
+
+  /**
+   * @name GJMaps
+   * @class This class creates a GJMap with initial properties.
+   * @global {array} poi Points of interest array.
+   * @global {object} settings Settings object.
+   * @global {object} google Google object.
+   * @global {array} cat Category array.
+   * @property {google.maps.Map} [map] Our instance of the google maps Map object.
+   * @property {object} [mapOptions] The initial options for our map.
+   * @property {object} [catIndexed] Holds our id indexed categories.
+   * @property {google.maps.InfoWindow} [infoWindow] Our instance of the google maps InfoWindow object.
+   * @property {array} [filter] Array used to filter the POIs by category.
+   */
   function GJMaps() {
-    // poi, settings, google, and cat are globals
      this.map;
      this.mapOptions = {
           zoom: Math.floor(settings.map_zoom),
@@ -23,10 +39,9 @@ jQuery(document).ready(function($) {
       this.filter = [];
   }
 
-  var gjMaps = new GJMaps();
-
-  google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
-
+  /**
+   * Initilaizes google map and POI with data.
+   */
   GJMaps.prototype.initMap = function() {
 
     this.indexCatData();
@@ -54,6 +69,10 @@ jQuery(document).ready(function($) {
     this.setupPOILists();
   }
 
+  /**
+   * Places markers on the map.
+   * @param {string} forceFit Forces map to fit to this marker.
+   */
    GJMaps.prototype.placeMarkers = function(forceFit) {
      var markerBounds = new google.maps.LatLngBounds();
 
@@ -157,12 +176,18 @@ jQuery(document).ready(function($) {
      }
    }
 
+   /**
+    * Indexes category data based on id.
+    */
   GJMaps.prototype.indexCatData = function() {
      for (var i = 0, len = cat.length; i < len; i++) {
        this.catIndexed[cat[i].id] = cat[i];
      }
    }
 
+   /**
+    * Sets up POI lists.
+    */
    GJMaps.prototype.setupPOILists = function() {
      var markup = '';
 
@@ -188,7 +213,9 @@ jQuery(document).ready(function($) {
      this.resizeCategories();
    }
 
-   // Resizes our category <li> for responsive
+   /**
+    * Resizes our category <li> for responsive
+    */
    GJMaps.prototype.resizeCategories = function() {
      var $cat = $('.gjmaps-category'), percent;
 
@@ -204,6 +231,10 @@ jQuery(document).ready(function($) {
      $cat.css('width',percent);
    }
 
+   /**
+    * Returns markup for category and POI lists.
+    * @param {object} cat Category data.
+    */
    GJMaps.prototype.markupCategoryList = function(cat) {
      var markup, address, symbolPath, color, background, catCount;
 
@@ -255,6 +286,10 @@ jQuery(document).ready(function($) {
      return markup;
    }
 
+ /**
+  * Creates and displays markup in infoWindow when a POI marker is clicked.
+  * @param {object} poi Point of interest data.
+  */
   GJMaps.prototype.showPOIInfo = function(poi) {
      var content, linkName, $pageTop, mapTop, phone;
 
@@ -296,9 +331,13 @@ jQuery(document).ready(function($) {
      this.gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
    }
 
+ /**
+  * Shows POI list/markers based on category.
+  * @param {object} el Category list element.
+  */
   GJMaps.prototype.showCategoryByEl = function(el) {
      var catElement = el.closest(".gjmaps-category"),
-        catID = catElement.attr("data-cat-id"),
+      catID = catElement.attr("data-cat-id"),
         filterIndex;
 
      if (catID === "all") {
@@ -333,13 +372,19 @@ jQuery(document).ready(function($) {
      }
    }
 
-   GJMaps.prototype.showCategoryByArr = function(arr) {
+   /**
+    * Shows category based on array being passed.
+    * @param {array} arr Category array.
+    */
+  GJMaps.prototype.showCategoryByArr = function(arr) {
      this.filter = arr;
      this.infoWindow.close();
      this.placeMarkers(settings.fit_bounds);
    }
 
-   // Filters the map on load to only show filter resists categories
+ /**
+  * Filters the map on load to only show filter resists categories.
+  */
   GJMaps.prototype.filterLoad = function() {
      this.filter = [];
      for(var i = 0; i < cat.length; i++) {
@@ -350,7 +395,10 @@ jQuery(document).ready(function($) {
      this.placeMarkers();
    }
 
-   // Check which categories have options enabled
+ /**
+  * Checks which categories have options enabled and returns them.
+  * @param {array} options Options array.
+  */
   GJMaps.prototype.categoryOptionCheck = function(options) {
      var hasOptions = [];
 
@@ -365,11 +413,18 @@ jQuery(document).ready(function($) {
      return hasOptions;
    }
 
-   // Custom Events
+   /**
+    * Triggers custom events.
+    * @param {string} name Event name.
+    * @param {object} name Event parameter(s).
+    */
    GJMaps.prototype.gjmapsEvents = function(name, param) {
      $.event.trigger({ type: name, 'gjmaps': param });
    }
 
+   /**
+    * Initializes click events
+    */
    GJMaps.prototype.initClickEvents = function() {
      // Handles click functions on the poi list items
      $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
