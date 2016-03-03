@@ -170,287 +170,277 @@ jQuery(document).ready(function($) {
    * Places markers on the map.
    * @param {string} forceFit Forces map to fit to this marker.
    */
-   GJMaps.prototype.placeMarkers = function(forceFit) {
-     var markerBounds = new google.maps.LatLngBounds();
+  GJMaps.prototype.placeMarkers = function(forceFit) {
+    var markerBounds = new google.maps.LatLngBounds();
 
-     for (var i = 0, len = poi.length; i < len; i++) {
-       var isMatch = this.checkIsMatch(i);
+    for (var i = 0, len = poi.length; i < len; i++) {
+      var isMatch = this.checkIsMatch(i);
 
-       // check for marker
-       if (typeof poi[i].marker !== "undefined") {
-         if (isMatch) {
-           poi[i].marker.setMap(this.map);
-           markerBounds.extend(poi[i].marker.getPosition());
-         } else {
-           poi[i].marker.setMap(null);
-         }
-       } else if(isMatch) {
+      // check for marker
+      if (typeof poi[i].marker !== "undefined") {
+        if (isMatch) {
+          poi[i].marker.setMap(this.map);
+          markerBounds.extend(poi[i].marker.getPosition());
+        } else {
+          poi[i].marker.setMap(null);
+        }
+      } else if(isMatch) {
           markerBounds = this.createMarker(i, markerBounds);
-       }
-     }
+      }
+    }
 
-     var mapBounds = this.map.getBounds();
+    var mapBounds = this.map.getBounds();
 
-     if (forceFit == '1' || (mapBounds && !mapBounds.intersects(markerBounds))) {
-       if (markerBounds.toString() != "((1, 180), (-1, -180))") {
-         this.map.fitBounds(markerBounds);
-       }
-     }
-   }
+    if (forceFit == '1' || (mapBounds && !mapBounds.intersects(markerBounds))) {
+      if (markerBounds.toString() != "((1, 180), (-1, -180))") {
+        this.map.fitBounds(markerBounds);
+      }
+    }
+  }
 
-   /**
-    * Indexes category data based on id.
-    */
+  /**
+   * Indexes category data based on id.
+   */
   GJMaps.prototype.indexCatData = function() {
-     for (var i = 0, len = cat.length; i < len; i++) {
-       this.catIndexed[cat[i].id] = cat[i];
-     }
-   }
+    for (var i = 0, len = cat.length; i < len; i++) {
+      this.catIndexed[cat[i].id] = cat[i];
+    }
+  }
 
-   /**
-    * Sets up POI lists.
-    */
-   GJMaps.prototype.setupPOILists = function() {
-     var markup = '';
+  /**
+   * Sets up POI lists.
+   */
+  GJMaps.prototype.setupPOILists = function() {
+    var markup = '';
 
-     for (var i = 0; i < cat.length; i++) {
-       if (cat[i].hide_list != '1') {
-         markup += this.markupCategoryList(cat[i]);
-       }
-     }
+    for (var i = 0; i < cat.length; i++) {
+      if (cat[i].hide_list != '1') {
+        markup += this.markupCategoryList(cat[i]);
+      }
+    }
 
-     $(".gjmaps-categories").append(markup);
+    $(".gjmaps-categories").append(markup);
 
-     $(".gjmaps-category div[data-type='label']").click(function() {
-       gjMaps.showCategoryByEl($(this));
-     });
+    $(".gjmaps-category div[data-type='label']").click(function() {
+      gjMaps.showCategoryByEl($(this));
+    });
 
-     if(settings.filter_load == 0) {
-       this.showCategoryByEl($(".gjmaps-category[data-cat-id='all']"));
-     }
+    if(settings.filter_load == 0) {
+      this.showCategoryByEl($(".gjmaps-category[data-cat-id='all']"));
+    }
 
-     // Check if categories are loaded
-     this.gjmapsEvents('gjmapsCatLoad', {'loaded': true});
+    // Check if categories are loaded
+    this.gjmapsEvents('gjmapsCatLoad', {'loaded': true});
 
-     this.resizeCategories();
-   }
+    this.resizeCategories();
+  }
 
-   /**
-    * Resizes our category <li> for responsive
-    */
-   GJMaps.prototype.resizeCategories = function() {
-     var $cat = $('.gjmaps-category'), percent;
+  /**
+   * Resizes our category <li> for responsive
+   */
+  GJMaps.prototype.resizeCategories = function() {
+    var $cat = $('.gjmaps-category'), percent;
 
-     if($(window).innerWidth() > 768) {
-       if($cat.length > 2) {
-         percent = ((100-($cat.length*2))/$cat.length) + '%';
-       } else {
-         percent = '50%';
-       }
-     } else {
-       percent = '100%';
-     }
-     $cat.css('width',percent);
-   }
+    if($(window).innerWidth() > 768) {
+      if($cat.length > 2) {
+        percent = ((100-($cat.length*2))/$cat.length) + '%';
+      } else {
+        percent = '50%';
+      }
+    } else {
+      percent = '100%';
+    }
+    $cat.css('width',percent);
+  }
 
-   /**
-    * Returns category with correct style properties. 
-    * @param {object} cat Category data.
-    * @return object
-    */
-   GJMaps.prototype.getCatStyle = function(cat) {
-     var symbolPath;
-     cat.background = '';
-     cat.text = true;
+  /**
+   * Returns category with correct style properties.
+   * @param {object} cat Category data.
+   * @return object
+   */
+  GJMaps.prototype.getCatStyle = function(cat) {
+    var symbolPath;
+    cat.background = '';
+    cat.text = true;
 
-     if (settings.label_color === "background") {
-       if (cat.icon) {
-         symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
-         cat.background = 'background-image: url(' + symbolPath + ');';
-       } else {
-         cat.background = '';
-       }
-       cat.color_style = 'background-color: ' + cat.color +';';
-     } else if (settings.label_color === "text") {
-       cat.background = '';
-       cat.color_style = 'color: ' + cat.color + ';';
-     } else if (settings.label_color === "icon") {
-       symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
-       cat.background = 'background-image: url(' + symbolPath + ');';
-       cat.text = false;
-     }
+    if (settings.label_color === "background") {
+      if (cat.icon) {
+        symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+        cat.background = 'background-image: url(' + symbolPath + ');';
+      } else {
+        cat.background = '';
+      }
+      cat.color_style = 'background-color: ' + cat.color +';';
+    } else if (settings.label_color === "text") {
+      cat.background = '';
+      cat.color_style = 'color: ' + cat.color + ';';
+    } else if (settings.label_color === "icon") {
+      symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
+      cat.background = 'background-image: url(' + symbolPath + ');';
+      cat.text = false;
+    }
 
-     return cat;
-   }
+    return cat;
+  }
 
-   /**
-    * Returns markup for category and POI lists.
-    * @param {object} cat Category data.
-    * @return string
-    */
-   GJMaps.prototype.markupCategoryList = function(cat) {
-     cat.poi_list = settings.poi_list;
-     cat.poi_array = [];
+  /**
+   * Returns markup for category and POI lists.
+   * @param {object} cat Category data.
+   * @return string
+   */
+  GJMaps.prototype.markupCategoryList = function(cat) {
+    cat.poi_list = settings.poi_list;
+    cat.poi_array = [];
+    cat = this.getCatStyle(cat);
+    if (settings.poi_list == 1) {
+      for (var i = 0, len = poi.length; i < len; i++) {
+        if (poi[i].cat_id === cat.id) {
+          poi[i].show_num = settings.poi_num == "1" ? true : false;
+          cat.poi_array.push(poi[i]);
+        }
+      }
+    }
 
-     cat = this.getCatStyle(cat);
+    return categoryListTemplate(cat);
+  }
 
-     if (settings.poi_list == 1) {
-       for (var i = 0, len = poi.length; i < len; i++) {
-         if (poi[i].cat_id === cat.id) {
-           poi[i].show_num = settings.poi_num == "1" ? true : false;
-           cat.poi_array.push(poi[i]);
-         }
-       }
-     }
-
-     return categoryListTemplate(cat);
-   }
-
- /**
-  * Creates and displays markup in infoWindow when a POI marker is clicked.
-  * @param {object} poi Point of interest data.
-  */
+  /**
+   * Creates and displays markup in infoWindow when a POI marker is clicked.
+   * @param {object} poi Point of interest data.
+   */
   GJMaps.prototype.showPOIInfo = function(poi) {
+    if (poi.phone) {
+      poi.phone_link = poi.phone.replace(/[\.\(\)\-\s]/g, '');
+    }
 
-     if (poi.phone) {
-       poi.phone_link = poi.phone.replace(/[\.\(\)\-\s]/g, '');
-     }
+    if (poi.url) {
+      poi.linkName = settings.link_text ? settings.link_text : poi.url.replace(/^https?:\/\/|\/$/g, '');
+    }
 
-     if (poi.url) {
-       poi.linkName = settings.link_text ? settings.link_text : poi.url.replace(/^https?:\/\/|\/$/g, '');
-     }
+    var html = infoWindowTemplate(poi);
+    this.infoWindow.setContent(html);
+    this.infoWindow.open(this.map, poi.marker);
 
-     var html = infoWindowTemplate(poi);
-     this.infoWindow.setContent(html);
-     this.infoWindow.open(this.map, poi.marker);
+    var $pageTop = $("body");
+    var mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
 
-     var $pageTop = $("body");
-     var mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
+    if ($(document.body).scrollTop() > mapTop) {
+      $(document.body).animate({scrollTop: mapTop}, 300);
+    }
 
-     if ($(document.body).scrollTop() > mapTop) {
-       $(document.body).animate({scrollTop: mapTop}, 300);
-     }
+    this.gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
+  }
 
-     this.gjmapsEvents('gjmapsPOIInfo', {'id': poi.id, 'cat_id': poi.cat_id});
-   }
-
- /**
-  * Shows POI list/markers based on category.
-  * @param {object} el Category list element.
-  */
+  /**
+   * Shows POI list/markers based on category.
+   * @param {object} el Category list element.
+   */
   GJMaps.prototype.showCategoryByEl = function(el) {
-     var catElement = el.closest(".gjmaps-category"),
-      catID = catElement.attr("data-cat-id"),
+    var catElement = el.closest(".gjmaps-category"),
+        catID = catElement.attr("data-cat-id"),
         filterIndex;
 
-     if (catID === "all") {
-       this.filter = [];
-       $("[data-cat-id='all']").addClass("active");
-       catElement.siblings(".gjmaps-category").removeClass("active");
-       if (settings.poi_list == 1) {
-         $(".gjmaps-category ul").slideDown();
-       } // show all lists
-     } else {
-       $("[data-cat-id='all']").removeClass("active");
-       catElement.siblings(".gjmaps-category").removeClass("active");
-       $(".gjmaps-category[data-cat-id=" + catID + "]").addClass("active");
-       if (settings.poi_list == 1) {
-         catElement.siblings(".gjmaps-category").find("ul").slideUp();
-         $("ul", catElement).slideDown(); // show this list
-         $(".gjmaps-category[data-cat-id=" + catID + "]").slideDown();
-       }
-       this.filter = [catID];
-     }
+    if (catID === "all") {
+      this.filter = [];
+      $("[data-cat-id='all']").addClass("active");
+      catElement.siblings(".gjmaps-category").removeClass("active");
+      if (settings.poi_list == 1) {
+        $(".gjmaps-category ul").slideDown();
+      } // show all lists
+    } else {
+      $("[data-cat-id='all']").removeClass("active");
+      catElement.siblings(".gjmaps-category").removeClass("active");
+      $(".gjmaps-category[data-cat-id=" + catID + "]").addClass("active");
+      if (settings.poi_list == 1) {
+        catElement.siblings(".gjmaps-category").find("ul").slideUp();
+        $("ul", catElement).slideDown(); // show this list
+        $(".gjmaps-category[data-cat-id=" + catID + "]").slideDown();
+      }
+        this.filter = [catID];
+    }
 
-     // Check which category is clicked
-     this.gjmapsEvents('gjmapsCatClick', {'category': catID});
+    // Check which category is clicked
+    this.gjmapsEvents('gjmapsCatClick', {'category': catID});
+    this.infoWindow.close();
+    this.placeMarkers(settings.fit_bounds);
+    if (catID === "all" && !settings.fit_bounds) {
+      this.map.panTo(this.mapOptions.center);
+      this.map.setZoom(this.mapOptions.zoom);
+    }
+  }
 
-     this.infoWindow.close();
-
-     this.placeMarkers(settings.fit_bounds);
-
-     if (catID === "all" && !settings.fit_bounds) {
-       this.map.panTo(this.mapOptions.center);
-       this.map.setZoom(this.mapOptions.zoom);
-     }
-   }
-
-   /**
-    * Shows category based on array being passed.
-    * @param {array} arr Category array.
-    */
+  /**
+   * Shows category based on array being passed.
+   * @param {array} arr Category array.
+   */
   GJMaps.prototype.showCategoryByArr = function(arr) {
-     this.filter = arr;
-     this.infoWindow.close();
-     this.placeMarkers(settings.fit_bounds);
-   }
+    this.filter = arr;
+    this.infoWindow.close();
+    this.placeMarkers(settings.fit_bounds);
+  }
 
- /**
-  * Filters the map on load to only show filter resists categories.
-  */
+  /**
+   * Filters the map on load to only show filter resists categories.
+   */
   GJMaps.prototype.filterLoad = function() {
-     this.filter = [];
-     for(var i = 0; i < cat.length; i++) {
-       if(cat[i]['filter_resist'] != null) {
-         this.filter.push(cat[i]['id']);
-       }
-     }
-     this.placeMarkers();
-   }
+    this.filter = [];
+    for(var i = 0; i < cat.length; i++) {
+      if(cat[i]['filter_resist'] != null) {
+        this.filter.push(cat[i]['id']);
+      }
+    }
+    this.placeMarkers();
+  }
 
- /**
-  * Checks which categories have options enabled and returns them.
-  * @param {array} options Options array.
-  * @return array
-  */
+  /**
+   * Checks which categories have options enabled and returns them.
+   * @param {array} options Options array.
+   * @return array
+   */
   GJMaps.prototype.categoryOptionCheck = function(options) {
-     var hasOptions = [];
+    var hasOptions = [];
+    for (var i = 0; i < cat.length; i++) {
+      for (var j = 0; j < options.length; j++) {
+        if (cat[i][options[j]] == true) {
+          hasOptions.push(cat[i]['id']);
+        }
+      }
+    }
+    return hasOptions;
+  }
 
-     for (var i = 0; i < cat.length; i++) {
-       for (var j = 0; j < options.length; j++) {
-         if (cat[i][options[j]] == true) {
-           hasOptions.push(cat[i]['id']);
-         }
-       };
-     };
+  /**
+   * Triggers custom events.
+   * @param {string} name Event name.
+   * @param {object} name Event parameter(s).
+   */
+  GJMaps.prototype.gjmapsEvents = function(name, param) {
+    $.event.trigger({ type: name, 'gjmaps': param });
+  }
 
-     return hasOptions;
-   }
+  /**
+   * Initializes click events
+   */
+  GJMaps.prototype.initClickEvents = function() {
+    // Handles click functions on the poi list items
+    $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
+      var id = $(this).data('poi-id'), marker = false;
+      for (var i = 0; poi.length > i; i++) {
+        if (poi[i].id == id) {
+          marker = poi[i];
+          break;
+        }
+      }
 
-   /**
-    * Triggers custom events.
-    * @param {string} name Event name.
-    * @param {object} name Event parameter(s).
-    */
-   GJMaps.prototype.gjmapsEvents = function(name, param) {
-     $.event.trigger({ type: name, 'gjmaps': param });
-   }
-
-   /**
-    * Initializes click events
-    */
-   GJMaps.prototype.initClickEvents = function() {
-     // Handles click functions on the poi list items
-     $('div.gjmaps-wrapper').on('click', 'li.poi', function() {
-       var id = $(this).data('poi-id'), marker = false;
-
-       for(var i = 0; poi.length > i; i++) {
-         if(poi[i].id == id) {
-           marker = poi[i];
-           break;
-         }
-       }
-
-       if(marker != false) {
-         gjMaps.showPOIInfo(marker);
-       }
-     });
-
-     // Handles click functions on the parents
-     $(document).on('click', '.gjmaps-parent', function() {
-       var cats = $(this).data('cat-ids').split(',');
-       gjMaps.showCategoryByArr(cats);
-     });
-   }
+      if(marker != false) {
+        gjMaps.showPOIInfo(marker);
+      }
+    });
+    // Handles click functions on the parents
+    $(document).on('click', '.gjmaps-parent', function() {
+      var cats = $(this).data('cat-ids').split(',');
+      gjMaps.showCategoryByArr(cats);
+    });
+  }
 
 });
