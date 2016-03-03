@@ -54,7 +54,6 @@ class gjMapsInject {
 
       $cat_default = get_option('gj_maps_cat_default');
       if ($cat_default === "") { $cat_default = "#ffffff"; }
-
       $gjWrapperOpen = '<div class="gjmaps-wrapper">';
       $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
       $gjCategories = '
