@@ -53,13 +53,18 @@ class gjMapsInject {
       $this->loadJS = true;
 
       $cat_default = get_option('gj_maps_cat_default');
-      if ($cat_default === "") { $cat_default = "#ffffff"; }
+      $cat_default = $cat_default === "" ? "#ffffff" : $cat_default;
+      $label_color  = get_option('gj_maps_label_color');
+      $label_style = '';
+      if ($label_color !== 'none') {
+        $label_style = $label_color === 'background' ? 'style="background-color:'.$cat_default.';"' : 'style="color:'.$cat_default.';"';
+      }
       $gjWrapperOpen = '<div class="gjmaps-wrapper">';
       $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
       $gjCategories = '
         <ul class="gjmaps-categories">
           <li class="gjmaps-category active" data-cat-id="all">
-            <div class="gjmaps-label" style="background-color: ' .$cat_default. ';" data-type="label"><span>View All</span></label>
+            <div class="gjmaps-label" '.$label_style.' data-type="label"><span>View All</span></label>
           </li>
         </ul>
       ';
