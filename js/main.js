@@ -253,7 +253,11 @@ jQuery(document).ready(function($) {
      $cat.css('width',percent);
    }
 
-
+   /**
+    * Returns category with correct style properties. 
+    * @param {object} cat Category data.
+    * @return object
+    */
    GJMaps.prototype.getCatStyle = function(cat) {
      var symbolPath;
      cat.background = '';
