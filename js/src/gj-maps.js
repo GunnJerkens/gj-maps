@@ -310,9 +310,8 @@ jQuery(document).ready(function($) {
    */
   GJMaps.prototype.showPOIInfo = function(poi) {
     if (poi.phone) {
-      poi.phone_link = poi.phone.replace(/[\.\(\)\-\s]/g, '');
+      poi.phone_link = settings.phone_link === '1' ? poi.phone.replace(/[\.\(\)\-\s]/g, '') : false;
     }
-
     if (poi.url) {
       poi.linkName = settings.link_text ? settings.link_text : poi.url.replace(/^https?:\/\/|\/$/g, '');
     }

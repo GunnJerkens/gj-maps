@@ -11,7 +11,11 @@
     </div>
     <div class="contact">
       {{#if phone}}
-        <a href="tel:+1{{phone}}">{{phone}}</a>
+        {{#if phone_link}}
+          <a href="tel:+1{{phone_link}}">{{phone}}</a>
+        {{else}}
+          <span>{{phone}}</span>
+        {{/if}}
       {{/if}}
       {{#if url}}
         <br><a href="{{url}}" target="_blank">{{linkName}}</a>
@@ -22,7 +26,6 @@
 
 <script id="category-list" type="text/x-handelbars-template">
   <li class="gjmaps-category" data-cat-id="{{id}}">
-
     <div style="{{background}}{{#if text}}{{color_style}}{{/if}}" class="gjmaps-label" data-type="label">
       {{#if text}}
         <span>{{name}}</span>

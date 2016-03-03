@@ -465,6 +465,9 @@ class gjMapsAdmin
     $enable_fit_bounds = isset($_POST['enable_fit_bounds']);
     update_option('gj_enable_fit_bounds', $enable_fit_bounds);
 
+    $enable_phone_link = isset($_POST['enable_phone_link']);
+    update_option('gj_enable_phone_link', $enable_phone_link);
+
     $cat_default = $_POST['cat_default'];
     update_option('gj_maps_cat_default', $cat_default);
 
@@ -507,6 +510,7 @@ class gjMapsAdmin
       "disable_mouse_scroll" => get_option('gj_disable_mouse_scroll'),
       "disable_mouse_drag"   => get_option('gj_disable_mouse_drag'),
       "enable_fit_bounds"    => get_option('gj_enable_fit_bounds'),
+      "enable_phone_link"    => get_option('gj_enable_phone_link'),
       "cat_default"          => get_option('gj_maps_cat_default'),
       "center_lat"           => get_option('gj_maps_center_lat'),
       "center_lng"           => get_option('gj_maps_center_lng'),

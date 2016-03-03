@@ -149,6 +149,7 @@ class gjMapsInject {
     $mouse_scroll = get_option('gj_disable_mouse_scroll');
     $mouse_drag   = get_option('gj_disable_mouse_drag');
     $fit_bounds   = get_option('gj_enable_fit_bounds');
+    $phone_link   = get_option('gj_enable_phone_link');
     $label_color  = get_option('gj_maps_label_color');
     $max_zoom     = get_option('gj_maps_max_zoom');
     $link_text    = get_option('gj_maps_link_text');
@@ -166,6 +167,7 @@ class gjMapsInject {
     $settings['mouse_scroll'] = $mouse_scroll ? $mouse_scroll : '0';
     $settings['mouse_drag']   = $mouse_drag ? $mouse_drag : '0';
     $settings['fit_bounds']   = $fit_bounds ? $fit_bounds : '0';
+    $settings['phone_link']   = $phone_link ? $phone_link : '0';
     $settings['label_color']  = $label_color ? $label_color : '0';
     $settings['map_styles']   = $map_styles ? $map_styles : '0';
 
