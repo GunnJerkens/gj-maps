@@ -8,7 +8,8 @@
  * Author URI: http://gunnjerkens.com
  * License: MIT
  */
-
+ 
+require_once(plugin_dir_path(__FILE__).'gj-maps-handlebars.php');
 require_once(plugin_dir_path(__FILE__).'gj-maps-inject.php');
 require_once(plugin_dir_path(__FILE__).'gj-maps-json-api.php');
 require_once(plugin_dir_path(__FILE__).'inc/gj-maps-admin-class.php');
@@ -32,7 +33,7 @@ class gjMaps {
     add_submenu_page('gj_maps', 'Options', 'Options', 'administrator', 'gj_maps_options', array($this, 'admin_options'));
   }
 
-  function admin_edit() { 
+  function admin_edit() {
     include('admin/gj-maps-maps.php');
   }
 
@@ -124,7 +125,7 @@ class gjMaps {
     }
     if($wpdb->get_var("SHOW TABLES LIKE '$gj_cat'") != $gj_cat) { //If table did not exist
       $wpdb->insert($gj_cat, array('name'=>'All', 'map_id'=>$wpdb->insert_id));
-    } 
+    }
 
   }
 

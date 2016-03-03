@@ -6,7 +6,11 @@
 
 jQuery(document).ready(function($) {
 
-  var gjMaps = new GJMaps();
+  var gjMaps = new GJMaps(),
+      infoWindowSource = $("#info-window").html(),
+      infoWindowTemplate = Handlebars.compile(infoWindowSource),
+      categoryListSource = $("#category-list").html(),
+      categoryListTemplate = Handlebars.compile(categoryListSource);
 
   google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
 
@@ -17,6 +21,7 @@ jQuery(document).ready(function($) {
    * @global {object} settings Settings object.
    * @global {object} google Google object.
    * @global {array} cat Category array.
+   * @global {object} MarkerWithLabel MarkerWithLabel class object.
    * @property {google.maps.Map} [map] Our instance of the google maps Map object.
    * @property {object} [mapOptions] The initial options for our map.
    * @property {object} [catIndexed] Holds our id indexed categories.
@@ -70,6 +75,98 @@ jQuery(document).ready(function($) {
   }
 
   /**
+   * Checks if filter matches POI.
+   * @param {int} i Index of the POI.
+   */
+  GJMaps.prototype.checkIsMatch = function (i) {
+    return (
+      !this.filter ||
+      (
+        typeof this.filter == "object" &&
+        (
+          !this.filter.length ||
+          this.filter.indexOf(poi[i].cat_id) !== -1 ||
+          this.catIndexed[poi[i].cat_id].filter_resist == '1'
+        )
+      ) ||
+      (
+        (
+          typeof this.filter == "string" ||
+          typeof this.filter == "number"
+        ) &&
+        poi[i].id == this.filter
+      )
+    );
+  }
+
+  /**
+   * Creates markers on the map.
+   * @param {int} i Index of the POI.
+   * @param {google.maps.LatLngBounds} markerBounds Bounds of the markers.
+   * @return google.maps.LatLngBounds
+   */
+  GJMaps.prototype.createMarker = function (i, markerBounds) {
+    if (Number(poi[i].lat) && Number(poi[i].lng)) {
+      var poiCat = this.catIndexed[poi[i].cat_id],
+          catOptions = ['filter_resist'],
+          hasOptions = this.categoryOptionCheck(catOptions),
+          position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
+
+      if("1" != settings.poi_num || hasOptions.indexOf(poi[i].cat_id) > -1) {
+        var markerOptions = {
+          position: position,
+          map: this.map,
+          title: poi[i].name
+        };
+
+        if (poiCat) {
+          markerOptions.icon = {
+            url: poiCat.icon !== "" ? poiCat.icon : settings.poi_icon,
+            anchor: new google.maps.Point(5, 33),
+          };
+        }
+
+        if(hasOptions.indexOf(poi[i].cat_id) > -1) {
+          $.extend(markerOptions, { zIndex: 8675309 });
+        }
+
+        poi[i].marker = new google.maps.Marker(markerOptions);
+
+      } else {
+        poi[i].marker = new MarkerWithLabel({
+          position: position,
+          draggable: false,
+          map: this.map,
+          icon: settings.poi_icon,
+          labelContent: poi[i].num,
+          labelAnchor: new google.maps.Point(12,0),
+          labelClass: "gj-maps-marker-label",
+          labelStyle: {
+            "width": "25px",
+            "height": "25px",
+            "paddingTop": "4px",
+            "color": "white",
+            "background": poiCat.color,
+            "border-radius": "50%"
+          }
+        });
+      }
+
+      google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
+        // get the center point of the infowindow
+        var center = new google.maps.LatLng(poi[i].lat, poi[i].lng)
+        // pan to this new point
+        gjMaps.map.panTo(center);
+        gjMaps.showPOIInfo(poi[i]);
+      }})(i));
+
+      markerBounds.extend(position);
+    }
+
+    return markerBounds;
+  }
+
+  /**
    * Places markers on the map.
    * @param {string} forceFit Forces map to fit to this marker.
    */
@@ -77,25 +174,9 @@ jQuery(document).ready(function($) {
      var markerBounds = new google.maps.LatLngBounds();
 
      for (var i = 0, len = poi.length; i < len; i++) {
-       var isMatch = (
-         !this.filter ||
-         (
-           typeof this.filter == "object" &&
-           (
-             !this.filter.length ||
-             this.filter.indexOf(poi[i].cat_id) !== -1 ||
-             this.catIndexed[poi[i].cat_id].filter_resist == '1'
-           )
-         ) ||
-         (
-           (
-             typeof this.filter == "string" ||
-             typeof this.filter == "number"
-           ) &&
-           poi[i].id == this.filter
-         )
-       );
+       var isMatch = this.checkIsMatch(i);
 
+       // check for marker
        if (typeof poi[i].marker !== "undefined") {
          if (isMatch) {
            poi[i].marker.setMap(this.map);
@@ -104,66 +185,7 @@ jQuery(document).ready(function($) {
            poi[i].marker.setMap(null);
          }
        } else if(isMatch) {
-
-         if (Number(poi[i].lat) && Number(poi[i].lng)) {
-
-           var poiCat = this.catIndexed[poi[i].cat_id],
-               catOptions = ['filter_resist'],
-               hasOptions = this.categoryOptionCheck(catOptions),
-               position = new google.maps.LatLng(poi[i].lat, poi[i].lng);
-
-           if("1" != settings.poi_num || hasOptions.indexOf(poi[i].cat_id) > -1) {
-
-             var markerOptions = {
-               position: position,
-               map: this.map,
-               title: poi[i].name
-             };
-
-             if (poiCat) {
-               markerOptions.icon = {
-                 url: poiCat.icon !== "" ? poiCat.icon : settings.poi_icon,
-                 anchor: new google.maps.Point(5, 33),
-               };
-             }
-
-             if(hasOptions.indexOf(poi[i].cat_id) > -1) {
-               $.extend(markerOptions, { zIndex: 8675309 });
-             }
-
-             poi[i].marker = new google.maps.Marker(markerOptions);
-
-           } else {
-
-             poi[i].marker = new MarkerWithLabel({
-               position: position,
-               draggable: false,
-               map: this.map,
-               icon: settings.poi_icon,
-               labelContent: poi[i].num,
-               labelAnchor: new google.maps.Point(12,0),
-               labelClass: "gj-maps-marker-label",
-               labelStyle: {
-                 "width": "25px",
-                 "height": "25px",
-                 "paddingTop": "4px",
-                 "color": "white",
-                 "background": poiCat.color,
-                 "border-radius": "50%"
-               }
-             });
-           }
-
-           google.maps.event.addListener(poi[i].marker, 'click', (function(i) { return function() {
-             // get the center point of the infowindow
-             var center = new google.maps.LatLng(poi[i].lat, poi[i].lng)
-             // pan to this new point
-             gjMaps.map.panTo(center);
-             gjMaps.showPOIInfo(poi[i]);
-           }})(i));
-
-           markerBounds.extend(position);
-         }
+          markerBounds = this.createMarker(i, markerBounds);
        }
      }
 
@@ -231,59 +253,53 @@ jQuery(document).ready(function($) {
      $cat.css('width',percent);
    }
 
-   /**
-    * Returns markup for category and POI lists.
-    * @param {object} cat Category data.
-    */
-   GJMaps.prototype.markupCategoryList = function(cat) {
-     var markup, address, symbolPath, color, background, catCount;
 
-     background = '';
-     color = '';
-     text = true;
+   GJMaps.prototype.getCatStyle = function(cat) {
+     var symbolPath;
+     cat.background = '';
+     cat.text = true;
 
      if (settings.label_color === "background") {
        if (cat.icon) {
          symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
-         background = 'background-image: url(' + symbolPath + ');';
+         cat.background = 'background-image: url(' + symbolPath + ');';
        } else {
-         background = '';
+         cat.background = '';
        }
-       color = 'background-color: ' + cat.color +';';
+       cat.color_style = 'background-color: ' + cat.color +';';
      } else if (settings.label_color === "text") {
-       background = '';
-       color = 'color: ' + cat.color + ';';
+       cat.background = '';
+       cat.color_style = 'color: ' + cat.color + ';';
      } else if (settings.label_color === "icon") {
        symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
-       background = 'background-image: url(' + symbolPath + ');';
-       text = false;
+       cat.background = 'background-image: url(' + symbolPath + ');';
+       cat.text = false;
      }
 
-     if(text) {
-       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
-         '<div style="' + background + color + '" class="gjmaps-label" data-type="label"><span>' +
-         cat.name + '</span></div><ul>';
-     } else {
-       markup = '<li class="gjmaps-category" data-cat-id="' + cat.id + '">' +
-         '<div style="' + background + '" class="gjmaps-label" data-type="label"></div><ul>';
-     }
+     return cat;
+   }
+
+   /**
+    * Returns markup for category and POI lists.
+    * @param {object} cat Category data.
+    * @return string
+    */
+   GJMaps.prototype.markupCategoryList = function(cat) {
+     cat.poi_list = settings.poi_list;
+     cat.poi_array = [];
+
+     cat = this.getCatStyle(cat);
 
      if (settings.poi_list == 1) {
        for (var i = 0, len = poi.length; i < len; i++) {
          if (poi[i].cat_id === cat.id) {
-           markup += '<li class="poi" data-poi-id="' + poi[i].id + '">';
-           if ("1" == settings.poi_num) {
-             markup += '<span>' + poi[i].num + ' </span>';
-           }
-           markup += poi[i].name + '</li>';
+           poi[i].show_num = settings.poi_num == "1" ? true : false;
+           cat.poi_array.push(poi[i]);
          }
        }
      }
 
-     markup += '</ul>' +
-       '</li>';
-
-     return markup;
+     return categoryListTemplate(cat);
    }
 
  /**
@@ -291,38 +307,21 @@ jQuery(document).ready(function($) {
   * @param {object} poi Point of interest data.
   */
   GJMaps.prototype.showPOIInfo = function(poi) {
-     var content, linkName, $pageTop, mapTop, phone;
-
-     content = '<div class="poi-info" style="overflow:hidden;">' +
-       '<h4>'+poi.name+'</h4>';
-
-     if (poi.description) {
-       content += '<div class="description">' + poi.description + '</div>';
-     }
-
-     content += '<div class="address">'+poi.address + '<br>' +
-       poi.city + ', ' + poi.state + ' ' + poi.zip +
-       '</div>' +
-       '<div class="contact">';
 
      if (poi.phone) {
-       phone = poi.phone.replace(/[\.\(\)\-\s]/g, '');
-       content += '<a href="tel:+1' + phone + '">' + poi.phone + '</a>';
-       if (poi.url) content += '<br>';
+       poi.phone_link = poi.phone.replace(/[\.\(\)\-\s]/g, '');
      }
 
      if (poi.url) {
-       linkName = poi.url.replace(/^https?:\/\/|\/$/g, '');
-       content += settings.link_text ? '<a href="'+poi.url+'" target="_blank">'+settings.link_text+'</a>' : '<a href="'+poi.url+'" target="_blank">'+linkName+'</a>';
+       poi.linkName = settings.link_text ? settings.link_text : poi.url.replace(/^https?:\/\/|\/$/g, '');
      }
 
-     content += '</div>' +
-       '</div>';
-
-     this.infoWindow.setContent(content);
+     var html = infoWindowTemplate(poi);
+     this.infoWindow.setContent(html);
      this.infoWindow.open(this.map, poi.marker);
-     $pageTop = $("body");
-     mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
+
+     var $pageTop = $("body");
+     var mapTop = $("#map-canvas").offset().top - $pageTop.position().top;
 
      if ($(document.body).scrollTop() > mapTop) {
        $(document.body).animate({scrollTop: mapTop}, 300);
@@ -398,6 +397,7 @@ jQuery(document).ready(function($) {
  /**
   * Checks which categories have options enabled and returns them.
   * @param {array} options Options array.
+  * @return array
   */
   GJMaps.prototype.categoryOptionCheck = function(options) {
      var hasOptions = [];
