@@ -45,6 +45,7 @@ if(!empty($_POST)) {
     foreach($_POST as $postKey=>$postValue) {
 
       if(isset($postValue['delete']) && $postValue['delete'] === 'on') {
+        $postValue['cat_delete_poi'] = $_POST['cat_delete_poi'];
         $deleteItems[] = $postValue;
       }
 
@@ -79,16 +80,16 @@ if(!empty($_POST)) {
       }
     }
 
-    if(!empty($deleteItems)) {
-      $response = $ad->deleteCat($deleteItems);
-    }
-
     if(!empty($updateItems)) {
       $response = $ad->editCat($updateItems);
     }
 
     if(!empty($createItems)) {
       $response = $ad->createCat($createItems);
+    }
+
+    if(!empty($deleteItems)) {
+      $response = $ad->deleteCat($deleteItems);
     }
   }
 
@@ -117,6 +118,12 @@ if(isset($response) && isset($response['error'])) {
     echo '<div id="message" class="updated"><p>'.$response['message'].'</p></div>';
   }
 }
+
+$hasModal = false;
+if(isset($response) && isset($response['modal'])) {
+  $hasModal = true;
+}
+
 
 echo $ad->mapsTab('cat', $maps, $map); ?>
 
@@ -156,7 +163,14 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
             <input type="hidden" name="<?php echo $category->id; ?>[map_id]" value="<?php echo $map_id; ?>">
             <input type="hidden" class="mode" name="<?php echo $category->id; ?>[mode]" value="">
             <th class="check-column">
-              <input type="checkbox" class="delete-box" name="<?php echo $category->id; ?>[delete]">
+              <input type="checkbox" class="delete-box" name="<?php echo $category->id; ?>[delete]"
+                <?php
+                  if ($hasModal) {
+                    if($response['modal']['type'] === 'has_poi')
+                      echo in_array($category->id, $response['modal']['items']) ? 'checked' : '';
+                  }
+                ?>
+              >
             </th>
             <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
             <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
@@ -176,5 +190,33 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
       <button class="btn button table-button" type="submit">Update Categories</button>
     </div>
 
+    <?php if($hasModal) { ?>
+      <div id="cat-delete-modal" class="gj-modal open">
+        <div class="gj-modal-dialog">
+          <div class="gj-modal-content">
+            <h4 class="gj-modal-message"><?php echo $response['message']; ?></h4>
+            <?php if($response['modal']['type'] === 'has_poi') { ?>
+              <p>Please select an option:</p>
+              <div class="gj-modal-input">
+                <label>
+                  <input type="radio" name="cat_delete_poi" value="1" checked>
+                  Delete all related points of interest.
+                </label>
+              </div>
+              <div class="gj-modal-input">
+                <label>
+                  <input class="gj-modal-input" type="radio" name="cat_delete_poi" value="0">
+                  Set all related points of interest to a new <strong>Default</strong> category.
+                </label>
+              </div>
+            <?php } ?>
+            <div class="gj-modal-footer">
+              <button type="button" class="gj-modal-cancel btn button table-button">Cancel</button>
+              <button class="btn button table-button" type="submit">Update Categories</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php } ?>
   </form>
 </div>

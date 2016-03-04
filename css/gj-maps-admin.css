@@ -45,3 +45,54 @@ th.th-header.active {
   overflow: hidden;
 }
 
+.gj-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.gj-modal.open {
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: block;
+}
+
+.gj-modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 60px 10px;
+}
+
+.gj-modal-content {
+  padding: 15px;
+  border-radius: 3px;
+  position: relative;
+  background-color: #fff;
+}
+
+.gj-modal-input {
+  margin-bottom: 15px;
+}
+
+.gj-modal-message {
+  font-size: 15px;
+}
+
+.gj-modal-footer {
+  margin-top: 20px;
+}
+
+@media (min-width: 768px){
+  .gj-modal-dialog {
+    width: 600px;
+    margin: 60px auto;
+  }
+}

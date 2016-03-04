@@ -399,6 +399,48 @@ class gjMapsDB
   }
 
   /**
+   *
+   * Creates Default Category
+   *
+   * @since 0.4
+   *
+   * @param $map_id int
+   *
+   * @return int
+   *
+   */
+  function createDefaultCategory($map_id)
+  {
+    $cat = array (
+      'map_id' => $map_id,
+      'name'   => 'Default',
+      'color'  => '#000000',
+      'icon'   => NULL
+    );
+    $this->createCategory($cat);
+    return strval($this->getInsertId());
+  }
+
+  /**
+   * Updates points of interest by category to new Default category
+   *
+   * @since 0.4
+   *
+   * @param $map_id int
+   * @param $cat_id int
+   *
+   * @return int || false
+   */
+  function updatePoiByCategoryToDefault($map_id, $cat_id)
+  {
+    $defaultCatId = $this->createDefaultCategory($map_id);
+
+    $updateCount = $this->wpdb->update($this->poiTable, array('cat_id'  => $defaultCatId), array('cat_id' => $cat_id));
+
+    return $updateCount;
+  }
+
+  /**
    * Update POI
    *
    * @since 0.1
@@ -461,6 +503,21 @@ class gjMapsDB
   function deletePoiByMap($map_id)
   {
     $sql = $this->wpdb->prepare("DELETE FROM $this->poiTable WHERE map_id = %d", $map_id);
+    return $this->wpdb->query($sql);
+  }
+
+  /**
+   * Delete all Poi based on a cat_id
+   *
+   * @since 0.4
+   *
+   * @param $cat_id int
+   *
+   * @return bool
+   */
+  function deletePoiByCategory($cat_id)
+  {
+    $sql = $this->wpdb->prepare("DELETE FROM $this->poiTable WHERE cat_id = %d", $cat_id);
     return $this->wpdb->query($sql);
   }
 
@@ -555,11 +612,33 @@ class gjMapsDB
   }
 
   /**
+   * Counts all points of interest for a category
+   *
+   * @since 0.4
+   *
+   * @param $cat_id int
+   *
+   * @return int
+   */
+  function countPoiByCategory($cat_id)
+  {
+    $poiCount = $this->wpdb->get_var( $this->wpdb->prepare(
+    	"
+    		SELECT COUNT(*)
+    		FROM $this->poiTable
+    		WHERE cat_id = %s
+    	",
+    	$cat_id
+    ) );
+    return $poiCount;
+  }
+
+  /**
    * Delete a category
    *
    * @since 0.3
    *
-   * @param $map_id int
+   * @param $cat_id int
    *
    * @return bool
    */

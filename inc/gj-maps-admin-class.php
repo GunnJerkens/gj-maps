@@ -30,9 +30,9 @@ class gjMapsAdmin
    *
    * @return array
    */
-  function response($status, $message)
+  function response($status, $message, $modal = null)
   {
-    return array('error' => $status, 'message' => $message);
+    return array('error' => $status, 'message' => $message, 'modal' => $modal);
   }
 
   /**
@@ -258,23 +258,12 @@ class gjMapsAdmin
   {
     $defaultCat = false;
     foreach($poi as $single) {
-
       if($single['cat_id'] === '0' && $defaultCat === false) {
-        $cat = array (
-          'map_id' => $single['map_id'],
-          'name'   => 'Default',
-          'color'  => '#000000',
-          'icon'   => NULL
-        );
-        $this->db->createCategory($cat);
-        $defaultCat = strval($this->db->getInsertId());
+        $defaultCat = $this->db->createDefaultCategory($single['map_id']);
         $single['cat_id'] = $defaultCat;
       } elseif ($single['cat_id'] === '0') {
         $single['cat_id'] = $defaultCat;
       }
-
-
-
       $createItems[] = $single;
     }
 
@@ -379,6 +368,7 @@ class gjMapsAdmin
 
     foreach($updateItems as $item) {
       unset($item['mode']);
+      unset($item['delete']);
       $responses[] = $this->db->updateCategories($item);
     }
 
@@ -409,22 +399,44 @@ class gjMapsAdmin
   function deleteCat($deleteItems)
   {
     $hasError = false;
+    $hasModal = false;
+    $modalItems = array();
 
     foreach($deleteItems as $item) {
-      unset($item['delete']);
-      $responses[] = $this->db->deleteCategory($item['id']);
-    }
-
-    foreach($responses as $response) {
-      if($response !== 1) {
+      // changes all POI to new Default
+      if($item['cat_delete_poi'] === '0') {
+        if(!$this->db->updatePoiByCategoryToDefault($item['map_id'], $item['id'])) {
+          $hasError = true;
+        }
+      // deletes all POI
+      } else if($item['cat_delete_poi'] === '1') {
+        if($this->db->deletePoiByCategory($item['id']) !== 1) {
+          $hasError = true;
+        }
+      }
+      $poiCount = $this->db->countPoiByCategory($item['id']);
+      if($poiCount === '0') {
+        if($this->db->deleteCategory($item['id']) !== 1) {
+          $hasError = true;
+        }
+      } else {
         $hasError = true;
+        $hasModal = 'has_poi';
+        array_push($modalItems, $item['id']);
       }
     }
 
     if(!$hasError) {
       $response = $this->response(false, 'Items deleted successfully.');
     } else {
-      $response = $this->response(true, 'Some items failed to delete');
+      if(!$hasModal) {
+        $response = $this->response(true, 'Some items failed to delete');
+      } else {
+        if($hasModal === 'has_poi') {
+          $hasModal = array('type' => 'has_poi', 'items' => $modalItems);
+          $response = $this->response(null, 'Some categories have points of interest associated with them.', $hasModal);
+        }
+      }
     }
 
     return $response;
