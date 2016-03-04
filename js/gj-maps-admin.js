@@ -1,5 +1,13 @@
 jQuery(document).ready(function($) {
 
+  function gjModal() {
+    $('.gj-modal-cancel').click(function(){
+      $(this).unbind('click');
+      $('.gj-modal').remove();
+    });
+  }
+  gjModal();
+
   function pickColors() {
     $('.color-picker').wpColorPicker({
       change: function(event, ui) {
@@ -23,7 +31,7 @@ jQuery(document).ready(function($) {
 
   function createPOIRow() {
     addPOIRow.click(function() {
-
+      catOptions = '';
       ID = $('.gj-maps > tbody:last').children('tr').last().data('id') + 1;
       ID = isNaN(ID) ? 1 : ID + 1;
 
