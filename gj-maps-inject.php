@@ -59,6 +59,7 @@ class gjMapsInject {
       if ($label_color !== 'none') {
         $label_style = $label_color === 'background' ? 'style="background-color:'.$cat_default.';"' : 'style="color:'.$cat_default.';"';
       }
+      $gjHandlebars = file_get_contents(plugin_dir_path(__FILE__).'gj-maps-handlebars.php');
       $gjWrapperOpen = '<div class="gjmaps-wrapper">';
       $gjCanvas = '<div id="map-canvas" class="gjmaps-map-canvas"></div>';
       $gjCategories = '
@@ -70,8 +71,8 @@ class gjMapsInject {
       ';
       $gjWrapperClose = '</div>';
 
-      $top = $gjWrapperOpen.$gjCategories.$gjCanvas.$gjWrapperClose;
-      $bot = $gjWrapperOpen.$gjCanvas.$gjCategories.$gjWrapperClose;
+      $top = $gjHandlebars.$gjWrapperOpen.$gjCategories.$gjCanvas.$gjWrapperClose;
+      $bot = $gjHandlebars.$gjWrapperOpen.$gjCanvas.$gjCategories.$gjWrapperClose;
 
 
       extract(shortcode_atts(array(

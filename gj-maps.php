@@ -9,7 +9,6 @@
  * License: MIT
  */
  
-require_once(plugin_dir_path(__FILE__).'gj-maps-handlebars.php');
 require_once(plugin_dir_path(__FILE__).'gj-maps-inject.php');
 require_once(plugin_dir_path(__FILE__).'gj-maps-json-api.php');
 require_once(plugin_dir_path(__FILE__).'inc/gj-maps-admin-class.php');
