@@ -52,7 +52,7 @@ class gjMapsInject {
 
       $this->loadJS = true;
 
-      $cat_default = get_option('gj_cat_default');
+      $cat_default = get_option('gj_maps_cat_default');
       if ($cat_default === "") { $cat_default = "#ffffff"; }
 
       $gjWrapperOpen = '<div class="gjmaps-wrapper">';
