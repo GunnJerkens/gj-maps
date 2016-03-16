@@ -411,14 +411,23 @@ class gjMapsDB
    */
   function createDefaultCategory($map_id)
   {
-    $cat = array (
-      'map_id' => $map_id,
-      'name'   => 'Default',
-      'color'  => '#000000',
-      'icon'   => NULL
-    );
-    $this->createCategory($cat);
-    return strval($this->getInsertId());
+    $cat_id = '';
+    // check if Default already exists
+    $cat = $this->getCategory($map_id, 'Default');
+    if($cat) {
+      $cat_id = $cat[0]->id;
+    } else {
+      $cat = array (
+        'map_id' => $map_id,
+        'name'   => 'Default',
+        'color'  => '#000000',
+        'icon'   => NULL
+      );
+      $this->createCategory($cat);
+      $cat_id = strval($this->getInsertId());
+    }
+
+    return $cat_id;
   }
 
   /**

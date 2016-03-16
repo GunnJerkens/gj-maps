@@ -206,7 +206,7 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
               <div class="gj-modal-input">
                 <label>
                   <input class="gj-modal-input" type="radio" name="cat_delete_poi" value="0">
-                  Set all related points of interest to a new <strong>Default</strong> category.
+                  Set all related points of interest to the <strong>Default</strong> category.
                 </label>
               </div>
             <?php } ?>

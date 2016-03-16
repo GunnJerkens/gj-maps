@@ -256,13 +256,10 @@ class gjMapsAdmin
    */
   function createPOI($poi)
   {
-    $defaultCat = false;
     foreach($poi as $single) {
-      if($single['cat_id'] === '0' && $defaultCat === false) {
-        $defaultCat = $this->db->createDefaultCategory($single['map_id']);
-        $single['cat_id'] = $defaultCat;
-      } elseif ($single['cat_id'] === '0') {
-        $single['cat_id'] = $defaultCat;
+      if($single['cat_id'] === '0') {
+        $defaultCatId = $this->db->createDefaultCategory($single['map_id']);
+        $single['cat_id'] = $defaultCatId;
       }
       $createItems[] = $single;
     }
@@ -403,7 +400,7 @@ class gjMapsAdmin
     $modalItems = array();
 
     foreach($deleteItems as $item) {
-      // changes all POI to new Default
+      // changes all POI to the Default category
       if($item['cat_delete_poi'] === '0') {
         if(!$this->db->updatePoiByCategoryToDefault($item['map_id'], $item['id'])) {
           $hasError = true;
