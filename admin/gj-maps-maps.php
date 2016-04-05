@@ -80,7 +80,7 @@ $cat  = false;
 if(isset($map[0])) {
   $map = $map[0];
   $pag = $ad->gjMapsPaginateTable($map_id, 30);
-  $poi = $db->getPoi($map_id, $pag['sql_offset'], $pag['sql_length']);
+  $poi = $db->getPoi($map_id, $pag['sql_offset'], $pag['sql_length'], 'OBJECT', get_option('gj_maps_poi_alpha_list'));
   $cat = $db->getCategories($map_id);
 
   wp_localize_script('gj_maps_admin_js', 'cat', $cat);
@@ -205,27 +205,27 @@ $url = $ad->gjMapsBuildURL($map_id); ?>
       <div class="tablenav-pages">
         <span class="displaying-num"><?php echo $pag['total_items'].' items'; ?></span>
         <span class="pagination-links">
-          <a 
-            class="first-page <?php echo $pag['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" 
+          <a
+            class="first-page <?php echo $pag['current_page'] - 1 > 0 ? '' : 'disabled'; ?>"
             title="Go to the first page" href="<?php echo $url.'&paged=1'; ?>">«
           </a>
-          <a 
-            class="prev-page <?php echo $pag['current_page'] - 1 > 0 ? '' : 'disabled'; ?>" 
-            title="Go to the previous page" 
+          <a
+            class="prev-page <?php echo $pag['current_page'] - 1 > 0 ? '' : 'disabled'; ?>"
+            title="Go to the previous page"
             href="<?php echo $url.'&paged='.($pag['current_page'] - 1 > 0 ? $pag['current_page'] - 1 : $pag['current_page']); ?>">‹
           </a>
-          <span 
-            class="paging-input"><?php echo $pag['current_page']; ?> of 
+          <span
+            class="paging-input"><?php echo $pag['current_page']; ?> of
             <span class="total-pages"><?php echo $pag['pages'] == 0 ? '1' : $pag['pages']; ?></span>
           </span>
-          <a 
-            class="next-page <?php echo $pag['current_page'] + 1 > $pag['pages'] ? 'disabled' : ''; ?>" 
-            title="Go to the next page" 
+          <a
+            class="next-page <?php echo $pag['current_page'] + 1 > $pag['pages'] ? 'disabled' : ''; ?>"
+            title="Go to the next page"
             href="<?php echo $url.'&paged='.($pag['current_page'] + 1 > $pag['pages'] ? $pag['current_page'] : $pag['current_page'] + 1); ?>">›
           </a>
-          <a 
-            class="last-page <?php echo $pag['current_page'] + 1 > $pag['pages'] ? 'disabled' : ''; ?>" 
-            title="Go to the last page" 
+          <a
+            class="last-page <?php echo $pag['current_page'] + 1 > $pag['pages'] ? 'disabled' : ''; ?>"
+            title="Go to the last page"
             href="<?php echo $url.'&paged='.$pag['pages']; ?>">»
           </a>
         </span>

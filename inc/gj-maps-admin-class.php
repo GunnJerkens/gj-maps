@@ -17,7 +17,7 @@ class gjMapsAdmin
    */
   function __construct()
   {
-    $this->db = new gjMapsDB();
+    $this->db = new gjMapsDB($this);
   }
 
   /**
@@ -459,6 +459,9 @@ class gjMapsAdmin
     $poi_list = isset($_POST['poi_list']);
     update_option('gj_maps_poi_list', $poi_list);
 
+    $poi_alpha_list = isset($_POST['poi_alpha_list']);
+    update_option('gj_maps_poi_alpha_list', $poi_alpha_list);
+
     $poi_num = isset($_POST['poi_num']);
     update_option('gj_maps_poi_num', $poi_num);
 
@@ -514,6 +517,7 @@ class gjMapsAdmin
       "use_styles"           => get_option('gj_maps_use_styles'),
       "label_color"          => get_option('gj_maps_label_color'),
       "poi_list"             => get_option('gj_maps_poi_list'),
+      "poi_alpha_list"       => get_option('gj_maps_poi_alpha_list'),
       "poi_num"              => get_option('gj_maps_poi_num'),
       "poi_filter_load"      => get_option('gj_poi_filter_load'),
       "disable_mouse_scroll" => get_option('gj_disable_mouse_scroll'),

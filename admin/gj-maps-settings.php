@@ -51,6 +51,10 @@ $settings = gjMapsAdmin::getSettings(); ?>
         <td><input type="checkbox" name="poi_list" <?php echo $settings->poi_list ? 'checked' : ''; ?>></td>
       </tr>
       <tr>
+        <th><label for="poi_alpha_list">Alphabetize POI List</label></th>
+        <td><input type="checkbox" name="poi_alpha_list" <?php echo $settings->poi_alpha_list ? 'checked' : ''; ?>></td>
+      </tr>
+      <tr>
         <th><label for="poi_num">Numbered POI</label></th>
         <td><input type="checkbox" name="poi_num" <?php echo $settings->poi_num ? 'checked' : ''; ?>></td>
       </tr>

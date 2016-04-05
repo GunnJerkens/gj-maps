@@ -131,8 +131,7 @@ class gjMapsInject {
       if(!isset($mapSettings['map_id'])) {
         return false;
       }
-
-      $poi = $this->db->getPoi($mapSettings['map_id']);
+      $poi = $this->db->getPoi($mapSettings['map_id'], 0, 999, 'OBJECT', get_option('gj_maps_poi_alpha_list'));
       $cat = $this->db->getCategories($mapSettings['map_id']);
     }
 

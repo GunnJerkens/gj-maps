@@ -328,12 +328,14 @@ class gjMapsDB
    *
    * @return object
    */
-  function getPoi($map_id, $offset = 0, $length = 999, $type = 'OBJECT')
+  function getPoi($map_id, $offset = 0, $length = 999, $type = 'OBJECT', $alpha=false)
   {
+    $alpha_query = $alpha ? 'ORDER BY name' : '';
     $sql = $this->wpdb->prepare(
       "SELECT *
        FROM $this->poiTable
        WHERE map_id = %d
+       $alpha_query
        LIMIT %d, %d",
        $map_id, $offset, $length
     );

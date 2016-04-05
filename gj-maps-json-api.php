@@ -48,7 +48,7 @@ class gjMapsAPI {
     $db = new gjMapsDB();
 
     $data = array(
-      'poi' => $db->getPoi($mapID),
+      'poi' => $db->getPoi($mapID, 0, 999, 'OBJECT', get_option('gj_maps_poi_alpha_list')),
       'cat' => $db->getCategories($mapID),
     );
 
