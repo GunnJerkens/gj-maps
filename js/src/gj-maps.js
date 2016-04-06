@@ -10,7 +10,8 @@ jQuery(document).ready(function($) {
       infoWindowSource = $("#info-window").html(),
       infoWindowTemplate = Handlebars.compile(infoWindowSource),
       categoryListSource = $("#category-list").html(),
-      categoryListTemplate = Handlebars.compile(categoryListSource);
+      categoryListTemplate = Handlebars.compile(categoryListSource),
+      autolinker = new Autolinker();
 
   google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
 
@@ -313,7 +314,12 @@ jQuery(document).ready(function($) {
       poi.phone_link = settings.phone_link === '1' ? poi.phone.replace(/[\.\(\)\-\s]/g, '') : false;
     }
     if (poi.url) {
-      poi.linkName = settings.link_text ? settings.link_text : poi.url.replace(/^https?:\/\/|\/$/g, '');
+      var matchArr = autolinker.parse(poi.url), poi_text = poi.url.replace(/^https?:\/\/|\/$/g, '');
+      if(matchArr.length) {
+        poi.url = matchArr[0].getAnchorHref();
+        poi_text = matchArr[0].getAnchorText();
+      }
+      poi.linkName = settings.link_text ? settings.link_text : poi_text;
     }
 
     var html = infoWindowTemplate(poi);

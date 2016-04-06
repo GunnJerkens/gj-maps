@@ -28,8 +28,9 @@ class gjMapsInject {
     if(!is_admin() && shortcode_exists('gjmaps') && !defined('DISABLE_GJ_MAPS')) {
       wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3', null, null);
       wp_enqueue_script('handlebars', plugin_dir_url(__FILE__).'js/libs/handlebars-v4.0.5.js', null, null);
+      wp_enqueue_script('autolinker', plugin_dir_url(__FILE__).'js/libs/autolinker.min.js', null, null);
       if(get_option('gj_maps_poi_num')) wp_enqueue_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps', 'handlebars'), false, true);
-      wp_enqueue_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps', 'handlebars'), false, true);
+      wp_enqueue_script('gj-maps-main', plugin_dir_url(__FILE__).'js/main.js', array('jquery', 'google-maps', 'handlebars', 'autolinker'), false, true);
       if (get_option('gj_maps_use_styles')) wp_enqueue_style('gj-maps-screen', plugin_dir_url(__FILE__).'css/screen.css', null, true);
 
       return true;
