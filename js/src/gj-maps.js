@@ -263,7 +263,7 @@ jQuery(document).ready(function($) {
     var symbolPath;
     cat.background = '';
     cat.text = true;
-
+    cat.background_true = false;
     if (settings.label_color === "background") {
       if (cat.icon) {
         symbolPath = cat.icon.replace(/\/marker-/, '/symbol-');
@@ -271,7 +271,8 @@ jQuery(document).ready(function($) {
       } else {
         cat.background = '';
       }
-      cat.color_style = 'background-color: ' + cat.color +';';
+      cat.background_true = true;
+      cat.color_style = 'border: solid 1px ' + cat.color + ';background-color: ' + cat.color +';';
     } else if (settings.label_color === "text") {
       cat.background = '';
       cat.color_style = 'color: ' + cat.color + ';';

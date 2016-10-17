@@ -25,8 +25,18 @@
 </script>
 
 <script id="category-list" type="text/x-handelbars-template">
+  {{#if text}}
+  <style>
+  .gjmaps-categories li[data-cat-id="{{id}}"] .gjmaps-label { {{color_style}} }
+  {{#if background_true}}
+  .gjmaps-categories li[data-cat-id="{{id}}"] .gjmaps-label:hover {background-color: white;}
+  .gjmaps-categories li[data-cat-id="{{id}}"] .gjmaps-label span {color: white;}
+  .gjmaps-categories li[data-cat-id="{{id}}"] .gjmaps-label:hover span {color: {{color}};}
+  {{/if}}
+  </style>
+  {{/if}}
   <li class="gjmaps-category" data-cat-id="{{id}}">
-    <div style="{{background}}{{#if text}}{{color_style}}{{/if}}" class="gjmaps-label" data-type="label">
+    <div style="{{background}}" class="gjmaps-label" data-type="label">
       {{#if text}}
         <span>{{name}}</span>
       {{/if}}
