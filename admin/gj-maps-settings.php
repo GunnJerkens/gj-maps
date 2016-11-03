@@ -32,6 +32,10 @@ $settings = gjMapsAdmin::getSettings(); ?>
     <?php wp_nonce_field('gj-maps-settings'); ?>
     <table class="form-table">
       <tr>
+        <th><label for="api_key">API Key</label></th>
+        <td><input type="text" name="api_key" value="<?php echo $settings->api_key; ?>" required></td>
+      </tr>
+      <tr>
         <th><label for="use_styles">Styles</label></th>
         <td><input type="checkbox" name="use_styles" <?php echo $settings->use_styles ? 'checked' : ''; ?>></td>
       </tr>

@@ -450,6 +450,9 @@ class gjMapsAdmin
    */
   function updateSettings($settings)
   {
+    $api_key = $_POST['api_key'];
+    update_option('gj_maps_api_key', $api_key);
+
     $styles = isset($_POST['use_styles']);
     update_option('gj_maps_use_styles', $styles);
 
@@ -514,6 +517,7 @@ class gjMapsAdmin
   public static function getSettings()
   {
     return (object) array(
+      "api_key"              => get_option('gj_maps_api_key'),
       "use_styles"           => get_option('gj_maps_use_styles'),
       "label_color"          => get_option('gj_maps_label_color'),
       "poi_list"             => get_option('gj_maps_poi_list'),

@@ -26,7 +26,8 @@ class gjMapsInject {
    */
   function doScripts() {
     if(!is_admin() && shortcode_exists('gjmaps') && !defined('DISABLE_GJ_MAPS')) {
-      wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?v=3', null, null);
+      $api_key = trim(get_option('gj_maps_api_key')) ? '?key='.get_option('gj_maps_api_key') : '';
+      wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js'.$api_key, null, null);
       wp_enqueue_script('handlebars', plugin_dir_url(__FILE__).'js/libs/handlebars-v4.0.5.js', null, null);
       wp_enqueue_script('autolinker', plugin_dir_url(__FILE__).'js/libs/autolinker.min.js', null, null);
       if(get_option('gj_maps_poi_num')) wp_enqueue_script('gj-maps-mwl', plugin_dir_url(__FILE__).'js/libs/markerwithlabel.js', array('jquery', 'google-maps', 'handlebars'), false, true);
