@@ -67,7 +67,7 @@ class gjMapsInject {
       $gjCategories = '
         <ul class="gjmaps-categories">
           <li class="gjmaps-category active" data-cat-id="all">
-            <div class="gjmaps-label" '.$label_style.' data-type="label"><span>View All</span></label>
+            <div class="gjmaps-label" '.$label_style.' data-type="label"><span>View All</span></div>
           </li>
         </ul>
       ';
