@@ -38,7 +38,8 @@ jQuery(document).ready(function($) {
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           styles: (settings.map_styles === '0' ? '' : jQuery.parseJSON(settings.map_styles)),
           draggable: (settings.mouse_drag === '0') ? true : false,
-          scrollwheel: (settings.mouse_scroll === '0') ? true : false
+          scrollwheel: (settings.mouse_scroll === '0') ? true : false,
+          gestureHandling: 'cooperative'
         };
       this.catIndexed = {};
       this.infoWindow = new google.maps.InfoWindow();
