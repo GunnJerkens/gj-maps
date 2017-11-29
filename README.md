@@ -44,6 +44,7 @@ Shortcode options include:
 | latitude | integer | optional | defaults to options setting |
 | longitude | integer | optional | defaults to options setting |
 | zoom | integer | optional | defaults to options setting |
+| fit_bounds | boolean | optional | defaults to options setting |
 | api | string | optional* | overrides map/map_id, url must have map id |
 
 *one of the three [map, map_id, api] is required.

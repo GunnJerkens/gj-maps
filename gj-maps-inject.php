@@ -78,22 +78,27 @@ class gjMapsInject {
 
 
       extract(shortcode_atts(array(
-        'map'       => null,
-        'map_id'    => null,
-        'position'  => 'top',
-        'latitude'  => get_option('gj_maps_center_lat'),
-        'longitude' => get_option('gj_maps_center_lng'),
-        'zoom'      => get_option('gj_maps_map_zoom'),
-        'api'       => false
+        'map'        => null,
+        'map_id'     => null,
+        'position'   => 'top',
+        'latitude'   => get_option('gj_maps_center_lat'),
+        'longitude'  => get_option('gj_maps_center_lng'),
+        'zoom'       => get_option('gj_maps_map_zoom'),
+        'fit_bounds' => get_option('gj_enable_fit_bounds'),
+        'api'        => false
       ), $atts));
 
+      // $fit_bounds string to boolean
+      $fit_bounds = filter_var( $fit_bounds, FILTER_VALIDATE_BOOLEAN );
+
       $gjmapsAPI = $this->frontend(array(
-          'map'       => $map,
-          'map_id'    => $map_id,
-          'latitude'  => $latitude,
-          'longitude' => $longitude,
-          'zoom'      => $zoom,
-          'api'       => $api
+          'map'        => $map,
+          'map_id'     => $map_id,
+          'latitude'   => $latitude,
+          'longitude'  => $longitude,
+          'zoom'       => $zoom,
+          'fit_bounds' => $fit_bounds,
+          'api'        => $api
         )
       );
 
@@ -172,7 +177,7 @@ class gjMapsInject {
     $settings['filter_load']  = $filter_load ? $filter_load : '0';
     $settings['mouse_scroll'] = $mouse_scroll ? $mouse_scroll : '0';
     $settings['mouse_drag']   = $mouse_drag ? $mouse_drag : '0';
-    $settings['fit_bounds']   = $fit_bounds ? $fit_bounds : '0';
+    $settings['fit_bounds']   = $mapSettings['fit_bounds'] ? $mapSettings['fit_bounds'] : '0';
     $settings['phone_link']   = $phone_link ? $phone_link : '0';
     $settings['label_color']  = $label_color ? $label_color : '0';
     $settings['map_styles']   = $map_styles ? $map_styles : '0';
