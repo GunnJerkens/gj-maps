@@ -41,6 +41,16 @@ class gjMapsAPI {
     }
   }
 
+  /** clean icon link categories
+  * We will serve up the full URL on the api, make it relative and make sure it is from this site.
+  */
+  protected function make_cat_icons_relative($cats){
+    foreach ($cats as $key => $value) {
+      $value->icon = get_home_url() . wp_make_link_relative($value->icon);
+    }
+    return $cats;
+  }
+
   /** Response Handler
   * This sends a JSON response to the browser
   */
@@ -49,9 +59,9 @@ class gjMapsAPI {
 
     $data = array(
       'poi' => $db->getPoi($mapID, 0, 999, 'OBJECT', get_option('gj_maps_poi_alpha_list')),
-      'cat' => $db->getCategories($mapID),
+      'cat' => $this->make_cat_icons_relative($db->getCategories($mapID))
     );
-
+    //wp_make_link_relative(
     header('content-type: application/json; charset=utf-8');
     header("access-control-allow-origin: *");
     echo json_encode($data);

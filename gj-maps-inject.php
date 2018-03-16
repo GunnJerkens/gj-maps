@@ -108,6 +108,16 @@ class gjMapsInject {
     }
   }
 
+  /** clean icon link categories
+  * We will serve up the full URL on the api, make it relative and make sure it is from this site.
+  */
+  function make_cat_icons_relative($cats){
+    foreach ($cats as $key => $value) {
+      $value->icon = wp_make_link_relative($value->icon);
+    }
+    return $cats;
+  }
+
   /**
    * This method dumps out the content to the frontend as CDATA
    *
@@ -139,7 +149,7 @@ class gjMapsInject {
         return false;
       }
       $poi = $this->db->getPoi($mapSettings['map_id'], 0, 999, 'OBJECT', get_option('gj_maps_poi_alpha_list'));
-      $cat = $this->db->getCategories($mapSettings['map_id']);
+      $cat = $this->make_cat_icons_relative($this->db->getCategories($mapSettings['map_id']));
     }
 
     if(get_option('gj_maps_poi_num')) {

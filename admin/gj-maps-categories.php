@@ -63,7 +63,7 @@ if(!empty($_POST)) {
               $upload = wp_handle_upload($icon, array('test_form'=>false));
 
               if(isset($upload['url'])) {
-                $postValue['icon'] = $upload['url'];
+                $postValue['icon'] = wp_make_link_relative($upload['url']);
               }
             }
           }
@@ -174,7 +174,7 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
             </th>
             <td><input type="text" class="maps-detect-change full-width" name="<?php echo $category->id; ?>[name]" value="<?php echo $category->name; ?>"></td>
             <td><input type="text" class="maps-detect-change color-picker" name="<?php echo $category->id; ?>[color]" value="<?php echo $category->color; ?>"></td>
-            <td><img src="<?php echo $category->icon; ?>"><input type="file" class="maps-detect-change" name="<?php echo $category->id; ?>[icon]" value="<?php echo $category->icon; ?>"></td>
+            <td><img src="<?php echo wp_make_link_relative($category->icon); ?>"><input type="file" class="maps-detect-change" name="<?php echo $category->id; ?>[icon]" value="<?php echo wp_make_link_relative($category->icon); ?>"></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[hide_list]" value="1" <?php if ($category->hide_list) echo 'checked'; ?>></td>
             <td><input type="checkbox" class="maps-detect-change" name="<?php echo $category->id; ?>[filter_resist]" value="1" <?php if ($category->filter_resist) echo 'checked'; ?>></td>
           </tr><?php
