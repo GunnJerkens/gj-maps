@@ -573,7 +573,7 @@ class gjMapsAdmin
 
     // Handle our labels, make sure the CSV matches our reqs
     foreach ($poi[0] as $key=>$value) {
-      $str = trim(strtolower($value));
+      $str = preg_replace("/[^\w\d]/","",strtolower($value));
 
       if(!empty($str)) {
         $labels[$str] = $str;
