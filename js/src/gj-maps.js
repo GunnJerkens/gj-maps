@@ -3,9 +3,7 @@
  *
  * @description: Frontend google maps rendering Wordpress plugin
  */
-
-jQuery(document).ready(function($) {
-
+google.maps.event.addDomListener(window, 'load', function(){
   var gjMaps = new GJMaps(),
       infoWindowSource = $("#info-window").html(),
       infoWindowTemplate = Handlebars.compile(infoWindowSource),
@@ -13,7 +11,9 @@ jQuery(document).ready(function($) {
       categoryListTemplate = Handlebars.compile(categoryListSource),
       autolinker = new Autolinker();
 
-  google.maps.event.addDomListener(window, 'load', function(){gjMaps.initMap()});
+  jQuery(document).ready(function($) {
+    gjMaps.initMap();
+  });
 
   /**
    * @name GJMaps
