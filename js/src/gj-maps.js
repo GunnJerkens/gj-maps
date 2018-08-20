@@ -11,10 +11,6 @@ google.maps.event.addDomListener(window, 'load', function(){
       categoryListTemplate = Handlebars.compile(categoryListSource),
       autolinker = new Autolinker();
 
-  jQuery(document).ready(function($) {
-    gjMaps.initMap();
-  });
-
   /**
    * @name GJMaps
    * @class This class creates a GJMap with initial properties.
@@ -449,5 +445,9 @@ google.maps.event.addDomListener(window, 'load', function(){
       gjMaps.showCategoryByArr(cats);
     });
   }
+
+  jQuery(document).ready(function($) {
+    gjMaps.initMap();
+  });
 
 });
