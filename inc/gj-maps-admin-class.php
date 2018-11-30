@@ -212,7 +212,7 @@ class gjMapsAdmin
           $address = urlencode($point["address"].', '.$point['city'].', '.$point['state'].' '.$point['zip']);
         }
 
-        $url = 'http://maps.googleapis.com/maps/api/geocode/json?key='.$apiKey.'&sensor=false';
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?key='.$apiKey.'&sensor=false';
         $url .= '&address='.$address;
 
         $googleResponseEncoded = wp_remote_get($url);
