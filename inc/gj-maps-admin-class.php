@@ -202,7 +202,7 @@ class gjMapsAdmin
   function geocodePOI($map_id)
   {
     $poi = $this->db->getPoiWithZeroLatLng($map_id, 'ARRAY_A');
-
+    $apiKey = get_option('gj_maps_api_key');
     if(sizeof($poi) > 0) {
       foreach($poi as $point) {
 
@@ -212,7 +212,7 @@ class gjMapsAdmin
           $address = urlencode($point["address"].', '.$point['city'].', '.$point['state'].' '.$point['zip']);
         }
 
-        $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false';
+        $url = 'http://maps.googleapis.com/maps/api/geocode/json?key='.$apikey.'&sensor=false';
         $url .= '&address='.$address;
 
         $googleResponseEncoded = wp_remote_get($url);
