@@ -155,7 +155,7 @@ echo $ad->mapsTab('cat', $maps, $map); ?>
       </thead>
       <tbody><?php
 
-      if($cat && sizeof($cat > 0)) {
+      if($cat && sizeof($cat) > 0) {
         foreach ($cat as $category) { ?>
 
           <tr id="map-<?php echo $category->id; ?>" class="alternate cat" data-id="<?php echo $category->id; ?>" data-map="<?php echo $map_id; ?>">
