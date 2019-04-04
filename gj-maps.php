@@ -3,7 +3,7 @@
  * Plugin Name: GJ Maps
  * Plugin URI: https://github.com/GunnJerkens/gj-maps
  * Description: Ability top upload Points of Interest from a CSV or manually, then access them in JSON format.
- * Version: 0.7.4
+ * Version: 0.7.5
  * Author: GunnJerkens
  * Author URI: http://gunnjerkens.com
  * License: MIT
