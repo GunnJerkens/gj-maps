@@ -97,6 +97,27 @@ define('DISABLE_GJ_MAPS', [any value]);
 
 If you are using W3 Total Cache it will strip the defined CORS header. To workaround this you must disable caching on the API pages. That can be fixed by adding `/?gjmaps_api=*` to the setting under `Performance > Page Cache  > Never cache the following pages`.
 
+## troubleshooting 
+
+### deleted map
+
+If a map is accidentally deleted from a production website, there are some features that allow map recovery without having to build the entire thing from scratch
+
+1. Go to the staging or local version of website, which ever has the most recent data
+2. Use the GJ Maps API endpoint to get a JSON dump of all map data `http://[domain].com?gjmaps_api=[ID]`
+3. Copy and paste JSON into a JSON to CSV converter - [something like this](https://www.convertcsv.com/json-to-csv.htm)
+4. Save CSV file
+5. Category icon image URL will be provided - save these locally and use them to recreate categories
+6. Create New Map
+7. Create New Categories
+8. Make sure file permissions are allow upload to WP Media Gallery - GJ Maps will not output specific error message
+9. If category icons are used in a sidebar the SCSS for the page template will need to be updated - new categories will have new IDs and those are the selectors for the SCSS
+10. Build and push changes to SCSS
+10. Extract POI columns from CSV for `category, name, address, city, state, zip, country, phone, url, lat, lng` into a new CSV document, removing the `poi/`
+11. Import POIs into new map
+12. Adjust any fields as needed
+13. Update map ID in shortcode on the page where deleted map was located
+
 ## issues
 
 [GitHub Issues](https://github.com/GunnJerkens/gj-maps/issues)
